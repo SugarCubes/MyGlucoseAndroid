@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- From https://developer.android.com/training/constraint-layout/
+ConstraintLayout is good for designing with Android Studio's Layout Editor. It
+allows you to create large and complex layouts with a flat view hierarchy (no nested view groups).
+
+You must add at least one horizontal and one vertical constraint for the view. Each constraint
+represents a connection or alignment to another view, the parent layout, or an invisible
+guideline.-->
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,4 +16,75 @@
     tools:context=".activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <Button
+        android:id="@+id/exercise_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:background="@android:color/holo_purple"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/log_exercise"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/glucose_button"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".47" />
+
+    <Button
+        android:id="@+id/meals_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/holo_green_light"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/log_meals"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/exercise_button"
+        app:layout_constraintLeft_toRightOf="@+id/exercise_button"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/exercise_button"
+        app:layout_constraintWidth_default="spread" />
+
+    <Button
+        android:id="@+id/glucose_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/holo_orange_dark"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/log_glucose"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498"
+        app:layout_constraintWidth_default="spread"
+        app:layout_constraintWidth_min="wrap" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="347dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:shadowColor="@android:color/holo_blue_light"
+        android:text="@string/app_name"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/glucose_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

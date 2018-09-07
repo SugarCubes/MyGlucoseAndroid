@@ -33,6 +33,8 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_ID = "_id";
 	public static final String KEY_USER_ID = "user_id";
 	public static final String KEY_USERNAME = "username";
+	public static final String KEY_USER_FIRST_NAME = "first_name";
+	public static final String KEY_USER_LAST_NAME = "last_name";
 	public static final String KEY_USER_TYPE = "user_type";
 	public static final String KEY_EMAIL = "email";
 	public static final String KEY_ADDRESS1 = "address1";
@@ -81,10 +83,11 @@ public class DB extends SQLiteOpenHelper
 
 		// CREATE LOGIN TABLE
 		String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-				+ KEY_ID + " INTEGER PRIMARY KEY,"
-				+ KEY_USER_ID + " TEXT,"
+				+ KEY_ID + " TEXT PRIMARY KEY,"
+				+ KEY_USER_TYPE + " TEXT,"
 				+ KEY_USERNAME + " TEXT,"
-				+ KEY_USER_TYPE + " INTEGER,"
+				+ KEY_USER_FIRST_NAME + " TEXT,"
+				+ KEY_USER_LAST_NAME + " TEXT,"
 				+ KEY_EMAIL + " TEXT UNIQUE,"
 				+ KEY_PHONE + " TEXT,"
 				+ KEY_ADDRESS1 + " TEXT,"

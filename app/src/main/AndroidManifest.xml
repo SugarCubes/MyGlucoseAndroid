@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name=".contentproviders.MyGlucoseContentProvider"
             android:authorities="com.sugarcubes.myglucose.provider"
@@ -27,12 +26,31 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" />
+        <activity android:name=".activities.LogGlucoseActivity" />
+        <activity android:name=".activities.LogMealsActivity" />
+        <activity android:name=".activities.LogExerciseActivity" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
     </application>
 

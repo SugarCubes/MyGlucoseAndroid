@@ -1,6 +1,6 @@
 package com.sugarcubes.myglucose.entities;
 
-class ExerciseEntry
+public class ExerciseEntry
 {
 
 }

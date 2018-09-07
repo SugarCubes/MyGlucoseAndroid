@@ -19,9 +19,6 @@ import java.util.HashMap;
 
 public class MyGlucoseContentProvider extends ContentProvider
 {
-
-	private static final String KEY_ID		= DB.KEY_ID;
-
 	// fields for content provider
 	public static final String
 			AUTHORITY				= "com.sugarcubes.myglucose.provider",
@@ -96,7 +93,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 		Cursor cursor;
 
 		sortOrder =	sortOrder == null
-				? KEY_ID + " ASC"
+				? DB.KEY_ID + " ASC"
 				: null;
 		queryBuilder.setProjectionMap( queryMap );
 
