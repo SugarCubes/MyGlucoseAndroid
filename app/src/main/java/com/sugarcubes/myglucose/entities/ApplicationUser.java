@@ -2,6 +2,7 @@ package com.sugarcubes.myglucose.entities;
 
 public class ApplicationUser
 {
+	protected static boolean loggedIn = false;
 	protected String id;
 	protected String email;
 	protected String firstName;
@@ -63,4 +64,14 @@ public class ApplicationUser
 	{
 		this.userName = userName;
 	}
-}
+
+	public boolean isLoggedIn()
+	{
+		return loggedIn;
+	}
+
+	public void setLoggedIn( boolean loggedIn )
+	{
+		this.loggedIn = loggedIn;
+	}
+} // class

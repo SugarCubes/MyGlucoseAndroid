@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,8 +27,10 @@ public class MainActivity
 		View.OnTouchListener
 {
 	private final String LOG_TAG = "MainActivity";
-	private int loaderIndex = 321;
-	private PatientSingleton patientUser = PatientSingleton.getInstance();
+	private PatientSingleton appUser = PatientSingleton.getInstance();
+	private Menu menu;
+	private final int USER_LOADER = 100;
+	private final int LOGIN_REQUEST = 200;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -41,7 +42,7 @@ public class MainActivity
 		setTitle( R.string.app_name );
 
 		// Initialize loader to handle calls to ContentProvider
-		getLoaderManager().initLoader( loaderIndex, null, this );
+		getLoaderManager().initLoader( USER_LOADER, null, this );
 
 		Button glucoseButton = findViewById( R.id.glucose_button );
 		Button mealsButton = findViewById( R.id.meals_button );
@@ -58,6 +59,13 @@ public class MainActivity
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate( R.menu.main, menu );
+
+		if( appUser == null )
+			appUser = PatientSingleton.getInstance();
+
+		this.menu = menu;
+		menu.findItem( R.id.action_login )
+				.setTitle( appUser.isLoggedIn() ? R.string.logout : R.string.login );
 		return true;
 
 	} // onCreateOptionsMenu
@@ -75,8 +83,17 @@ public class MainActivity
 				break;
 
 			case R.id.action_login:
-				Intent loginIntent = new Intent( this, LoginActivity.class );
-				startActivity( loginIntent );
+				if( appUser.isLoggedIn() )
+				{
+					item.setTitle( R.string.login );
+					appUser.setLoggedIn( false );
+					// TODO: set not logged in in DB
+				}
+				else
+				{
+					Intent loginIntent = new Intent( this, LoginActivity.class );
+					startActivityForResult( loginIntent, LOGIN_REQUEST );	// Redirect to the Login Activity
+				}
 				break;
 
 			case R.id.action_register:
@@ -104,12 +121,12 @@ public class MainActivity
 		// 2. Causes app to crash on orientation change:
 		//if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
 
-		//getLoaderManager().initLoader( loaderIndex, null, this );
-		getLoaderManager().restartLoader( loaderIndex, null, this );
+		//getLoaderManager().initLoader( USER_LOADER, null, this );
+		getLoaderManager().restartLoader( USER_LOADER, null, this );
 		//getLoaderManager().notify();	// Object not locked by thread before notify()
 		try
 		{
-			getLoaderManager().getLoader( loaderIndex ).forceLoad();
+			getLoaderManager().getLoader( USER_LOADER ).forceLoad();
 			getLoaderManager().notify();
 		}
 		catch( Exception e )
@@ -144,27 +161,44 @@ public class MainActivity
 //		this.cursor = cursor;
 //		if( mAdapter != null )
 //			mAdapter.swapCursor( cursor );
-		if( cursor != null && !cursor.isClosed() )
+		if( cursor != null && !cursor.isClosed() )			// This should return Users from db
 		{
 			if( cursor.getCount() > 0 )						// If there are no users logged in...
-			{
-				cursor.moveToFirst();							// This should return Users from db
-				PatientSingleton.getInstance().loadFromCursor( cursor );
+				appUser.loadFromCursor( cursor );
 
-			}
-			else
+			if( !appUser.isLoggedIn() )
 			{
-				//Intent intent = new Intent( this, LoginActivity.class );
-				//startActivity( intent );					// Redirect to the Login Activity
+				Intent intent = new Intent( this, LoginActivity.class );
+				startActivityForResult( intent, LOGIN_REQUEST );	// Redirect to the Login Activity
 			}
 
 			synchronized( cursor )
 			{
 				cursor.notify();
 			}
-		}
+
+		} // if cursor valid
 
 	} // onLoadFinished
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Check which request we're responding to
+		if ( requestCode == LOGIN_REQUEST )
+		{
+			// Make sure the request was successful
+			if (resultCode == RESULT_OK)
+			{
+				MenuItem loginMenuItem = menu.findItem( R.id.action_login );
+				if( loginMenuItem != null )
+					loginMenuItem.setTitle( R.string.logout );
+
+			} // if RESULT_OK
+
+		} // if LOGIN_REQUEST
+
+	} // onActivityResult
 
 
 	@Override

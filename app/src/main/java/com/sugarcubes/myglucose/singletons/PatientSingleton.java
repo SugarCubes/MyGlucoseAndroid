@@ -15,8 +15,6 @@ public class PatientSingleton extends ApplicationUser
 {
 	private static PatientSingleton singleton;
 
-	private static boolean loggedIn;
-
 	protected String address1;
 	protected String address2;
 	protected String city;
@@ -76,6 +74,7 @@ public class PatientSingleton extends ApplicationUser
 			this.phoneNumber	= cursor.getString( cursor.getColumnIndex( DB.KEY_PHONE ) );
 			this.email			= cursor.getString( cursor.getColumnIndex( DB.KEY_EMAIL ) );
 			this.userName		= cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) );
+			loggedIn 			= true;
 
 		} // if
 
@@ -150,16 +149,6 @@ public class PatientSingleton extends ApplicationUser
 	public void setPhoneNumber( String phoneNumber )
 	{
 		this.phoneNumber = phoneNumber;
-	}
-
-	public static boolean isLoggedIn()
-	{
-		return loggedIn;
-	}
-
-	public static void setLoggedIn( boolean loggedIn )
-	{
-		PatientSingleton.loggedIn = loggedIn;
 	}
 
 	public Doctor getDoctor()
