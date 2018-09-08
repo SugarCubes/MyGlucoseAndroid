@@ -1,6 +1,8 @@
 package com.sugarcubes.myglucose.singletons;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
@@ -14,14 +16,6 @@ import java.util.ArrayList;
 public class PatientSingleton extends ApplicationUser
 {
 	private static PatientSingleton singleton;
-
-	protected String address1;
-	protected String address2;
-	protected String city;
-	protected String state;
-	protected int zip1;
-	protected int zip2;
-	protected String phoneNumber;
 
 	protected Doctor doctor;
 
@@ -57,29 +51,34 @@ public class PatientSingleton extends ApplicationUser
 	} // getInstance
 
 
-	public void loadFromCursor( Cursor cursor )
+	public void loadFromCursor( Cursor cursor, Context context )
 	{
-		if( cursor != null && cursor.getCount() > 0 )	// Load the patient info
+		super.loadFromCursor( cursor );			// Be sure to load the _id before proceeding
+
+//		DB dbHandler = new DB( context );
+//		SQLiteDatabase db = dbHandler.getReadableDatabase();
+//
+//		// LOAD GLUCOSE ENTRIES
+//		Cursor glucoseCursor = db.query( DB.TABLE_PATIENTS, null,
+//				DB.KEY_USER_ID + "=?", null, null, null, null );
+//		glucoseCursor.moveToFirst();
+
+		try
 		{
-			cursor.moveToFirst();
-			this.id				= cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) );
-			this.firstName 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) );
-			this.lastName 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) );
-			this.address1 		= cursor.getString( cursor.getColumnIndex( DB.KEY_ADDRESS1 ) );
-			this.address2 		= cursor.getString( cursor.getColumnIndex( DB.KEY_ADDRESS2 ) );
-			this.city	 		= cursor.getString( cursor.getColumnIndex( DB.KEY_CITY ) );
-			this.state	 		= cursor.getString( cursor.getColumnIndex( DB.KEY_STATE ) );
-			this.zip1	 		= cursor.getInt( cursor.getColumnIndex( DB.KEY_ZIP1 ) );
-			this.zip2	 		= cursor.getInt( cursor.getColumnIndex( DB.KEY_ZIP2 ) );
-			this.phoneNumber	= cursor.getString( cursor.getColumnIndex( DB.KEY_PHONE ) );
-			this.email			= cursor.getString( cursor.getColumnIndex( DB.KEY_EMAIL ) );
-			this.userName		= cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) );
-			loggedIn 			= true;
+//			while( glucoseCursor.moveToNext() )
+//			{
+//				GlucoseEntry entry = new GlucoseEntry();
+//				entry.loadFromCursor( glucoseCursor );
+//				glucoseEntries.add( entry );
+//			}
+			glucoseEntries = GlucoseEntry.getAllEntries( context, id );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 
-		} // if
-
-	} // loadFromCursor
-
+	}
 
 	public String getAddress1()
 	{

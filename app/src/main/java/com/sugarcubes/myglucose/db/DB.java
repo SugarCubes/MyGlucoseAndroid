@@ -15,50 +15,59 @@ public class DB extends SQLiteOpenHelper
 
 	// Table names:
 	public static final String TABLE_USERS = "users";
+	public static final String TABLE_PATIENTS = "patients";
+	public static final String TABLE_DOCTORS = "doctors";
 	public static final String TABLE_GLUCOSE_ENTRIES = "glucose_entries";
 	public static final String TABLE_MEAL_ENTRIES = "meal_entries";
 	public static final String TABLE_MEAL_ITEMS = "meal_items";
 	public static final String TABLE_EXERCISE_ENTRIES = "exercise_entries";
 
-	// Also add tables here:
+	// Also add tables here to use in a for loop:
 	private String[] tables = {
 			TABLE_USERS,
+			TABLE_PATIENTS,
+			TABLE_DOCTORS,
 			TABLE_GLUCOSE_ENTRIES,
 			TABLE_MEAL_ENTRIES,
 			TABLE_MEAL_ITEMS,
 			TABLE_EXERCISE_ENTRIES
 	};
 
-	// ApplicationUser db table keys:
+	// Misc db table keys:
 	public static final String KEY_ID = "_id";
+	public static final String KEY_DATE = "date";
+	public static final String KEY_TIMESTAMP = "timestamp";
+	// ApplicationUser table keys:
 	public static final String KEY_USER_ID = "user_id";
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_USER_FIRST_NAME = "first_name";
 	public static final String KEY_USER_LAST_NAME = "last_name";
 	public static final String KEY_USER_TYPE = "user_type";
-	public static final String KEY_EMAIL = "email";
-	public static final String KEY_ADDRESS1 = "address1";
-	public static final String KEY_ADDRESS2 = "address2";
-	public static final String KEY_CITY = "city";
-	public static final String KEY_STATE = "state";
-	public static final String KEY_ZIP1 = "zip1";
-	public static final String KEY_ZIP2 = "zip2";
-	public static final String KEY_PHONE = "phone_number";
-	public static final String KEY_DATE = "date";
-	public static final String KEY_TIMESTAMP = "timestamp";
-	// GlucoseEntry db table keys:
-	public static final String KEY_MEASUREMENT = "measurement";
-	public static final String KEY_BEFORE_AFTER = "before_after";
-	public static final String KEY_WHICH_MEAL = "which_meal";
-	// MealEntry db table keys:
-	public static final String KEY_TOTAL_CARBS = "total_carbohydrates";
-	// MealItem db table keys:
-	public static final String KEY_NAME = "name";
+	public static final String KEY_USER_EMAIL = "email";
+	public static final String KEY_USER_ADDRESS1 = "address1";
+	public static final String KEY_USER_ADDRESS2 = "address2";
+	public static final String KEY_USER_CITY = "city";
+	public static final String KEY_USER_STATE = "state";
+	public static final String KEY_USER_ZIP1 = "zip1";
+	public static final String KEY_USER_ZIP2 = "zip2";
+	public static final String KEY_USER_PHONE = "phone_number";
+	// Patient table keys:
+	// Doctor table keys:
+	public static final String KEY_DR_ID = "doctor_id";
+	public static final String KEY_DR_DEGREE_ABBREVIATION = "degree_abbreviation";
+	// GlucoseEntry table keys:
+	public static final String KEY_GLUCOSE_MEASUREMENT = "measurement";
+	public static final String KEY_GLUCOSE_BEFORE_AFTER = "before_after";
+	public static final String KEY_GLUCOSE_WHICH_MEAL = "which_meal";
+	// MealEntry table keys:
+	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS = "total_carbohydrates";
+	// MealItem table keys:
+	public static final String KEY_MEAL_ITEM_NAME = "name";
 	public static final String KEY_MEAL_ID = "meal_id";
-	public static final String KEY_CARBS = "carbohydrates";
-	public static final String KEY_SERVINGS = "servings";
-	// ExerciseEntry db table keys:
-	public static final String KEY_MINUTES_SPENT = "minutes_spent";
+	public static final String KEY_MEAL_ITEM_CARBS = "carbohydrates";
+	public static final String KEY_MEAL_ITEM_SERVINGS = "servings";
+	// ExerciseEntry table keys:
+	public static final String KEY_EXERCISE_MINUTES_SPENT = "minutes_spent";
 
 
 	public DB( Context context )
@@ -84,72 +93,111 @@ public class DB extends SQLiteOpenHelper
 		// CREATE LOGIN TABLE
 		String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
 				+ KEY_ID + " TEXT PRIMARY KEY,"
-				+ KEY_USER_TYPE + " TEXT,"
 				+ KEY_USERNAME + " TEXT,"
+				+ KEY_USER_EMAIL + " TEXT UNIQUE,"
+				+ KEY_USER_TYPE + " TEXT,"
 				+ KEY_USER_FIRST_NAME + " TEXT,"
 				+ KEY_USER_LAST_NAME + " TEXT,"
-				+ KEY_EMAIL + " TEXT UNIQUE,"
-				+ KEY_PHONE + " TEXT,"
-				+ KEY_ADDRESS1 + " TEXT,"
-				+ KEY_ADDRESS2 + " TEXT,"
-				+ KEY_CITY + " TEXT,"
-				+ KEY_STATE + " TEXT,"
-				+ KEY_ZIP1 + " INTEGER,"
-				+ KEY_ZIP2 + " INTEGER,"
-				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
+				+ KEY_USER_ADDRESS1 + " TEXT,"
+				+ KEY_USER_ADDRESS2 + " TEXT,"
+				+ KEY_USER_CITY + " TEXT,"
+				+ KEY_USER_STATE + " TEXT,"
+				+ KEY_USER_ZIP1 + " INTEGER,"
+				+ KEY_USER_ZIP2 + " INTEGER,"
+				+ KEY_USER_PHONE + " TEXT,"
+				+ KEY_TIMESTAMP + " INTEGER );";	// Retrieve as a *long* value
+
+		// CREATE PATIENTS TABLE
+		String CREATE_PATIENTS_TABLE = "CREATE TABLE " + TABLE_PATIENTS + "("
+				+ KEY_USER_ID + " TEXT PRIMARY KEY,"
+				+ KEY_DR_ID + " TEXT );";
+
+		// CREATE DOCTORS TABLE
+		String CREATE_DOCTORS_TABLE = "CREATE TABLE " + TABLE_DOCTORS + "("
+				+ KEY_USER_ID + " TEXT PRIMARY KEY,"
+				+ KEY_DR_DEGREE_ABBREVIATION + " TEXT );";
 
 		// CREATE GLUCOSE TABLE
 		String CREATE_GLUCOSE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_GLUCOSE_ENTRIES + "("
 				+ KEY_ID + " TEXT PRIMARY KEY, "
 				+ KEY_USER_ID + " TEXT, "
-				+ KEY_MEASUREMENT + " INTEGER, "
-				+ KEY_BEFORE_AFTER + " INTEGER, "
-				+ KEY_WHICH_MEAL + " INTEGER, "
-				+ KEY_DATE + " TEXT, "			// Parse and restrict readings to 3 per day
-				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
+				+ KEY_GLUCOSE_MEASUREMENT + " REAL, "	// DEFAULT: mmol/L. May need conversion
+				+ KEY_GLUCOSE_BEFORE_AFTER + " INTEGER, "
+				+ KEY_GLUCOSE_WHICH_MEAL + " INTEGER, "
+				+ KEY_DATE + " TEXT, "					// Parse and restrict readings to 3 per day
+				+ KEY_TIMESTAMP + " INTEGER);";			// Retrieve as a *long* value
 
 		// CREATE MEALS TABLE
 		String CREATE_MEAL_ENTRIES_TABLE = "CREATE TABLE " + TABLE_MEAL_ENTRIES + "("
 				+ KEY_ID + " TEXT PRIMARY KEY, "
 				+ KEY_USER_ID + " TEXT, "
-				+ KEY_TOTAL_CARBS + " INTEGER, "
-				+ KEY_DATE + " TEXT, "			// Parse and restrict readings to 3 per day
+				+ KEY_MEAL_ENTRY_TOTAL_CARBS + " INTEGER, "
+				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
 
 		// CREATE MEAL ITEMS TABLE
 		String CREATE_MEAL_ITEMS_TABLE = "CREATE TABLE " + TABLE_MEAL_ITEMS + "("
 				+ KEY_ID + " TEXT PRIMARY KEY, "
-				+ KEY_USER_ID + " TEXT, "
-				+ KEY_NAME + " TEXT, "
 				+ KEY_MEAL_ID + " TEXT, "
-				+ KEY_CARBS + " INTEGER, "
-				+ KEY_SERVINGS + " INTEGER, "
-				+ KEY_DATE + " TEXT, "			// Parse and restrict readings to 3 per day
+				+ KEY_MEAL_ITEM_NAME + " TEXT, "
+				+ KEY_MEAL_ITEM_CARBS + " INTEGER, "
+				+ KEY_MEAL_ITEM_SERVINGS + " INTEGER, "
+				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
 
 		// CREATE EXERCISE TABLE
 		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("
 				+ KEY_ID + " TEXT PRIMARY KEY, "
 				+ KEY_USER_ID + " TEXT, "
-				+ KEY_NAME + " TEXT, "
-				+ KEY_MINUTES_SPENT + " INTEGER, "
-				+ KEY_DATE + " TEXT, "			// Parse and restrict readings to 3 per day
+				+ KEY_MEAL_ITEM_NAME + " TEXT, "
+				+ KEY_EXERCISE_MINUTES_SPENT + " INTEGER, "
+				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
 
 
 		db.execSQL( CREATE_USERS_TABLE );
+		db.execSQL( CREATE_PATIENTS_TABLE );
+		db.execSQL( CREATE_DOCTORS_TABLE );
 		db.execSQL( CREATE_GLUCOSE_ENTRIES_TABLE );
 		db.execSQL( CREATE_MEAL_ENTRIES_TABLE );
 		db.execSQL( CREATE_MEAL_ITEMS_TABLE );
 		db.execSQL( CREATE_EXERCISE_ENTRIES_TABLE );
 
+		// NOTE: When a DB has to hit an index, and then another table, this adds
+		// 	another query it has to perform. Since we will only be storing one patient
+		// 	and one doctor, this extra query would be more overhead than is required.
+
 		// Create Indexes:
-
-		// CREATE MEAL ITEMS INDEX ON meal_id
-		String CREATE_MEAL_ITEMS_INDEX = "CREATE INDEX `meal_items_index` ON " +
-				TABLE_MEAL_ITEMS + "(" + DB.KEY_MEAL_ID + ");";
-
-		db.execSQL( CREATE_MEAL_ITEMS_INDEX );
+//		// CREATE PATIENTS ENTRIES INDEX ON user_id
+//		String CREATE_PATIENTS_INDEX = "CREATE INDEX `patients_index` ON " +
+//				TABLE_PATIENTS + "(" + DB.KEY_USER_ID + ");";
+//
+//		// CREATE DOCTORS ENTRIES INDEX ON user_id
+//		String CREATE_DOCTORS_INDEX = "CREATE INDEX `patients_index` ON " +
+//				TABLE_DOCTORS + "(" + DB.KEY_USER_ID + ");";
+//
+//		// CREATE MEAL ENTRIES INDEX ON user_id
+//		String CREATE_MEAL_ENTRIES_INDEX = "CREATE INDEX `meal_entries_index` ON " +
+//				TABLE_MEAL_ENTRIES + "(" + DB.KEY_USER_ID + ");";
+//
+//		// CREATE MEAL ITEMS INDEX ON meal_id
+//		String CREATE_MEAL_ITEMS_INDEX = "CREATE INDEX `meal_items_index` ON " +
+//				TABLE_MEAL_ITEMS + "(" + DB.KEY_MEAL_ID + ");";
+//
+//		// CREATE GLUCOSE ITEMS INDEX ON user_id
+//		String CREATE_GLUCOSE_ENTRIES_INDEX = "CREATE INDEX `glucose_entries_index` ON " +
+//				TABLE_GLUCOSE_ENTRIES + "(" + DB.KEY_USER_ID + ");";
+//
+//		// CREATE EXERCISE ITEMS INDEX ON user_id
+//		String CREATE_EXERCISE_ENTRIES_INDEX = "CREATE INDEX `exercise_entries_index` ON " +
+//				TABLE_EXERCISE_ENTRIES + "(" + DB.KEY_USER_ID + ");";
+//
+//		db.execSQL( CREATE_PATIENTS_INDEX );
+//		db.execSQL( CREATE_DOCTORS_INDEX );
+//		db.execSQL( CREATE_MEAL_ENTRIES_INDEX );
+//		db.execSQL( CREATE_MEAL_ITEMS_INDEX );
+//		db.execSQL( CREATE_GLUCOSE_ENTRIES_INDEX );
+//		db.execSQL( CREATE_EXERCISE_ENTRIES_INDEX );
 	}
 
 	@Override
