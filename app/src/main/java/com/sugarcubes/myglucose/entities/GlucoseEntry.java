@@ -21,6 +21,7 @@ import java.util.Date;
 public class GlucoseEntry
 {
 	private String id;
+	private String userId;
 	private float measurement;			// DEFAULT: mmol/L. May need conversion to display correctly
 //	private GlucoseUnits units;			// enum	mmol/L or mg/dL
 	private BeforeAfter beforeAfter;	// enum representing before or after a meal
@@ -57,6 +58,16 @@ public class GlucoseEntry
 	public void setId( String id )
 	{
 		this.id = id;
+	}
+
+	public String getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId( String userId )
+	{
+		this.userId = userId;
 	}
 
 	public float getMeasurement()

@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.sugarcubes.myglucose.db.DB;
 
+import java.util.Date;
+
 public class ApplicationUser
 {
 	protected static boolean loggedIn = false;
@@ -21,34 +23,13 @@ public class ApplicationUser
 	protected int zip2;
 	protected String phoneNumber;
 
+	protected Date date;
+	protected long timestamp;
+
 	public ApplicationUser()
 	{
 
 	}
-
-
-	public void loadFromCursor( Cursor cursor )
-	{
-		if( cursor != null && cursor.getCount() > 0 )	// Load the patient info
-		{
-			cursor.moveToFirst();
-			this.id				= cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) );
-			this.firstName 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) );
-			this.lastName 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) );
-			this.address1 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) );
-			this.address2 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) );
-			this.city	 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) );
-			this.state	 		= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_STATE ) );
-			this.zip1	 		= cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) );
-			this.zip2	 		= cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) );
-			this.phoneNumber	= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) );
-			this.email			= cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) );
-			this.userName		= cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) );
-			loggedIn 			= true;
-
-		} // if
-
-	} // loadFromCursor
 
 
 	public String getId()
@@ -109,6 +90,96 @@ public class ApplicationUser
 	public void setLoggedIn( boolean loggedIn )
 	{
 		ApplicationUser.loggedIn = loggedIn;
+	}
+
+	public String getAddress1()
+	{
+		return address1;
+	}
+
+	public void setAddress1( String address1 )
+	{
+		this.address1 = address1;
+	}
+
+	public String getAddress2()
+	{
+		return address2;
+	}
+
+	public void setAddress2( String address2 )
+	{
+		this.address2 = address2;
+	}
+
+	public String getCity()
+	{
+		return city;
+	}
+
+	public void setCity( String city )
+	{
+		this.city = city;
+	}
+
+	public String getState()
+	{
+		return state;
+	}
+
+	public void setState( String state )
+	{
+		this.state = state;
+	}
+
+	public int getZip1()
+	{
+		return zip1;
+	}
+
+	public void setZip1( int zip1 )
+	{
+		this.zip1 = zip1;
+	}
+
+	public int getZip2()
+	{
+		return zip2;
+	}
+
+	public void setZip2( int zip2 )
+	{
+		this.zip2 = zip2;
+	}
+
+	public String getPhoneNumber()
+	{
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber( String phoneNumber )
+	{
+		this.phoneNumber = phoneNumber;
+	}
+
+	public Date getDate()
+	{
+		return date;
+	}
+
+	public void setDate( Date date )
+	{
+		this.date = date;
+	}
+
+	public long getTimestamp()
+	{
+		return timestamp;
+	}
+
+	public void setTimestamp( long timestamp )
+	{
+		this.timestamp = timestamp;
 	}
 
 } // class

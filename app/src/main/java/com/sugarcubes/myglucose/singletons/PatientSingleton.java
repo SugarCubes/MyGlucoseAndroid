@@ -1,15 +1,14 @@
 package com.sugarcubes.myglucose.singletons;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.entities.MealEntry;
+import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
 
 import java.util.ArrayList;
 
@@ -26,10 +25,8 @@ public class PatientSingleton extends ApplicationUser
 
 	private PatientSingleton()
 	{
-		// TODO: Check if logged in
 		loggedIn = false;
 		// Instantiate the doctor:
-		// TODO: Use ContentProvider to get doctor details
 		doctor = new Doctor();
 		// Instantiate all ArrayLists:
 		glucoseEntries = new ArrayList<>();
@@ -51,34 +48,15 @@ public class PatientSingleton extends ApplicationUser
 	} // getInstance
 
 
-	public void loadFromCursor( Cursor cursor, Context context )
+	public void load( Context context )
 	{
-		super.loadFromCursor( cursor );			// Be sure to load the _id before proceeding
+		// TODO: Check if logged in
+		// Load the Patient's GlucoseEntries
+		IGlucoseEntryRepository glucoseEntryRepository = new DbGlucoseEntryRepository( context );
+		glucoseEntries = glucoseEntryRepository.readAll();
 
-//		DB dbHandler = new DB( context );
-//		SQLiteDatabase db = dbHandler.getReadableDatabase();
-//
-//		// LOAD GLUCOSE ENTRIES
-//		Cursor glucoseCursor = db.query( DB.TABLE_PATIENTS, null,
-//				DB.KEY_USER_ID + "=?", null, null, null, null );
-//		glucoseCursor.moveToFirst();
+	} // load
 
-		try
-		{
-//			while( glucoseCursor.moveToNext() )
-//			{
-//				GlucoseEntry entry = new GlucoseEntry();
-//				entry.loadFromCursor( glucoseCursor );
-//				glucoseEntries.add( entry );
-//			}
-			glucoseEntries = GlucoseEntry.getAllEntries( context, id );
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
-		}
-
-	}
 
 	public String getAddress1()
 	{

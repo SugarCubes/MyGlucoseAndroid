@@ -3,6 +3,7 @@ package com.sugarcubes.myglucose.contentproviders;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -42,9 +43,14 @@ public class MyGlucoseContentProvider extends ContentProvider
 			USERS					= 1,
 			USERS_ID				= 2,
 			GLUCOSE_ENTRIES			= 3,
-			MEAL_ENTRIES			= 4,
-			MEAL_ITEMS				= 5,
-			EXERCISE_ENTRIES		= 6;
+			GLUCOSE_ENTRIES_ID		= 4,
+			MEAL_ENTRIES			= 5,
+			MEAL_ENTRIES_ID			= 6,
+			MEAL_ENTRY_ITEMS = 7,
+			MEAL_ITEMS				= 8,
+			MEAL_ITEMS_ID			= 9,
+			EXERCISE_ENTRIES		= 10,
+			EXERCISE_ENTRIES_ID		= 11;
 
 	// Creates a UriMatcher object.
 	private static final UriMatcher uriMatcher;
@@ -55,9 +61,14 @@ public class MyGlucoseContentProvider extends ContentProvider
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_USERS, USERS );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_USERS + "/#", USERS_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_GLUCOSE_ENTRIES, GLUCOSE_ENTRIES );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_GLUCOSE_ENTRIES + "/#", GLUCOSE_ENTRIES_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ENTRIES, MEAL_ENTRIES );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ENTRIES + "/#", MEAL_ENTRIES_ID );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ITEMS, MEAL_ENTRY_ITEMS );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ITEMS, MEAL_ITEMS );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ITEMS + "/#", MEAL_ITEMS_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_EXERCISE_ENTRIES, EXERCISE_ENTRIES );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_EXERCISE_ENTRIES + "/#", EXERCISE_ENTRIES_ID );
 
 	} // uriMatcher
 
@@ -120,16 +131,42 @@ public class MyGlucoseContentProvider extends ContentProvider
 				queryBuilder.setTables( DB.TABLE_GLUCOSE_ENTRIES );
 				break;
 
+			case GLUCOSE_ENTRIES_ID:
+				queryBuilder.setTables( DB.TABLE_GLUCOSE_ENTRIES );
+				queryBuilder.appendWhere( DB.KEY_ID + "=" + uri.getLastPathSegment() );
+				break;
+
 			case MEAL_ENTRIES:
 				queryBuilder.setTables( DB.TABLE_MEAL_ENTRIES );
+				break;
+
+			case MEAL_ENTRIES_ID:
+				queryBuilder.setTables( DB.TABLE_MEAL_ENTRIES );
+				queryBuilder.appendWhere( DB.KEY_ID + "=" + uri.getLastPathSegment() );
+				break;
+
+			// Return all items included in one meal
+			case MEAL_ENTRY_ITEMS:
+				queryBuilder.setTables( DB.TABLE_MEAL_ITEMS );
+				queryBuilder.appendWhere( DB.KEY_MEAL_ID + "=" + uri.getLastPathSegment() );
 				break;
 
 			case MEAL_ITEMS:
 				queryBuilder.setTables( DB.TABLE_MEAL_ITEMS );
 				break;
 
+			case MEAL_ITEMS_ID:
+				queryBuilder.setTables( DB.TABLE_MEAL_ITEMS );
+				queryBuilder.appendWhere( DB.KEY_ID + "=" + uri.getLastPathSegment() );
+				break;
+
 			case EXERCISE_ENTRIES:
 				queryBuilder.setTables( DB.TABLE_EXERCISE_ENTRIES );
+				break;
+
+			case EXERCISE_ENTRIES_ID:
+				queryBuilder.setTables( DB.TABLE_EXERCISE_ENTRIES );
+				queryBuilder.appendWhere( DB.KEY_ID + "=" + uri.getLastPathSegment() );
 				break;
 
 			default:
@@ -190,14 +227,9 @@ public class MyGlucoseContentProvider extends ContentProvider
 		if( row > 0 )
 		{
 			// Usually need to notify any content resolvers of the change:
-			try
-			{
-				getContext().getContentResolver().notifyChange( uri, null );
-			}
-			catch ( NullPointerException e )
-			{
-				e.printStackTrace();
-			}
+			Context context = getContext();
+			if( context != null && context.getContentResolver() != null )
+				context.getContentResolver().notifyChange( uri, null );
 
 			return ContentUris.withAppendedId( uri, row );			// RETURN STATEMENT
 
@@ -236,25 +268,60 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case USERS_ID:
 				count = database.delete(
-						DB.TABLE_USERS, DB.KEY_USER_ID +  " = " + uri.getLastPathSegment() +
-								( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-						selectionArgs);
+						DB.TABLE_USERS, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
 				break;
 
 			case GLUCOSE_ENTRIES:
 				count	=	database.delete( DB.TABLE_GLUCOSE_ENTRIES, selection, selectionArgs );
 				break;
 
+			case GLUCOSE_ENTRIES_ID:
+				count = database.delete(
+						DB.TABLE_GLUCOSE_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
+				break;
+
 			case MEAL_ENTRIES:
 				count	=	database.delete( DB.TABLE_MEAL_ENTRIES, selection, selectionArgs );
+				break;
+
+			case MEAL_ENTRIES_ID:
+				count = database.delete(
+						DB.TABLE_MEAL_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
+				break;
+
+			case MEAL_ENTRY_ITEMS:
+				count = database.delete(
+						DB.TABLE_MEAL_ITEMS, DB.KEY_MEAL_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
 				break;
 
 			case MEAL_ITEMS:
 				count	=	database.delete( DB.TABLE_MEAL_ITEMS, selection, selectionArgs );
 				break;
 
+			case MEAL_ITEMS_ID:
+				count = database.delete(
+						DB.TABLE_MEAL_ITEMS, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
+				break;
+
 			case EXERCISE_ENTRIES:
 				count	=	database.delete( DB.TABLE_EXERCISE_ENTRIES, selection, selectionArgs );
+				break;
+
+			case EXERCISE_ENTRIES_ID:
+				count = database.delete(
+						DB.TABLE_EXERCISE_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
+							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+							selectionArgs );
 				break;
 
 			default:
@@ -263,14 +330,9 @@ public class MyGlucoseContentProvider extends ContentProvider
 		} // switch
 
 		// Usually need to notify any content resolvers of the change:
-		try
-		{
-			getContext().getContentResolver().notifyChange( uri, null );
-		}
-		catch ( NullPointerException e )
-		{
-			e.printStackTrace();
-		}
+		Context context = getContext();
+		if( context != null && context.getContentResolver() != null )
+			context.getContentResolver().notifyChange( uri, null );
 
 		return count;
 
@@ -314,16 +376,56 @@ public class MyGlucoseContentProvider extends ContentProvider
 				count	=	database.update( DB.TABLE_GLUCOSE_ENTRIES, values, selection, selectionArgs );
 				break;
 
+			// If the incoming URI was for a single row
+			case GLUCOSE_ENTRIES_ID:
+				count	= 	database.update( DB.TABLE_GLUCOSE_ENTRIES,
+						values,
+						DB.KEY_ID +  "=?"
+								+ ( !TextUtils.isEmpty(selection)
+								? " AND (" + selection + ')' : "" ),
+						new String[]{ uri.getLastPathSegment() } );
+				break;
+
 			case MEAL_ENTRIES:
 				count	=	database.update( DB.TABLE_MEAL_ENTRIES, values, selection, selectionArgs );
+				break;
+
+			// If the incoming URI was for a single row
+			case MEAL_ENTRIES_ID:
+				count	= 	database.update( DB.TABLE_MEAL_ENTRIES,
+						values,
+						DB.KEY_ID +  "=?"
+								+ ( !TextUtils.isEmpty(selection)
+								? " AND (" + selection + ')' : "" ),
+						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case MEAL_ITEMS:
 				count	=	database.update( DB.TABLE_MEAL_ITEMS, values, selection, selectionArgs );
 				break;
 
+			// If the incoming URI was for a single row
+			case MEAL_ITEMS_ID:
+				count	= 	database.update( DB.TABLE_MEAL_ITEMS,
+						values,
+						DB.KEY_ID +  "=?"
+								+ ( !TextUtils.isEmpty(selection)
+								? " AND (" + selection + ')' : "" ),
+						new String[]{ uri.getLastPathSegment() } );
+				break;
+
 			case EXERCISE_ENTRIES:
 				count	=	database.update( DB.TABLE_EXERCISE_ENTRIES, values, selection, selectionArgs );
+				break;
+
+			// If the incoming URI was for a single row
+			case EXERCISE_ENTRIES_ID:
+				count	= 	database.update( DB.TABLE_EXERCISE_ENTRIES,
+						values,
+						DB.KEY_ID +  "=?"
+								+ ( !TextUtils.isEmpty(selection)
+								? " AND (" + selection + ')' : "" ),
+						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			default:
@@ -332,14 +434,9 @@ public class MyGlucoseContentProvider extends ContentProvider
 		} // switch
 
 		// Usually need to notify any content resolvers of the change:
-		try
-		{
-			getContext().getContentResolver().notifyChange( uri, null );
-		}
-		catch ( NullPointerException e )
-		{
-			e.printStackTrace();
-		}
+		Context context = getContext();
+		if( context != null && context.getContentResolver() != null )
+			context.getContentResolver().notifyChange( uri, null );
 
 		return count;
 
@@ -359,12 +456,22 @@ public class MyGlucoseContentProvider extends ContentProvider
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.usersid";
 			case GLUCOSE_ENTRIES:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.glucoseentries";
+			case GLUCOSE_ENTRIES_ID:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.glucoseentriesid";
 			case MEAL_ENTRIES:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.mealentries";
+			case MEAL_ENTRIES_ID:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.mealentriesid";
+			case MEAL_ENTRY_ITEMS:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.mealentryitems";
 			case MEAL_ITEMS:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.mealitems";
+			case MEAL_ITEMS_ID:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.mealitemsid";
 			case EXERCISE_ENTRIES:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.exerciseentries";
+			case EXERCISE_ENTRIES_ID:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.exerciseentriesid";
 			default:
 				throw new IllegalArgumentException( "Unsupported URI: " + uri );
 		} // switch
