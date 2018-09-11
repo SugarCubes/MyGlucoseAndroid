@@ -42,7 +42,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	{
 		Cursor cursor = contentResolver.query( uri,
 				null, DB.KEY_ID + "=?", new String[]{ id },
-				DB.KEY_TIMESTAMP + " ASC" );
+				null );
 
 		if( cursor != null )
 		{
@@ -101,7 +101,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
 		values.put( DB.KEY_GLUCOSE_WHICH_MEAL, item.getWhichMeal().toString() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
-		values.put( DB.KEY_TIMESTAMP, item.getTimeStamp() );
+		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
 
 	} // getContentValues
@@ -150,7 +150,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) ) );
 
 		// Retrieve as a long:
-		entry.setTimeStamp(
+		entry.setTimestamp(
 				cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
 
 		return entry;

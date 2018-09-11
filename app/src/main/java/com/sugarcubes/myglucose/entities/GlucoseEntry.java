@@ -110,12 +110,12 @@ public class GlucoseEntry
 		this.date = date;
 	}
 
-	public long getTimeStamp()
+	public long getTimestamp()
 	{
 		return timeStamp;
 	}
 
-	public void setTimeStamp( long timeStamp )
+	public void setTimestamp( long timeStamp )
 	{
 		this.timeStamp = timeStamp;
 	}

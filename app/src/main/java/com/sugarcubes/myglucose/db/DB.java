@@ -68,6 +68,7 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_MEAL_ITEM_SERVINGS = "servings";
 	// ExerciseEntry table keys:
 	public static final String KEY_EXERCISE_MINUTES_SPENT = "minutes_spent";
+	public static final String KEY_EXERCISE_NAME = "name";
 
 
 	public DB( Context context )
@@ -149,7 +150,7 @@ public class DB extends SQLiteOpenHelper
 		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("
 				+ KEY_ID + " TEXT PRIMARY KEY, "
 				+ KEY_USER_ID + " TEXT, "
-				+ KEY_MEAL_ITEM_NAME + " TEXT, "
+				+ KEY_EXERCISE_NAME + " TEXT, "
 				+ KEY_EXERCISE_MINUTES_SPENT + " INTEGER, "
 				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
