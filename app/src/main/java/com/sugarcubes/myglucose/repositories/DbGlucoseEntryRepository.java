@@ -1,3 +1,13 @@
+//--------------------------------------------------------------------------------------//
+//																						//
+// File Name:	DbGlucoseEntryRepository.java											//
+// Programmer:	J.T. Blevins (jt.blevins@gmail.com)										//
+// Date:		09/08/2018																//
+// Purpose:		A repository to allow glucose entry data manipulation in a SQLite 		//
+// 				database. 																//
+//																						//
+//--------------------------------------------------------------------------------------//
+
 package com.sugarcubes.myglucose.repositories;
 
 import android.content.ContentResolver;
@@ -38,10 +48,10 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 
 	@Override
-	public GlucoseEntry read( String id )
+	public GlucoseEntry read( int id )
 	{
 		Cursor cursor = contentResolver.query( uri,
-				null, DB.KEY_ID + "=?", new String[]{ id },
+				null, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) },
 				null );
 
 		if( cursor != null )
@@ -96,7 +106,8 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_USER_ID, item.getUserId() );
+		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+		values.put( DB.KEY_USER_ID, item.getUserEmail() );
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
 		values.put( DB.KEY_GLUCOSE_WHICH_MEAL, item.getWhichMeal().toString() );
@@ -108,10 +119,10 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 
 	@Override
-	public void update( String id, GlucoseEntry item )
+	public void update( int id, GlucoseEntry item )
 	{
 		contentResolver.update( uri, getContentValues( item ),
-				DB.KEY_ID + "=?", new String[]{ id } );
+				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 	} // update
 
@@ -119,15 +130,16 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void delete( GlucoseEntry item )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ item.getId() } );
+		contentResolver.delete( uri, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( item.getId() ) } );
 
 	} // delete
 
 
 	@Override
-	public void delete( String id )
+	public void delete( int id )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 	} // delete
 
@@ -137,7 +149,9 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	{
 		GlucoseEntry entry = new GlucoseEntry();
 
-		entry.setId( cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setRemoteId( cursor.getString(
+				cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
 		entry.setMeasurement( cursor.getFloat(
 				cursor.getColumnIndex( DB.KEY_GLUCOSE_MEASUREMENT ) ) );
 		entry.setBeforeAfter( BeforeAfter.valueOf( cursor.getString(

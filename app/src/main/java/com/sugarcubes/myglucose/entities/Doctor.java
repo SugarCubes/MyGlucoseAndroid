@@ -19,4 +19,12 @@ public class Doctor extends ApplicationUser
 		DegreeAbbreviation = degreeAbbreviation;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Doctor{" +
+				"DegreeAbbreviation='" + DegreeAbbreviation + '\'' +
+				'}';
+	} // toString
+
 } // class

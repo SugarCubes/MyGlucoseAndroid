@@ -1,27 +1,18 @@
 package com.sugarcubes.myglucose.entities;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 
-import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
-import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
-import com.sugarcubes.myglucose.enums.GlucoseUnits;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
-import com.sugarcubes.myglucose.utils.DateUtilities;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class GlucoseEntry
 {
-	private String id;
-	private String userId;
+	private int id;
+	private String remoteId;
+	private String userEmail;
 	private float measurement;			// DEFAULT: mmol/L. May need conversion to display correctly
 //	private GlucoseUnits units;			// enum	mmol/L or mg/dL
 	private BeforeAfter beforeAfter;	// enum representing before or after a meal
@@ -33,7 +24,7 @@ public class GlucoseEntry
 
 	public GlucoseEntry()
 	{
-		patient = PatientSingleton.getInstance();
+
 	}
 
 	public void loadFromCursor( Cursor glucoseCursor )
@@ -50,24 +41,44 @@ public class GlucoseEntry
 //	} // load
 
 
-	public String getId()
+	public int getId()
 	{
 		return id;
 	}
 
-	public void setId( String id )
+	public void setId( int id )
 	{
 		this.id = id;
 	}
 
-	public String getUserId()
+	public String getRemoteId()
 	{
-		return userId;
+		return remoteId;
 	}
 
-	public void setUserId( String userId )
+	public void setRemoteId( String remoteId )
 	{
-		this.userId = userId;
+		this.remoteId = remoteId;
+	}
+
+	public long getTimeStamp()
+	{
+		return timeStamp;
+	}
+
+	public void setTimeStamp( long timeStamp )
+	{
+		this.timeStamp = timeStamp;
+	}
+
+	public String getUserEmail()
+	{
+		return userEmail;
+	}
+
+	public void setUserEmail( String userEmail )
+	{
+		this.userEmail = userEmail;
 	}
 
 	public float getMeasurement()

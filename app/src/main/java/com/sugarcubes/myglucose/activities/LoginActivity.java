@@ -390,7 +390,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		@Override
 		protected Boolean doInBackground( Void... params )
 		{
-			return loginAction.attemptLogin( mEmail, mPassword );
+			return loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
 
 		} // doInBackground
 

@@ -1,3 +1,13 @@
+//--------------------------------------------------------------------------------------//
+//																						//
+// File Name:	DbExerciseEntryRepository.java											//
+// Programmer:	J.T. Blevins (jt.blevins@gmail.com)										//
+// Date:		09/08/2018																//
+// Purpose:		A repository to allow ExerciseEntry data manipulation in a SQLite 		//
+// 				database. 																//
+//																						//
+//--------------------------------------------------------------------------------------//
+
 package com.sugarcubes.myglucose.repositories;
 
 import android.content.ContentResolver;
@@ -36,10 +46,10 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 
 
 	@Override
-	public ExerciseEntry read( String id )
+	public ExerciseEntry read( int id )
 	{
 		Cursor cursor = contentResolver.query( uri,
-				null, DB.KEY_ID + "=?", new String[]{ id },
+				null, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) },
 				null );
 
 		if( cursor != null )
@@ -92,7 +102,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	{
 		ExerciseEntry entry = new ExerciseEntry();
 
-		entry.setId( cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
 		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ));
 		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES_SPENT ) ));
 
@@ -114,7 +125,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_USER_ID, item.getUserId() );
+		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+		values.put( DB.KEY_USER_ID, item.getUserEmail() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );
 		values.put( DB.KEY_EXERCISE_MINUTES_SPENT, item.getMinutes() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
@@ -125,9 +137,10 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 
 
 	@Override
-	public void update( String id, ExerciseEntry item )
+	public void update( int id, ExerciseEntry item )
 	{
-		contentResolver.update( uri, getContentValues( item ), DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.update( uri, getContentValues( item ), DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( id ) } );
 
 	} // update
 
@@ -135,15 +148,17 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void delete( ExerciseEntry item )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ item.getId() } );
+		contentResolver.delete( uri, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( item.getId() ) } );
 
 	} // delete
 
 
 	@Override
-	public void delete( String id )
+	public void delete( int id )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.delete( uri, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( id ) } );
 
 	} // delete
 

@@ -1,3 +1,12 @@
+//--------------------------------------------------------------------------------------//
+//																						//
+// File Name:	MainActivity.java														//
+// Programmer:	J.T. Blevins (jt.blevins@gmail.com)										//
+// Date:		09/03/2018																//
+// Purpose:		The main activity, shown when the user first opens the app and logs in. //
+//																						//
+//--------------------------------------------------------------------------------------//
+
 package com.sugarcubes.myglucose.activities;
 
 import android.content.CursorLoader;
@@ -19,6 +28,8 @@ import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.UserType;
+import com.sugarcubes.myglucose.repositories.DbApplicationUserRepository;
+import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 public class MainActivity
@@ -27,7 +38,7 @@ public class MainActivity
 		View.OnTouchListener
 {
 	private final String LOG_TAG = "MainActivity";
-	private PatientSingleton appUser = PatientSingleton.getInstance();
+	private PatientSingleton patientUser = PatientSingleton.getInstance();
 	private Menu menu;
 	private final int USER_LOADER = 100;
 	private final int LOGIN_REQUEST = 200;
@@ -60,12 +71,9 @@ public class MainActivity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate( R.menu.main, menu );
 
-		if( appUser == null )
-			appUser = PatientSingleton.getInstance();
-
 		this.menu = menu;
 		menu.findItem( R.id.action_login )
-				.setTitle( appUser.isLoggedIn() ? R.string.logout : R.string.login );
+				.setTitle( patientUser.isLoggedIn() ? R.string.logout : R.string.login );
 		return true;
 
 	} // onCreateOptionsMenu
@@ -83,11 +91,13 @@ public class MainActivity
 				break;
 
 			case R.id.action_login:
-				if( appUser.isLoggedIn() )
+				if( patientUser.isLoggedIn() )
 				{
 					item.setTitle( R.string.login );
-					appUser.setLoggedIn( false );
-					// TODO: set not logged in in DB
+					patientUser.setLoggedIn( false );
+					DbPatientRepository patientRepository =
+							new DbPatientRepository( getApplicationContext() );
+					patientRepository.logOut( patientUser );
 				}
 				else
 				{
@@ -111,19 +121,7 @@ public class MainActivity
 
 	public void loaderReset()
 	{
-//		if( mCapsuleAdapter != null && cursor != null )
-//		{
-//			mCapsuleAdapter.notifyDataSetChanged();
-//			//mCapsuleAdapter.getCursor().requery();	// cursor is null
-//			mCapsuleAdapter.changeCursor( cursor );
-//		}
-		// 1. Must be called in order to show the items in the list:
-		// 2. Causes app to crash on orientation change:
-		//if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
-
-		//getLoaderManager().initLoader( USER_LOADER, null, this );
 		getLoaderManager().restartLoader( USER_LOADER, null, this );
-		//getLoaderManager().notify();	// Object not locked by thread before notify()
 		try
 		{
 			getLoaderManager().getLoader( USER_LOADER ).forceLoad();
@@ -146,11 +144,21 @@ public class MainActivity
 	} // loaderReset
 
 
+	/**
+	 * onCreateLoader - This is where the actual database query will be performed.
+	 * @param id - Loader id
+	 * @param args - Args
+	 * @return CursorLoader
+	 */
 	@Override
 	public Loader<Cursor> onCreateLoader( int id, Bundle args )
 	{
-		return new CursorLoader( getApplicationContext(), MyGlucoseContentProvider.USERS_URI,
-				null, DB.KEY_USER_TYPE + "=?", new String[]{ UserType.PATIENT.toString() }, null );
+		// This is where the main joined query takes place. We want to check if the user is
+		//	logged in. To do this, we join the "patients" and "users" table, and check the
+		//	"logged_in" column
+		return new CursorLoader( getApplicationContext(), MyGlucoseContentProvider.PATIENT_USERS_URI,
+				null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
+				new String[]{ String.valueOf( 1 ) }, null );
 
 	} // onCreateLoader
 
@@ -163,10 +171,21 @@ public class MainActivity
 //			mAdapter.swapCursor( cursor );
 		if( cursor != null && !cursor.isClosed() )			// This should return Users from db
 		{
-			if( cursor.getCount() > 0 )						// If there are no users logged in...
-				appUser.loadFromCursor( cursor );
 
-			if( !appUser.isLoggedIn() )
+			Log.d( LOG_TAG, patientUser.toString() );
+
+			if( cursor.getCount() > 0 )						// If there are no users logged in...
+			{
+				// Patient is already initialized. Now we need to log him/her in:
+				DbPatientRepository patientRepository
+						= new DbPatientRepository( getApplicationContext() );
+				patientRepository.logIn( patientUser, cursor );
+
+			} // if
+
+			Log.d( LOG_TAG, patientUser.toString() );
+
+			if( !patientUser.isLoggedIn() )
 			{
 				Intent intent = new Intent( this, LoginActivity.class );
 				startActivityForResult( intent, LOGIN_REQUEST );	// Redirect to the Login Activity

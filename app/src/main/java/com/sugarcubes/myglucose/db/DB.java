@@ -22,6 +22,8 @@ public class DB extends SQLiteOpenHelper
 	public static final String TABLE_MEAL_ITEMS = "meal_items";
 	public static final String TABLE_EXERCISE_ENTRIES = "exercise_entries";
 
+	public static final String PATIENT_USERS = "patient_users";		// Use in ContentProvider to do joins
+
 	// Also add tables here to use in a for loop:
 	private String[] tables = {
 			TABLE_USERS,
@@ -37,7 +39,9 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_ID = "_id";
 	public static final String KEY_DATE = "date";
 	public static final String KEY_TIMESTAMP = "timestamp";
+	public static final String KEY_REMOTE_KEY = "remote_key";
 	// ApplicationUser table keys:
+	public static final String KEY_USER_LOGGED_IN = "logged_in";
 	public static final String KEY_USER_ID = "user_id";
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_USER_FIRST_NAME = "first_name";
@@ -93,9 +97,9 @@ public class DB extends SQLiteOpenHelper
 
 		// CREATE LOGIN TABLE
 		String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-				+ KEY_ID + " TEXT PRIMARY KEY,"
+				+ KEY_USER_EMAIL + " TEXT PRIMARY KEY,"
+				+ KEY_USER_LOGGED_IN + " INTEGER,"
 				+ KEY_USERNAME + " TEXT,"
-				+ KEY_USER_EMAIL + " TEXT UNIQUE,"
 				+ KEY_USER_TYPE + " TEXT,"
 				+ KEY_USER_FIRST_NAME + " TEXT,"
 				+ KEY_USER_LAST_NAME + " TEXT,"
@@ -106,22 +110,24 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USER_ZIP1 + " INTEGER,"
 				+ KEY_USER_ZIP2 + " INTEGER,"
 				+ KEY_USER_PHONE + " TEXT,"
+				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER );";	// Retrieve as a *long* value
 
 		// CREATE PATIENTS TABLE
 		String CREATE_PATIENTS_TABLE = "CREATE TABLE " + TABLE_PATIENTS + "("
-				+ KEY_USER_ID + " TEXT PRIMARY KEY,"
+				+ KEY_USER_EMAIL + " TEXT PRIMARY KEY,"
 				+ KEY_DR_ID + " TEXT );";
 
 		// CREATE DOCTORS TABLE
 		String CREATE_DOCTORS_TABLE = "CREATE TABLE " + TABLE_DOCTORS + "("
-				+ KEY_USER_ID + " TEXT PRIMARY KEY,"
+				+ KEY_USER_EMAIL + " TEXT PRIMARY KEY,"
 				+ KEY_DR_DEGREE_ABBREVIATION + " TEXT );";
 
 		// CREATE GLUCOSE TABLE
 		String CREATE_GLUCOSE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_GLUCOSE_ENTRIES + "("
-				+ KEY_ID + " TEXT PRIMARY KEY, "
-				+ KEY_USER_ID + " TEXT, "
+				+ KEY_ID + " INTEGER PRIMARY KEY, "
+				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_USER_EMAIL + " TEXT, "
 				+ KEY_GLUCOSE_MEASUREMENT + " REAL, "	// DEFAULT: mmol/L. May need conversion
 				+ KEY_GLUCOSE_BEFORE_AFTER + " INTEGER, "
 				+ KEY_GLUCOSE_WHICH_MEAL + " INTEGER, "
@@ -130,15 +136,17 @@ public class DB extends SQLiteOpenHelper
 
 		// CREATE MEALS TABLE
 		String CREATE_MEAL_ENTRIES_TABLE = "CREATE TABLE " + TABLE_MEAL_ENTRIES + "("
-				+ KEY_ID + " TEXT PRIMARY KEY, "
-				+ KEY_USER_ID + " TEXT, "
+				+ KEY_ID + " INTEGER PRIMARY KEY, "
+				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_USER_EMAIL + " TEXT, "
 				+ KEY_MEAL_ENTRY_TOTAL_CARBS + " INTEGER, "
 				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
 
 		// CREATE MEAL ITEMS TABLE
 		String CREATE_MEAL_ITEMS_TABLE = "CREATE TABLE " + TABLE_MEAL_ITEMS + "("
-				+ KEY_ID + " TEXT PRIMARY KEY, "
+				+ KEY_ID + " INTEGER PRIMARY KEY, "
+				+ KEY_REMOTE_KEY + " TEXT, "
 				+ KEY_MEAL_ID + " TEXT, "
 				+ KEY_MEAL_ITEM_NAME + " TEXT, "
 				+ KEY_MEAL_ITEM_CARBS + " INTEGER, "
@@ -148,8 +156,9 @@ public class DB extends SQLiteOpenHelper
 
 		// CREATE EXERCISE TABLE
 		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("
-				+ KEY_ID + " TEXT PRIMARY KEY, "
-				+ KEY_USER_ID + " TEXT, "
+				+ KEY_ID + " INTEGER PRIMARY KEY, "
+				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_USER_EMAIL + " TEXT, "
 				+ KEY_EXERCISE_NAME + " TEXT, "
 				+ KEY_EXERCISE_MINUTES_SPENT + " INTEGER, "
 				+ KEY_DATE + " TEXT, "

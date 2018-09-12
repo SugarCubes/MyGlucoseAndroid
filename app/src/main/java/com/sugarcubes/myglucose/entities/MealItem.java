@@ -2,7 +2,8 @@ package com.sugarcubes.myglucose.entities;
 
 public class MealItem
 {
-	private String id;
+	private int id;
+	private String remoteId;
 	private String mealId;
 	private String name;
 	private int carbs;
@@ -12,7 +13,7 @@ public class MealItem
 	{
 	}
 
-	public MealItem( String id, String mealId, String name, int carbs, int servings )
+	public MealItem( int id, String remoteId, String mealId, String name, int carbs, int servings )
 	{
 		this.id = id;
 		this.name = name;
@@ -20,12 +21,22 @@ public class MealItem
 		this.servings = servings;
 	}
 
-	public String getId()
+	public String getRemoteId()
+	{
+		return remoteId;
+	}
+
+	public void setRemoteId( String remoteId )
+	{
+		this.remoteId = remoteId;
+	}
+
+	public int getId()
 	{
 		return id;
 	}
 
-	public void setId( String id )
+	public void setId( int id )
 	{
 		this.id = id;
 	}

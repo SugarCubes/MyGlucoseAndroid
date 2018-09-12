@@ -1,3 +1,13 @@
+//--------------------------------------------------------------------------------------//
+//																						//
+// File Name:	DbGlucoseEntryRepository.java											//
+// Programmer:	J.T. Blevins (jt.blevins@gmail.com)										//
+// Date:		09/08/2018																//
+// Purpose:		A repository to allow MealEntry and MealItem data manipulation in a 	//
+// 				SQLite database. 														//
+//																						//
+//--------------------------------------------------------------------------------------//
+
 package com.sugarcubes.myglucose.repositories;
 
 import android.content.ContentResolver;
@@ -31,7 +41,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	@Override
 	public void create( MealEntry item )
 	{
-		contentResolver.insert(  uriEntries, getContentValues( item ) );
+		contentResolver.insert( uriEntries, getContentValues( item ) );
 		if( item.getMealItems() != null && item.getMealItems().size() > 0 )
 		{
 			// Create MealItems if they exist
@@ -47,10 +57,11 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public MealEntry read( String id )
+	public MealEntry read( int id )
 	{
 		Cursor cursor = contentResolver.query( uriEntries,
-				null, DB.KEY_ID + "=?", new String[]{ id },
+				null, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( id ) },
 				DB.KEY_TIMESTAMP + " ASC" );
 
 		if( cursor != null )							// First, if we have a MealEntry...
@@ -61,7 +72,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 			Cursor mealItemsCursor = contentResolver.query( uriItems,
-					null, DB.KEY_MEAL_ID + "=?", new String[]{ id },
+					null, DB.KEY_MEAL_ID + "=?",
+					new String[]{ String.valueOf( id ) },
 					DB.KEY_TIMESTAMP + " ASC" );
 
 			if( mealItemsCursor != null )				// Then we check for MealItems
@@ -119,7 +131,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	public MealEntry readFromCursor( Cursor cursor )
 	{
 		MealEntry entry = new MealEntry();
-		entry.setId( cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
 		entry.setTotalCarbs( cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) ) );
 		entry.setMealItems( readAllMealItems( entry.getId() ) );	// Access MealItems by meal id
 		// Convert the date string to a Date object:
@@ -138,6 +151,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
+		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
 		values.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, item.getTotalCarbs() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
@@ -147,10 +161,10 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public void update( String id, MealEntry item )
+	public void update( int id, MealEntry item )
 	{
 		contentResolver.update( uriEntries, getContentValues( item ),		// Update the MealEntry
-				DB.KEY_ID + "=?", new String[]{ id } );
+				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 		if( item.getMealItems() != null && item.getMealItems().size() > 0 )	// If !null
 			for( MealItem mealItem : item.getMealItems() )
@@ -168,15 +182,20 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public void delete( String id )
+	public void delete( int id )
 	{
 		// Delete the MealItems first:
-		contentResolver.delete( uriItems, DB.KEY_MEAL_ID + "=?", new String[]{ id } );
+		contentResolver.delete( uriItems, DB.KEY_MEAL_ID + "=?",
+				new String[]{ String.valueOf( id ) } );
 
 		// Finally, delete the MealEntry row itself:
-		contentResolver.delete( uriEntries, DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.delete( uriEntries, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( id ) } );
 
 	} // delete
+
+
+	//----------------------------- MealItem implementation: -----------------------------//
 
 
 	@Override
@@ -188,11 +207,12 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public ArrayList<MealItem> readAllMealItems( String mealEntryId )
+	public ArrayList<MealItem> readAllMealItems( int mealEntryId )
 	{
 		ArrayList<MealItem> mealItems = new ArrayList<>();
 		Cursor cursor = contentResolver.query( uriItems,
-				null, DB.KEY_MEAL_ID + "=?", new String[]{ mealEntryId },
+				null, DB.KEY_MEAL_ID + "=?",
+				new String[]{ String.valueOf( mealEntryId ) },
 				DB.KEY_TIMESTAMP + " DESC" );
 
 		if( cursor != null )
@@ -217,7 +237,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	public MealItem readMealItemFromCursor( Cursor cursor )
 	{
 		return new MealItem(
-				cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) ),
+				cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ),
+				cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ),
 				cursor.getString( cursor.getColumnIndex( DB.KEY_MEAL_ID ) ),
 				cursor.getString( cursor.getColumnIndex( DB.KEY_MEAL_ITEM_NAME ) ),
 				cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ITEM_CARBS ) ),
@@ -232,6 +253,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
+		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
 		values.put( DB.KEY_MEAL_ID, item.getMealId() );
 		values.put( DB.KEY_MEAL_ITEM_NAME, item.getName() );
 		values.put( DB.KEY_MEAL_ITEM_CARBS, item.getCarbs() );
@@ -241,18 +263,29 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	} // getMealItemContentValues
 
 
-	public void updateMealItem( String mealItemId, MealItem mealItem )
+	@Override
+	public void updateMealItem( int mealItemId, MealItem mealItem )
 	{
 		contentResolver.update( uriItems, getMealItemContentValues( mealItem ),
-				DB.KEY_ID + "=?", new String[]{ mealItemId } );
+				DB.KEY_ID + "=?", new String[]{ String.valueOf( mealItemId ) } );
 
 	} // updateMealItem
 
 
 	@Override
-	public void deleteMealItem( String mealItemId )
+	public void deleteMealEntryMealItems( int mealEntryId )
 	{
-		contentResolver.delete( uriItems, DB.KEY_ID + "=?", new String[]{ mealItemId } );
+		contentResolver.delete( uriItems, DB.KEY_MEAL_ID + "=?",
+				new String[]{ String.valueOf( mealEntryId )  } );
+
+	} // deleteMealEntryMealItems
+
+
+	@Override
+	public void deleteMealItem( int mealItemId )
+	{
+		contentResolver.delete( uriItems, DB.KEY_ID + "=?",
+				new String[]{ String.valueOf( mealItemId )  } );
 
 	} // deleteMealItem
 

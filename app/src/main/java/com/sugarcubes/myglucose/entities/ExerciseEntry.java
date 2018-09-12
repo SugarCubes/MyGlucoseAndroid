@@ -4,35 +4,48 @@ import java.util.Date;
 
 public class ExerciseEntry
 {
-	private String id;
-	private String userId;
+	private int id;
+	private String remoteId;
+	private String userEmail;
 	private String exerciseName;
 	private int minutes;
 	private Date date;
 	private long timestamp;
 
 
+	public ExerciseEntry()
+	{
 
+	}
 
-
-	public String getId()
+	public int getId()
 	{
 		return id;
 	}
 
-	public void setId( String id )
+	public void setId( int id )
 	{
 		this.id = id;
 	}
 
-	public String getUserId()
+	public String getRemoteId()
 	{
-		return userId;
+		return remoteId;
 	}
 
-	public void setUserId( String userId )
+	public void setRemoteId( String remoteId )
 	{
-		this.userId = userId;
+		this.remoteId = remoteId;
+	}
+
+	public String getUserEmail()
+	{
+		return userEmail;
+	}
+
+	public void setUserEmail( String userEmail )
+	{
+		this.userEmail = userEmail;
 	}
 
 	public String getExerciseName()

@@ -1,5 +1,6 @@
 package com.sugarcubes.myglucose.singletons;
 
+import android.content.ContentValues;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.entities.ApplicationUser;
@@ -8,7 +9,9 @@ import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.entities.MealEntry;
 import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
+import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,6 @@ public class PatientSingleton extends ApplicationUser
 
 	private PatientSingleton()
 	{
-		loggedIn = false;
 		// Instantiate the doctor:
 		doctor = new Doctor();
 		// Instantiate all ArrayLists:
@@ -46,87 +48,6 @@ public class PatientSingleton extends ApplicationUser
 		return singleton;
 
 	} // getInstance
-
-
-	public void load( Context context )
-	{
-		// TODO: Check if logged in
-		// Load the Patient's GlucoseEntries
-		IGlucoseEntryRepository glucoseEntryRepository = new DbGlucoseEntryRepository( context );
-		glucoseEntries = glucoseEntryRepository.readAll();
-
-	} // load
-
-
-	public String getAddress1()
-	{
-		return address1;
-	}
-
-	public void setAddress1( String address1 )
-	{
-		this.address1 = address1;
-	}
-
-	public String getAddress2()
-	{
-		return address2;
-	}
-
-	public void setAddress2( String address2 )
-	{
-		this.address2 = address2;
-	}
-
-	public String getCity()
-	{
-		return city;
-	}
-
-	public void setCity( String city )
-	{
-		this.city = city;
-	}
-
-	public String getState()
-	{
-		return state;
-	}
-
-	public void setState( String state )
-	{
-		this.state = state;
-	}
-
-	public int getZip1()
-	{
-		return zip1;
-	}
-
-	public void setZip1( int zip1 )
-	{
-		this.zip1 = zip1;
-	}
-
-	public int getZip2()
-	{
-		return zip2;
-	}
-
-	public void setZip2( int zip2 )
-	{
-		this.zip2 = zip2;
-	}
-
-	public String getPhoneNumber()
-	{
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber( String phoneNumber )
-	{
-		this.phoneNumber = phoneNumber;
-	}
 
 	public Doctor getDoctor()
 	{
@@ -153,4 +74,16 @@ public class PatientSingleton extends ApplicationUser
 		return exerciseEntries;
 	}
 
+	@Override
+	public String toString()
+	{
+		String doctorString = doctor != null ? doctor.toString() : "";
+		return super.toString() +
+				"\nPatientSingleton{" +
+				"doctor=" + doctorString +
+				", glucoseEntries=" + glucoseEntries +
+				", mealEntries=" + mealEntries +
+				", exerciseEntries=" + exerciseEntries +
+				'}';
+	}
 } // class

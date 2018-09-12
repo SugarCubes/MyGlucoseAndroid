@@ -9,8 +9,7 @@ import java.util.Date;
 public class ApplicationUser
 {
 	protected static boolean loggedIn = false;
-	protected String id;
-	protected String email;
+	protected String email;					// Primary key
 	protected String firstName;
 	protected String lastName;
 	protected String userName;
@@ -28,19 +27,22 @@ public class ApplicationUser
 
 	public ApplicationUser()
 	{
+		email 		= "";
+		firstName 	= "";
+		lastName 	= "";
+		userName	= "";
+		address1	= "";
+		address2	= "";
+		city		= "";
+		state		= "";
+		zip1		= -1;
+		zip2		= -1;
+		phoneNumber = "";
+		date		= new Date();
+		timestamp	= -1;
 
-	}
+	} // constructor
 
-
-	public String getId()
-	{
-		return id;
-	}
-
-	public void setId( String id )
-	{
-		this.id = id;
-	}
 
 	public String getEmail()
 	{
@@ -181,5 +183,25 @@ public class ApplicationUser
 	{
 		this.timestamp = timestamp;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ApplicationUser{" +
+				"email='" + email + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", userName='" + userName + '\'' +
+				", address1='" + address1 + '\'' +
+				", address2='" + address2 + '\'' +
+				", city='" + city + '\'' +
+				", state='" + state + '\'' +
+				", zip1=" + zip1 +
+				", zip2=" + zip2 +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", date=" + date +
+				", timestamp=" + timestamp +
+				'}';
+	} // toString
 
 } // class

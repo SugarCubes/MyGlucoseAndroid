@@ -5,7 +5,9 @@ import java.util.Date;
 
 public class MealEntry
 {
-	private String id;
+	private int id;
+	private String remoteId;
+	private String userEmail;
 	private int totalCarbs;
 	private Date date;
 	private long timestamp;
@@ -13,22 +15,41 @@ public class MealEntry
 	private ArrayList<MealItem> mealItems;
 
 
-	public String getId()
-	{
-		return id;
-	}
-
-	public void setId( String id )
-	{
-		this.id = id;
-	}
-
 	public MealEntry()
 	{
 		mealItems = new ArrayList<>();
 
 	} // constructor
 
+	public int getId()
+	{
+		return id;
+	}
+
+	public void setId( int id )
+	{
+		this.id = id;
+	}
+
+	public String getRemoteId()
+	{
+		return remoteId;
+	}
+
+	public void setRemoteId( String remoteId )
+	{
+		this.remoteId = remoteId;
+	}
+
+	public String getUserEmail()
+	{
+		return userEmail;
+	}
+
+	public void setUserEmail( String userEmail )
+	{
+		this.userEmail = userEmail;
+	}
 
 	public int getTotalCarbs()
 	{

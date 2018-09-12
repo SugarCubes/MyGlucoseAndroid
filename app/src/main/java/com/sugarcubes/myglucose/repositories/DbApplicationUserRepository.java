@@ -1,3 +1,12 @@
+//--------------------------------------------------------------------------------------//
+//																						//
+// File Name:	DbApplicationUserRepository.java										//
+// Programmer:	J.T. Blevins (jt.blevins@gmail.com)										//
+// Date:		09/08/2018																//
+// Purpose:		A repository to allow user data manipulation in a SQLite database. 		//
+//																						//
+//--------------------------------------------------------------------------------------//
+
 package com.sugarcubes.myglucose.repositories;
 
 import android.content.ContentResolver;
@@ -15,7 +24,7 @@ import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.util.ArrayList;
 
-public class DbApplicationUserRepository implements IApplicationUserRepository
+public class DbApplicationUserRepository implements IApplicationUserRepository<ApplicationUser>
 {
 	private ContentResolver contentResolver;
 	private Uri uri = MyGlucoseContentProvider.USERS_URI;
@@ -95,7 +104,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 
 		ApplicationUser user = new ApplicationUser();
 
-		user.setId( cursor.getString( cursor.getColumnIndex( DB.KEY_ID ) ) );
+		user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
 		user.setFirstName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
 		user.setLastName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) ) );
 		user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
@@ -105,7 +114,6 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 		user.setZip1( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) ) );
 		user.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
 		user.setPhoneNumber( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) ) );
-		user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
 		user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 		user.setDate( DateUtilities.convertStringToDate(
 				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) )
@@ -123,7 +131,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 	public ContentValues getContentValues( ApplicationUser user )
 	{
 		ContentValues values = new ContentValues();
-		values.put( DB.KEY_ID, user.getId() );
+		values.put( DB.KEY_USER_EMAIL, user.getEmail() );
 		values.put( DB.KEY_USER_FIRST_NAME, user.getFirstName() );
 		values.put( DB.KEY_USER_LAST_NAME, user.getLastName() );
 		values.put( DB.KEY_USER_ADDRESS1, user.getAddress1() );
@@ -133,7 +141,6 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 		values.put( DB.KEY_USER_ZIP1, user.getZip1() );
 		values.put( DB.KEY_USER_ZIP2, user.getZip2() );
 		values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
-		values.put( DB.KEY_USER_EMAIL, user.getEmail() );
 		values.put( DB.KEY_USERNAME, user.getUserName() );
 		values.put( DB.KEY_DATE, user.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
@@ -146,7 +153,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 	public void update( String id, ApplicationUser item )
 	{
 		ContentValues values = getContentValues( item );
-		contentResolver.update( uri, values, DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.update( uri, values, DB.KEY_USER_EMAIL + "=?", new String[]{ id } );
 
 	} // update
 
@@ -154,16 +161,40 @@ public class DbApplicationUserRepository implements IApplicationUserRepository
 	@Override
 	public void delete( ApplicationUser item )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ item.getId() } );
+		contentResolver.delete( uri, DB.KEY_USER_EMAIL + "=?", new String[]{ item.getEmail() } );
 
 	} // delete
 
 
 	@Override
-	public void delete( String id )
+	public void delete( String email )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?", new String[]{ id } );
+		contentResolver.delete( uri, DB.KEY_USER_EMAIL + "=?", new String[]{ email } );
 
 	} // delete
+
+
+	@Override
+	public ApplicationUser getLoggedInUser()
+	{
+		int loggedIn = 1;		// SQLite stores boolean values as 0=false, 1=true
+		Cursor cursor = contentResolver.query( uri, null, DB.KEY_USER_LOGGED_IN + "=?",
+				new String[]{ String.valueOf( loggedIn ) }, null );
+
+		if( cursor != null )
+		{
+			cursor.moveToFirst();
+
+			ApplicationUser user = readFromCursor( cursor );
+
+			cursor.close();
+
+			return user;
+
+		} // if cursor != null
+
+		return null;
+
+	} // getLoggedInUser
 
 } // repository
