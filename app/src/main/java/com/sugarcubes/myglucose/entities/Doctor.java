@@ -6,8 +6,9 @@ public class Doctor extends ApplicationUser
 
 	public Doctor()
 	{
+		DegreeAbbreviation = "MD";				// Default abbreviation
 
-	}
+	} // constructor
 
 	public String getDegreeAbbreviation()
 	{

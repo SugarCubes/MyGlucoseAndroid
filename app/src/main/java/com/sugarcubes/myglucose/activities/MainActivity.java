@@ -70,10 +70,9 @@ public class MainActivity
 		getMenuInflater().inflate( R.menu.main, menu );
 
 		this.menu = menu;
-		menu.findItem( R.id.action_login )
-				.setTitle( patientUser.isLoggedIn()
-						? R.string.logout
-						: R.string.login );
+
+		setMenuTexts();					// Show Log in/out, Register
+
 		return true;
 
 	} // onCreateOptionsMenu
@@ -86,29 +85,26 @@ public class MainActivity
 		switch( item.getItemId() )
 		{
 			case R.id.action_settings:
-				Intent intent = new Intent( this, SettingsActivity.class );
-				startActivity( intent );
+				startSettingsActivity();
 				break;
 
 			case R.id.action_login:
 				if( patientUser.isLoggedIn() )
 				{
-					item.setTitle( R.string.login );
 					patientUser.setLoggedIn( false );
 					DbPatientRepository patientRepository =
 							new DbPatientRepository( getApplicationContext() );
 					patientRepository.delete( patientUser );
+					setMenuTexts();		// Show Log in/out, Register
 				}
 				else
 				{
-					Intent loginIntent = new Intent( this, LoginActivity.class );
-					startActivityForResult( loginIntent, LOGIN_REQUEST );    // Redirect to the Login Activity
+					startLoginActivity();
 				}
 				break;
 
 			case R.id.action_register:
-				Intent registerIntent = new Intent( this, RegisterActivity.class );
-				startActivity( registerIntent );
+				startRegisterActivity();
 				break;
 
 			default:
@@ -119,6 +115,10 @@ public class MainActivity
 
 	} // onOptionsItemSelected
 
+
+	/**
+	 * 	loaderReset - Refreshes content resolver when the db changes
+ 	 */
 	public void loaderReset()
 	{
 		getLoaderManager().restartLoader( USER_LOADER, null, this );
@@ -134,12 +134,6 @@ public class MainActivity
 
 		getApplicationContext().getContentResolver().notifyChange(
 				MyGlucoseContentProvider.USERS_URI, null );
-
-//		if( cursor != null )
-//			synchronized( cursor )
-//			{
-//				cursor.notify();
-//			}
 
 	} // loaderReset
 
@@ -188,8 +182,7 @@ public class MainActivity
 
 			if( !patientUser.isLoggedIn() )
 			{
-				Intent intent = new Intent( this, LoginActivity.class );
-				startActivityForResult( intent, LOGIN_REQUEST );    // Redirect to the Login Activity
+				startLoginActivity();
 			}
 
 			synchronized( cursor )
@@ -211,9 +204,10 @@ public class MainActivity
 			// Make sure the request was successful
 			if( resultCode == RESULT_OK )
 			{
-				MenuItem loginMenuItem = menu.findItem( R.id.action_login );
-				if( loginMenuItem != null )
-					loginMenuItem.setTitle( R.string.logout );
+				setMenuTexts();
+
+				// TODO: Do this only if first time logging in:
+				startSettingsActivity();
 
 			} // if RESULT_OK
 
@@ -270,5 +264,46 @@ public class MainActivity
 		return false;
 
 	} // onTouch
+
+
+	private void startLoginActivity()
+	{
+		Intent intent = new Intent( this, LoginActivity.class );
+		startActivityForResult( intent, LOGIN_REQUEST );    // Redirect to the Login Activity
+
+	} // startLoginActivity
+
+
+	private void startRegisterActivity()
+	{
+		Intent registerIntent = new Intent( this, RegisterActivity.class );
+		startActivity( registerIntent );
+
+	} // startLoginActivity
+
+
+	private void startSettingsActivity()
+	{
+		Intent intent = new Intent( this, SettingsActivity.class );
+		startActivity( intent );
+
+	} // startSettingsActivity
+
+
+	private void setMenuTexts()
+	{
+//		MenuItem loginMenuItem = menu.findItem( R.id.action_login );
+//		if( loginMenuItem != null )
+//			loginMenuItem.setTitle( R.string.logout );
+
+		menu.findItem( R.id.action_login )
+				.setTitle( patientUser.isLoggedIn()
+						? R.string.logout
+						: R.string.login );
+
+		menu.findItem( R.id.action_register )
+				.setVisible( !patientUser.isLoggedIn() );
+
+	} // setMenuTexts
 
 } // class

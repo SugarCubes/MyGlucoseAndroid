@@ -133,7 +133,6 @@ public class DbPatientRepository implements IPatientRepository
 		if( patientSingleton.getDoctor() != null )
 			patientValues.put( DB.KEY_DR_ID, patientSingleton.getDoctor().getEmail() );
 		patientValues.put( DB.KEY_USER_EMAIL, patientSingleton.getEmail() );
-		patientValues.put( DB.KEY_TIMESTAMP, timestamp );
 		Uri patientUri = contentResolver.insert(
 				MyGlucoseContentProvider.PATIENTS_URI, patientValues );
 
