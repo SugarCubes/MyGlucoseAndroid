@@ -140,7 +140,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			// If the URI matches a single user:
 			case USERS_ID:
 				queryBuilder.setTables( DB.TABLE_USERS );
-				queryBuilder.appendWhere( DB.KEY_USER_ID + "=" + uri.getLastPathSegment() );
+				queryBuilder.appendWhere( DB.KEY_USER_EMAIL + "=" + uri.getLastPathSegment() );
 				break;
 
 			case PATIENTS:
@@ -149,7 +149,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case PATIENTS_ID:
 				queryBuilder.setTables( DB.TABLE_PATIENTS );
-				queryBuilder.appendWhere( DB.KEY_USER_ID + "=" + uri.getLastPathSegment() );
+				queryBuilder.appendWhere( DB.KEY_USER_EMAIL + "=" + uri.getLastPathSegment() );
 				break;
 
 			case PATIENT_USERS:
@@ -164,7 +164,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case DOCTORS_ID:
 				queryBuilder.setTables( DB.TABLE_DOCTORS );
-				queryBuilder.appendWhere( DB.KEY_USER_ID + "=" + uri.getLastPathSegment() );
+				queryBuilder.appendWhere( DB.KEY_USER_EMAIL + "=" + uri.getLastPathSegment() );
 				break;
 
 			case GLUCOSE_ENTRIES:
@@ -332,7 +332,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case PATIENTS_ID:
 				count = database.delete(
-						DB.TABLE_PATIENTS, DB.KEY_USER_ID +  " = " + uri.getLastPathSegment() +
+						DB.TABLE_PATIENTS, DB.KEY_USER_EMAIL +  " = " + uri.getLastPathSegment() +
 								( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
 						selectionArgs );
 				break;
@@ -348,7 +348,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case DOCTORS_ID:
 				count = database.delete(
-						DB.TABLE_DOCTORS, DB.KEY_USER_ID +  " = " + uri.getLastPathSegment() +
+						DB.TABLE_DOCTORS, DB.KEY_USER_EMAIL +  " = " + uri.getLastPathSegment() +
 								( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
 						selectionArgs );
 				break;
@@ -464,7 +464,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			case PATIENTS_ID:
 				count	= 	database.update( DB.TABLE_PATIENTS,
 						values,
-						DB.KEY_USER_ID +  "=?"
+						DB.KEY_USER_EMAIL +  "=?"
 								+ ( !TextUtils.isEmpty(selection)
 								? " AND (" + selection + ')' : "" ),
 						new String[]{ uri.getLastPathSegment() } );
@@ -477,7 +477,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			case DOCTORS_ID:
 				count	= 	database.update( DB.TABLE_DOCTORS,
 						values,
-						DB.KEY_USER_ID +  "=?"
+						DB.KEY_USER_EMAIL +  "=?"
 								+ ( !TextUtils.isEmpty(selection)
 								? " AND (" + selection + ')' : "" ),
 						new String[]{ uri.getLastPathSegment() } );

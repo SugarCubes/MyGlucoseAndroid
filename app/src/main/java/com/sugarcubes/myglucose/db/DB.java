@@ -37,42 +37,42 @@ public class DB extends SQLiteOpenHelper
 
 	// Misc db table keys:
 	public static final String KEY_ID = "_id";
-	public static final String KEY_DATE = "date";
-	public static final String KEY_TIMESTAMP = "timestamp";
-	public static final String KEY_REMOTE_KEY = "remote_key";
+	public static final String KEY_DATE = "Date";
+	public static final String KEY_TIMESTAMP = "Timestamp";
+	public static final String KEY_REMOTE_KEY = "RemoteKey";
 	// ApplicationUser table keys:
-	public static final String KEY_USER_LOGGED_IN = "logged_in";
-	public static final String KEY_USER_ID = "user_id";
-	public static final String KEY_USERNAME = "username";
-	public static final String KEY_USER_FIRST_NAME = "first_name";
-	public static final String KEY_USER_LAST_NAME = "last_name";
-	public static final String KEY_USER_TYPE = "user_type";
-	public static final String KEY_USER_EMAIL = "email";
-	public static final String KEY_USER_ADDRESS1 = "address1";
-	public static final String KEY_USER_ADDRESS2 = "address2";
-	public static final String KEY_USER_CITY = "city";
-	public static final String KEY_USER_STATE = "state";
-	public static final String KEY_USER_ZIP1 = "zip1";
-	public static final String KEY_USER_ZIP2 = "zip2";
-	public static final String KEY_USER_PHONE = "phone_number";
+	public static final String KEY_USER_LOGGED_IN = "LoggedIn";
+	public static final String KEY_USERNAME = "Username";
+	public static final String KEY_USER_FIRST_NAME = "FistName";
+	public static final String KEY_USER_LAST_NAME = "LastName";
+	public static final String KEY_USER_TYPE = "UserType";
+	public static final String KEY_USER_EMAIL = "Email";
+	public static final String KEY_USER_ADDRESS1 = "Address1";
+	public static final String KEY_USER_ADDRESS2 = "Address2";
+	public static final String KEY_USER_CITY = "City";
+	public static final String KEY_USER_STATE = "State";
+	public static final String KEY_USER_ZIP1 = "Zip1";
+	public static final String KEY_USER_ZIP2 = "Zip2";
+	public static final String KEY_USER_PHONE = "PhoneNumber";
 	// Patient table keys:
+	public static final String KEY_DR_EMAIL = "DoctorEmail";
 	// Doctor table keys:
-	public static final String KEY_DR_ID = "doctor_id";
-	public static final String KEY_DR_DEGREE_ABBREVIATION = "degree_abbreviation";
+	public static final String KEY_DR_ID = "DoctorId";
+	public static final String KEY_DR_DEGREE_ABBREVIATION = "DegreeAbbreviation";
 	// GlucoseEntry table keys:
-	public static final String KEY_GLUCOSE_MEASUREMENT = "measurement";
-	public static final String KEY_GLUCOSE_BEFORE_AFTER = "before_after";
-	public static final String KEY_GLUCOSE_WHICH_MEAL = "which_meal";
+	public static final String KEY_GLUCOSE_MEASUREMENT = "Measurement";
+	public static final String KEY_GLUCOSE_BEFORE_AFTER = "BeforeAfter";
+	public static final String KEY_GLUCOSE_WHICH_MEAL = "WhichMeal";
 	// MealEntry table keys:
-	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS = "total_carbohydrates";
+	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS = "TotalCarbohydrates";
 	// MealItem table keys:
-	public static final String KEY_MEAL_ITEM_NAME = "name";
-	public static final String KEY_MEAL_ID = "meal_id";
-	public static final String KEY_MEAL_ITEM_CARBS = "carbohydrates";
-	public static final String KEY_MEAL_ITEM_SERVINGS = "servings";
+	public static final String KEY_MEAL_ITEM_NAME = "Name";
+	public static final String KEY_MEAL_ID = "MealId";
+	public static final String KEY_MEAL_ITEM_CARBS = "Carbohydrates";
+	public static final String KEY_MEAL_ITEM_SERVINGS = "Servings";
 	// ExerciseEntry table keys:
-	public static final String KEY_EXERCISE_MINUTES_SPENT = "minutes_spent";
-	public static final String KEY_EXERCISE_NAME = "name";
+	public static final String KEY_EXERCISE_MINUTES_SPENT = "MinutesSpent";
+	public static final String KEY_EXERCISE_NAME = "Name";
 
 
 	public DB( Context context )
