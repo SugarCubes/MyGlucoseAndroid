@@ -19,6 +19,7 @@ public class PatientSingleton extends ApplicationUser
 {
 	private static PatientSingleton singleton;
 
+	private String doctorEmail;
 	protected Doctor doctor;
 
 	protected ArrayList<GlucoseEntry> glucoseEntries;
@@ -29,6 +30,7 @@ public class PatientSingleton extends ApplicationUser
 	private PatientSingleton()
 	{
 		// Instantiate the doctor:
+		doctorEmail = "";
 		doctor = new Doctor();
 		// Instantiate all ArrayLists:
 		glucoseEntries = new ArrayList<>();
@@ -86,4 +88,5 @@ public class PatientSingleton extends ApplicationUser
 				", exerciseEntries=" + exerciseEntries +
 				'}';
 	}
+
 } // class
