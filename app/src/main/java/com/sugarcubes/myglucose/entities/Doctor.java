@@ -22,7 +22,8 @@ public class Doctor extends ApplicationUser
 	@Override
 	public String toString()
 	{
-		return "Doctor{" +
+		return super.toString()
+				+ " DoctorInfo{" +
 				"DegreeAbbreviation='" + DegreeAbbreviation + '\'' +
 				'}';
 	} // toString
