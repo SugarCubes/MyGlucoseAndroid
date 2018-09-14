@@ -20,7 +20,9 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 public interface IPatientRepository
 {
 	// Add new Patient-specific methods here
-	void logIn( PatientSingleton patientSingleton, Cursor cursor );
-	boolean logOut( PatientSingleton patientSingleton );
-	boolean createLogin( PatientSingleton patientSingleton );
+	void populate( PatientSingleton patientSingleton, Cursor cursor );
+	boolean delete( PatientSingleton patientSingleton );
+	boolean create( PatientSingleton patientSingleton );
+	Cursor getCursorForLoggedInUser();
+
 } // interface

@@ -75,6 +75,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		mEmailView = findViewById( R.id.email );
 		populateAutoComplete();
 
+		// TODO
+		// TODO: Change to live LoginAction when switching to production:
+		// TODO
+		loginAction = new LoginSimulationAction( appUser );
+
+
 		mPasswordView = findViewById( R.id.password );
 		mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener()
 		{
@@ -100,13 +106,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			}
 		} );
 
+		Button mRegisterButton = findViewById( R.id.login_register_button );
+		mRegisterButton.setOnClickListener( new OnClickListener()
+		{
+			@Override
+			public void onClick( View v )
+			{
+				Intent registerIntent = new Intent( LoginActivity.this, RegisterActivity.class );
+				startActivity( registerIntent );
+			}
+		} );
+
 		mLoginFormView = findViewById( R.id.login_form );
 		mProgressView = findViewById( R.id.login_progress );
 
 		appUser = PatientSingleton.getInstance();
-		// TODO: Change to live LoginAction when switch to production:
-		loginAction = new LoginSimulationAction( appUser );
-
 	}
 
 	private void populateAutoComplete()

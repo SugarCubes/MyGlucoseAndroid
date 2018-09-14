@@ -23,6 +23,7 @@ guideline.-->
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/holo_purple"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -34,13 +35,14 @@ guideline.-->
         app:layout_constraintTop_toBottomOf="@+id/glucose_button"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".47" />
+        app:layout_constraintWidth_percent=".45" />
 
     <Button
         android:id="@+id/meals_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_green_light"
         android:paddingLeft="10dp"
@@ -61,8 +63,6 @@ guideline.-->
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/holo_orange_dark"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:text="@string/log_glucose"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
