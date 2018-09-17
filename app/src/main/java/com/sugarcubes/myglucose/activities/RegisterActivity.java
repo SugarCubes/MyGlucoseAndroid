@@ -42,7 +42,7 @@ import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
 	private IRetrieveDoctorsAction retrieveDoctorsAction;	// Use to retrieve list of doctors
 	private IRegisterPatientAction registerPatientAction;	// Use to register the patient
-	private IPatientRepository patientRepository;			// Use to log in after registration
+	private IApplicationUserRepository patientRepository;			// Use to log in after registration
 
 
 	/**

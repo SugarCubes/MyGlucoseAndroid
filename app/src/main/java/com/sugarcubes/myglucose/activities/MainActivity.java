@@ -133,7 +133,7 @@ public class MainActivity
 		}
 
 		getApplicationContext().getContentResolver().notifyChange(
-				MyGlucoseContentProvider.USERS_URI, null );
+				MyGlucoseContentProvider.PATIENT_USERS_URI, null );
 
 	} // loaderReset
 
@@ -174,7 +174,7 @@ public class MainActivity
 				// Patient is already initialized. Now we need to log him/her in:
 				DbPatientRepository patientRepository
 						= new DbPatientRepository( getApplicationContext() );
-				patientRepository.populate( patientUser, cursor );
+				patientRepository.readFromCursor( patientUser, cursor );
 
 			} // if
 

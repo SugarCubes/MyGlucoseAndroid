@@ -12,7 +12,7 @@ public class GlucoseEntry
 {
 	private int id;
 	private String remoteId;
-	private String userEmail;
+	private String userName;
 	private float measurement;			// DEFAULT: mmol/L. May need conversion to display correctly
 //	private GlucoseUnits units;			// enum	mmol/L or mg/dL
 	private BeforeAfter beforeAfter;	// enum representing before or after a meal
@@ -71,14 +71,14 @@ public class GlucoseEntry
 		this.timeStamp = timeStamp;
 	}
 
-	public String getUserEmail()
+	public String getUserName()
 	{
-		return userEmail;
+		return userName;
 	}
 
-	public void setUserEmail( String userEmail )
+	public void setUserName( String userName )
 	{
-		this.userEmail = userEmail;
+		this.userName = userName;
 	}
 
 	public float getMeasurement()

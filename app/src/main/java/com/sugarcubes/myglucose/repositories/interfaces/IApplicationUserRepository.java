@@ -19,18 +19,11 @@ import java.util.ArrayList;
 
 public interface IApplicationUserRepository<T>
 {
-	void create( T item );
+	boolean create( T item );
 
 	T read( String id );
 
 	ArrayList<T> readAll();
-
-	/**
-	 * Reads an item from the database and converts it to an entity object.
-	 * @param cursor - The cursor to read the item from
-	 * @return an item of the specified type
-	 */
-	T readFromCursor( Cursor cursor );
 
 	/**
 	 * Extracts ContentValues from a model class, for use with the create() and update() methods.
@@ -39,12 +32,17 @@ public interface IApplicationUserRepository<T>
 	 */
 	ContentValues getContentValues( T item );
 
+	/**
+	 * Reads an item from the database and converts it to an entity object.
+	 * @param cursor - The cursor to read the item from
+	 * @return an item of the specified type
+	 */
+	T readFromCursor( T patient, Cursor cursor );
+
 	void update( String id, T item );
 
-	void delete( T item );
+	boolean delete( T item );
 
 	void delete( String id );
-
-	T getLoggedInUser();
 
 } // interface

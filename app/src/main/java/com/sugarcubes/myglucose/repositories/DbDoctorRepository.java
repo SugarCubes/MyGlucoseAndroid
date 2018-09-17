@@ -7,9 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
+import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
-import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
 
 import java.util.ArrayList;
@@ -17,72 +17,139 @@ import java.util.ArrayList;
 public class DbDoctorRepository implements IDoctorRepository
 {
 	private ContentResolver contentResolver;
-	private Uri uri = MyGlucoseContentProvider.DOCTORS_URI;
-	private IApplicationUserRepository userRepository;
+	private Uri doctorsUri = MyGlucoseContentProvider.DOCTORS_URI;
+	private DbApplicationUserRepository dbApplicationUserRepository;
 	private ApplicationUser user;
 
 
 	public DbDoctorRepository( Context context )
 	{
 		contentResolver = context.getContentResolver();
-		this.userRepository = new DbApplicationUserRepository( context );
+		this.dbApplicationUserRepository = new DbApplicationUserRepository( context );
 
 	} // constructor
 
 
 	@Override
-	public void create( Doctor item )
+	public boolean create( Doctor item )
 	{
+		boolean createUser = dbApplicationUserRepository.create( item );
+		Uri createUri = contentResolver.insert( doctorsUri, getContentValues( item ) );
 
-	}
+		return createUser && createUri != null;
+
+	} // create
+
 
 	@Override
-	public Doctor read( String id )
+	public Doctor read( String userName )
 	{
-		return null;
-	}
+		Doctor doctor = (Doctor) new Doctor();	// Get an appUser and cast
+		Cursor cursor = getDoctorCursor( userName );
+		readFromCursor( doctor, cursor );
+		// Load the info related to ApplicationUser:
+		dbApplicationUserRepository.readFromCursor( doctor, getApplicationUserCursor( userName ) );
+
+		return doctor;
+
+	} // read
+
 
 	@Override
 	public ArrayList<Doctor> readAll()
 	{
-		return null;
-	}
+		ArrayList<Doctor> doctors = new ArrayList<>();
+
+
+		Cursor cursor =  contentResolver.query( doctorsUri,
+				null, null, null, null );
+
+		if( cursor != null )
+		{
+			cursor.moveToFirst();
+
+			while( cursor.moveToNext() )
+			{
+				Doctor doctor = new Doctor();
+				readFromCursor( doctor, cursor );								// Set the Doctor values
+				Cursor userCursor = getApplicationUserCursor( doctor.getUserName() );
+				dbApplicationUserRepository.readFromCursor( doctor, userCursor );	// Set the User values
+				doctors.add( doctor );
+
+			} // while
+
+			cursor.close();
+		}
+
+		return doctors;
+
+	} // readAll
+
 
 	@Override
-	public Doctor readFromCursor( Cursor cursor )
+	public Doctor readFromCursor( Doctor doctor, Cursor cursor )
 	{
-		return null;
-	}
+		Doctor dr = new Doctor();
+
+		dr.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+		dr.setDegreeAbbreviation( cursor.getColumnName(
+				cursor.getColumnIndex( DB.KEY_DR_DEGREE_ABBREVIATION ) ) );
+
+		return dr;
+
+	} // readFromCursor
+
 
 	@Override
-	public ContentValues getContentValues( Doctor item )
+	public ContentValues getContentValues( Doctor doctor )
 	{
-		return null;
-	}
+		ContentValues values = new ContentValues();
+
+		values.put( DB.KEY_DR_DEGREE_ABBREVIATION, doctor.getDegreeAbbreviation() );
+
+		return values;
+
+	} // getContentValues
+
 
 	@Override
-	public void update( String id, Doctor item )
+	public void update( String id, Doctor doctor )
 	{
+		ContentValues values = getContentValues( doctor );
+		contentResolver.update( doctorsUri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
 
-	}
+	} // update
+
 
 	@Override
-	public void delete( Doctor item )
+	public boolean delete( Doctor doctor )
 	{
+		return true;
 
-	}
+	} // delete
+
 
 	@Override
-	public void delete( String id )
+	public void delete( String username )
 	{
+		dbApplicationUserRepository.delete( username );
+		contentResolver.delete( doctorsUri, DB.KEY_USERNAME + "=?", new String[]{ username } );
 
-	}
+	} // delete
 
-	@Override
-	public Doctor getLoggedInUser()
+
+	public Cursor getApplicationUserCursor( String username )
 	{
-		// TODO: Update doctor info
-		return (Doctor) userRepository.getLoggedInUser();
-	}
+		return dbApplicationUserRepository.getApplicationUserCursor( username );
 
-}
+	} // getApplicationUserCursor
+
+
+	public Cursor getDoctorCursor( String username )
+	{
+		return contentResolver.query( doctorsUri, null,
+				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
+
+	} // getDoctorCursor
+
+} // repository

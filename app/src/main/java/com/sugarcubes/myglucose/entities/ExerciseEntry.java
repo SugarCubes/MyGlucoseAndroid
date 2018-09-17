@@ -6,7 +6,7 @@ public class ExerciseEntry
 {
 	private int id;
 	private String remoteId;
-	private String userEmail;
+	private String userName;
 	private String exerciseName;
 	private int minutes;
 	private Date date;
@@ -38,14 +38,14 @@ public class ExerciseEntry
 		this.remoteId = remoteId;
 	}
 
-	public String getUserEmail()
+	public String getUserName()
 	{
-		return userEmail;
+		return userName;
 	}
 
-	public void setUserEmail( String userEmail )
+	public void setUserName( String userName )
 	{
-		this.userEmail = userEmail;
+		this.userName = userName;
 	}
 
 	public String getExerciseName()

@@ -107,7 +107,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
 		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
-		values.put( DB.KEY_USER_EMAIL, item.getUserEmail() );
+		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
 		values.put( DB.KEY_GLUCOSE_WHICH_MEAL, item.getWhichMeal().toString() );

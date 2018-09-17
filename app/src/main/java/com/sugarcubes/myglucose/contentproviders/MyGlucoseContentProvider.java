@@ -154,8 +154,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case PATIENT_USERS:
 				queryBuilder.setTables( DB.TABLE_PATIENTS + " INNER JOIN " + DB.TABLE_USERS + " ON "
-					+ DB.TABLE_PATIENTS + "." + DB.KEY_USER_EMAIL + "=" + DB.TABLE_USERS + "."
-					+ DB.KEY_USER_EMAIL );
+					+ DB.TABLE_PATIENTS + "." + DB.KEY_USERNAME + "=" + DB.TABLE_USERS + "."
+					+ DB.KEY_USERNAME );
 				break;
 
 			case DOCTORS:
