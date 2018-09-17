@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.actions.LoginSimulationAction;
+import com.sugarcubes.myglucose.actions.SimulateLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// TODO
 		// TODO: Change to live LoginAction when switching to production:
 		// TODO
-		loginAction = new LoginSimulationAction( appUser );
+		loginAction = new SimulateLoginAction( appUser );
 
 
 		mPasswordView = findViewById( R.id.password );
@@ -114,6 +114,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			{
 				Intent registerIntent = new Intent( LoginActivity.this, RegisterActivity.class );
 				startActivity( registerIntent );
+				finish();
 			}
 		} );
 
@@ -121,7 +122,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		mProgressView = findViewById( R.id.login_progress );
 
 		appUser = PatientSingleton.getInstance();
-	}
+
+	} // onCreate
+
 
 	private void populateAutoComplete()
 	{
@@ -132,6 +135,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 		getLoaderManager().initLoader( 0, null, this );
 	}
+
 
 	private boolean mayRequestContacts()
 	{
@@ -240,20 +244,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			mAuthTask = new UserLoginTask( email, password );
 			mAuthTask.execute( (Void) null );
 		}
-	}
+
+	} // attemptLogin
 
 
 	private boolean isEmailValid( String email )
 	{
-		//TODO: Replace this with your own logic
 		return email.contains( "@" );
 	}
 
 
 	private boolean isPasswordValid( String password )
 	{
-		//TODO: Replace this with your own logic
-		return password.length() > 4;
+		return password.length() > 7;
 	}
 
 
@@ -314,8 +317,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			mLoginFormView.setVisibility( show
 					? View.GONE
 					: View.VISIBLE );
-		}
-	}
+
+		} // if honeycomb...else...
+
+	} // showProgress
 
 
 	@Override
@@ -420,8 +425,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 				appUser.setLoggedIn( true );
 				Intent returnData = new Intent();
 				returnData.setData( Uri.parse("logged in") );
-				setResult( RESULT_OK, returnData );
-				finish();
+				setResult( RESULT_OK, returnData );			// Return ok result for activity result
+				finish();									// Close the activity
 			}
 			else
 			{

@@ -6,7 +6,7 @@ import com.sugarcubes.myglucose.entities.Doctor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RetrieveDoctorsSimuationAction implements IRetrieveDoctorsAction
+public class SimulateRetrieveDoctorsAction implements IRetrieveDoctorsAction
 {
 	@Override
 	public List<Doctor> retrieveDoctors()

@@ -112,6 +112,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+<<<<<<< HEAD
 
     //Unused currently, for the EditProfileActivity. 9/12/2018 8:32PM
     <string-array name="states">
@@ -129,4 +130,8 @@
         <item>Utah</item><item>Vermont</item><item>Virginia</item><item>Washington</item>
         <item>West Virginia</item><item>Wisconsin</item><item>Wyoming</item>
     </string-array>
+=======
+    <string name="developer_settings">Developer Settings</string>
+    <string name="patient_settings">Patient Settings</string>
+>>>>>>> master
 </resources>

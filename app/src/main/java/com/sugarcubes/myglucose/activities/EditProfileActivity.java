@@ -89,10 +89,4 @@ public class EditProfileActivity extends AppCompatActivity  {
             }
         });
     }
-
-    private void testDisplay(String text)
-    {
-        Toast.makeText(EditProfileActivity.this, text, Toast.LENGTH_SHORT).show();
-    }
-
 }

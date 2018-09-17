@@ -10,11 +10,11 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.util.Date;
 
-public class LoginSimulationAction implements ILoginAction
+public class SimulateLoginAction implements ILoginAction
 {
 	ApplicationUser user;
 
-	public LoginSimulationAction( ApplicationUser user )
+	public SimulateLoginAction( ApplicationUser user )
 	{
 		this.user = user;
 

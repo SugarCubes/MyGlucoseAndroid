@@ -3,7 +3,7 @@ package com.sugarcubes.myglucose.actions;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
-public class RegisterPatientSimulationAction implements IRegisterPatientAction
+public class SimulateRegisterPatientAction implements IRegisterPatientAction
 {
 	@Override
 	public boolean registerPatient( PatientSingleton patient )
