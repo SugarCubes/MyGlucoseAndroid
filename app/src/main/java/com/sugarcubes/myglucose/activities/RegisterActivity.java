@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.actions.RegisterPatientSimulationAction;
-import com.sugarcubes.myglucose.actions.RetrieveDoctorsSimuationAction;
+import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
+import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
@@ -85,8 +85,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		// TODO
 		// TODO: Change to live actions when going into production
 		// TODO
-		retrieveDoctorsAction = new RetrieveDoctorsSimuationAction();
-		registerPatientAction = new RegisterPatientSimulationAction();
+		retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
+		registerPatientAction = new SimulateRegisterPatientAction();
 		patientRepository = new DbPatientRepository( getApplicationContext() );
 		// TODO
 

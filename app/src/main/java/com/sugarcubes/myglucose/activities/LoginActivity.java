@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.actions.LoginSimulationAction;
+import com.sugarcubes.myglucose.actions.SimulateLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// TODO
 		// TODO: Change to live LoginAction when switching to production:
 		// TODO
-		loginAction = new LoginSimulationAction( appUser );
+		loginAction = new SimulateLoginAction( appUser );
 
 
 		mPasswordView = findViewById( R.id.password );
