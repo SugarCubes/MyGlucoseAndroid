@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -31,6 +32,7 @@ import com.sugarcubes.myglucose.enums.UserType;
 import com.sugarcubes.myglucose.repositories.DbApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
+import android.widget.Spinner;
 
 public class MainActivity
 		extends AppCompatActivity
@@ -44,7 +46,7 @@ public class MainActivity
 	private final int LOGIN_REQUEST = 200;
 
 	@Override
-	protected void onCreate( Bundle savedInstanceState )
+	protected void onCreate( Bundle savedInstanceState)
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_main );
@@ -58,9 +60,12 @@ public class MainActivity
 		Button glucoseButton = findViewById( R.id.glucose_button );
 		Button mealsButton = findViewById( R.id.meals_button );
 		Button exerciseButton = findViewById( R.id.exercise_button );
+		Button editButton = findViewById (R.id.edit);
 		glucoseButton.setOnTouchListener( this );
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
+		editButton.setOnTouchListener( this );
+
 
 	} // onCreate
 
@@ -258,11 +263,18 @@ public class MainActivity
 //				Log.i( LOG_TAG, "Exercise button tapped" );
 				if( event.getAction() == MotionEvent.ACTION_UP )	// Only handle single event
 				{
-					Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
-					startActivity( exerciseIntent );
+					Intent exerciseIntent = new Intent( this,LogExerciseActivity.class );
+                    startActivity( exerciseIntent );
 				}
 				break;
 
+            case R.id.edit:
+                if(event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    Intent editIntent = new Intent(this, EditProfileActivity.class);
+                    startActivity(editIntent);
+                }
+                break;
 		} // switch
 
 		return false;

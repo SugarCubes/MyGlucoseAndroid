@@ -24,9 +24,10 @@ public class PatientSingleton extends ApplicationUser
 	protected ArrayList<GlucoseEntry> glucoseEntries;
 	protected ArrayList<MealEntry> mealEntries;
 	protected ArrayList<ExerciseEntry> exerciseEntries;
+	public String firstname, lastname, phonenumber, city, state, address, weight, height;
 
 
-	private PatientSingleton()
+	public PatientSingleton()
 	{
 		// Instantiate the doctor:
 		doctor = new Doctor();
@@ -34,6 +35,14 @@ public class PatientSingleton extends ApplicationUser
 		glucoseEntries = new ArrayList<>();
 		mealEntries = new ArrayList<>();
 		exerciseEntries = new ArrayList<>();
+		firstname = "";
+		lastname = "";
+		phonenumber = "";
+		city = "";
+		state = "";
+		address = "";
+		weight = "";
+		height = "";
 
 	} // constructor
 
