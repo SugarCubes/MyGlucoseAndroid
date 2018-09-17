@@ -28,8 +28,6 @@ import android.app.LoaderManager.LoaderCallbacks;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.enums.UserType;
-import com.sugarcubes.myglucose.repositories.DbApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import android.widget.Spinner;
@@ -78,7 +76,9 @@ public class MainActivity
 
 		this.menu = menu;
 		menu.findItem( R.id.action_login )
-				.setTitle( patientUser.isLoggedIn() ? R.string.logout : R.string.login );
+				.setTitle( patientUser.isLoggedIn()
+						? R.string.logout
+						: R.string.login );
 		return true;
 
 	} // onCreateOptionsMenu
@@ -102,12 +102,12 @@ public class MainActivity
 					patientUser.setLoggedIn( false );
 					DbPatientRepository patientRepository =
 							new DbPatientRepository( getApplicationContext() );
-					patientRepository.logOut( patientUser );
+					patientRepository.delete( patientUser );
 				}
 				else
 				{
 					Intent loginIntent = new Intent( this, LoginActivity.class );
-					startActivityForResult( loginIntent, LOGIN_REQUEST );	// Redirect to the Login Activity
+					startActivityForResult( loginIntent, LOGIN_REQUEST );    // Redirect to the Login Activity
 				}
 				break;
 
@@ -151,7 +151,8 @@ public class MainActivity
 
 	/**
 	 * onCreateLoader - This is where the actual database query will be performed.
-	 * @param id - Loader id
+	 *
+	 * @param id   - Loader id
 	 * @param args - Args
 	 * @return CursorLoader
 	 */
@@ -174,17 +175,17 @@ public class MainActivity
 //		this.cursor = cursor;
 //		if( mAdapter != null )
 //			mAdapter.swapCursor( cursor );
-		if( cursor != null && !cursor.isClosed() )			// This should return Users from db
+		if( cursor != null && !cursor.isClosed() )            // This should return Users from db
 		{
 
 			Log.d( LOG_TAG, patientUser.toString() );
 
-			if( cursor.getCount() > 0 )						// If there are no users logged in...
+			if( cursor.getCount() > 0 )                        // If there are no users logged in...
 			{
 				// Patient is already initialized. Now we need to log him/her in:
 				DbPatientRepository patientRepository
 						= new DbPatientRepository( getApplicationContext() );
-				patientRepository.logIn( patientUser, cursor );
+				patientRepository.populate( patientUser, cursor );
 
 			} // if
 
@@ -193,7 +194,7 @@ public class MainActivity
 			if( !patientUser.isLoggedIn() )
 			{
 				Intent intent = new Intent( this, LoginActivity.class );
-				startActivityForResult( intent, LOGIN_REQUEST );	// Redirect to the Login Activity
+				startActivityForResult( intent, LOGIN_REQUEST );    // Redirect to the Login Activity
 			}
 
 			synchronized( cursor )
@@ -207,12 +208,13 @@ public class MainActivity
 
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
 		// Check which request we're responding to
-		if ( requestCode == LOGIN_REQUEST )
+		if( requestCode == LOGIN_REQUEST )
 		{
 			// Make sure the request was successful
-			if (resultCode == RESULT_OK)
+			if( resultCode == RESULT_OK )
 			{
 				MenuItem loginMenuItem = menu.findItem( R.id.action_login );
 				if( loginMenuItem != null )
@@ -236,32 +238,32 @@ public class MainActivity
 	@Override
 	public boolean onTouch( View view, MotionEvent event )
 	{
-		view.performClick();								// Perform default action
+		view.performClick();                                // Perform default action
 		//Log.i( LOG_TAG, "Touch detected: " + view.getId() );
 
 		switch( view.getId() )
 		{
-			case R.id.glucose_button:								// Glucose button tap
+			case R.id.glucose_button:                                // Glucose button tap
 //				Log.i( LOG_TAG, "Glucose button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )	// Only handle single event
+				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
 					Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
 					startActivity( glucoseIntent );
 				}
 				break;
 
-			case R.id.meals_button:									// Meals button tap
+			case R.id.meals_button:                                    // Meals button tap
 //				Log.i( LOG_TAG, "Meals button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )	// Only handle single event
+				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
 					Intent mealsIntent = new Intent( this, LogMealsActivity.class );
 					startActivity( mealsIntent );
 				}
 				break;
 
-			case R.id.exercise_button:								// Exercise button tap
+			case R.id.exercise_button:                                // Exercise button tap
 //				Log.i( LOG_TAG, "Exercise button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )	// Only handle single event
+				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
 					Intent exerciseIntent = new Intent( this,LogExerciseActivity.class );
                     startActivity( exerciseIntent );

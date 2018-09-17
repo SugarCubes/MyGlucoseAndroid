@@ -1,15 +1,10 @@
 package com.sugarcubes.myglucose.actions;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
-import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
-import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
-import com.sugarcubes.myglucose.repositories.DbMealEntryRepository;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
@@ -36,7 +31,7 @@ public class LoginSimulationAction implements ILoginAction
 //			Cursor cursor = context.getContentResolver().query( MyGlucoseContentProvider.PATIENT_USERS_URI,
 //					null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
 //					new String[]{ String.valueOf( 1 ) }, null );
-//			patientRepository.logIn( PatientSingleton.getInstance(), cursor );
+//			patientRepository.populate( PatientSingleton.getInstance(), cursor );
 			patientSingleton.setEmail( username );
 			patientSingleton.setUserName( username );
 			patientSingleton.setFirstName( "John" );
@@ -56,7 +51,7 @@ public class LoginSimulationAction implements ILoginAction
 			dr.setEmail( "dr.jones@example.com" );
 			patientSingleton.setDoctor( dr );
 
-			patientRepository.createLogin( patientSingleton );
+			patientRepository.create( patientSingleton );
 		}
 		catch( Exception e )
 		{

@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,12 +28,22 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.actions.RegisterPatientSimulationAction;
+import com.sugarcubes.myglucose.actions.RetrieveDoctorsSimuationAction;
+import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
+import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
+import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
+import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.repositories.DbPatientRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -47,23 +58,22 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 */
 	private static final int REQUEST_READ_CONTACTS = 0;
 
-	/**
-	 * A dummy authentication store containing known user names and passwords.
-	 * TODO: remove after connecting to a real authentication system.
-	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[]{
-			"foo@example.com:hello", "bar@example.com:world"
-	};
+	private IRetrieveDoctorsAction retrieveDoctorsAction;	// Use to retrieve list of doctors
+	private IRegisterPatientAction registerPatientAction;	// Use to register the patient
+	private IPatientRepository patientRepository;			// Use to log in after registration
+
+
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	private UserLoginTask mAuthTask = null;
+	private UserRegisterTask mAuthTask = null;
 
 	// UI references.
 	private AutoCompleteTextView mEmailView;
 	private EditText mPasswordView;
 	private View mProgressView;
 	private View mLoginFormView;
+	private Spinner mDoctorDropdownSpinner;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -71,6 +81,15 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_register );
 		setupActionBar();
+
+		// TODO
+		// TODO: Change to live actions when going into production
+		// TODO
+		retrieveDoctorsAction = new RetrieveDoctorsSimuationAction();
+		registerPatientAction = new RegisterPatientSimulationAction();
+		patientRepository = new DbPatientRepository( getApplicationContext() );
+		// TODO
+
 		// Set up the login form.
 		mEmailView = (AutoCompleteTextView) findViewById( R.id.email );
 		populateAutoComplete();
@@ -83,25 +102,32 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			{
 				if( id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL )
 				{
-					attemptLogin();
+					attemptRegistration();
 					return true;
 				}
 				return false;
 			}
 		} );
+		mDoctorDropdownSpinner = findViewById( R.id.doctor_dropdown_spinner );
+		mDoctorDropdownSpinner.setAdapter(
+				new DoctorDropDownAdapter( this,
+						R.layout.doctor_dropdown_item_layout,
+						R.id.doctor_name,
+						retrieveDoctorsAction.retrieveDoctors() )
+		);
 
-		Button mEmailSignInButton = (Button) findViewById( R.id.email_sign_in_button );
+		Button mEmailSignInButton = (Button) findViewById( R.id.register_button );
 		mEmailSignInButton.setOnClickListener( new OnClickListener()
 		{
 			@Override
 			public void onClick( View view )
 			{
-				attemptLogin();
+				attemptRegistration();
 			}
 		} );
 
-		mLoginFormView = findViewById( R.id.login_form );
-		mProgressView = findViewById( R.id.login_progress );
+		mLoginFormView = findViewById( R.id.registration_form );
+		mProgressView = findViewById( R.id.register_progress );
 	}
 
 	private void populateAutoComplete()
@@ -178,7 +204,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	private void attemptLogin()
+	private void attemptRegistration()
 	{
 		if( mAuthTask != null )
 		{
@@ -189,9 +215,12 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		mEmailView.setError( null );
 		mPasswordView.setError( null );
 
+		PatientSingleton patient = PatientSingleton.getInstance();
+
 		// Store values at the time of the login attempt.
 		String email = mEmailView.getText().toString();
 		String password = mPasswordView.getText().toString();
+		Doctor doctor = (Doctor) mDoctorDropdownSpinner.getSelectedItem();
 
 		boolean cancel = false;
 		View focusView = null;
@@ -229,21 +258,24 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
 			showProgress( true );
-			mAuthTask = new UserLoginTask( email, password );
+
+			patient.setEmail( email );
+			// TODO: Test
+			patient.setDoctor( doctor );
+
+			mAuthTask = new UserRegisterTask( patient );
 			mAuthTask.execute( (Void) null );
 		}
 	}
 
 	private boolean isEmailValid( String email )
 	{
-		//TODO: Replace this with your own logic
 		return email.contains( "@" );
 	}
 
 	private boolean isPasswordValid( String password )
 	{
-		//TODO: Replace this with your own logic
-		return password.length() > 4;
+		return password.length() > 7;
 	}
 
 	/**
@@ -370,44 +402,30 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
+	public class UserRegisterTask extends AsyncTask<Void, Void, Boolean>
 	{
 
-		private final String mEmail;
-		private final String mPassword;
+		private final PatientSingleton mPatient;
 
-		UserLoginTask( String email, String password )
+		UserRegisterTask( PatientSingleton patient )
 		{
-			mEmail = email;
-			mPassword = password;
+			mPatient = patient;
 		}
 
 		@Override
 		protected Boolean doInBackground( Void... params )
 		{
-			// TODO: attempt authentication against a network service.
-
 			try
 			{
-				// Simulate network access.
-				Thread.sleep( 2000 );
+				// We have populated our PatientSingleton, so now we save that information
+				//		to the appropriate databases:
+				registerPatientAction.registerPatient( mPatient );
 			}
-			catch( InterruptedException e )
+			catch( Exception e )
 			{
 				return false;
 			}
 
-			for( String credential : DUMMY_CREDENTIALS )
-			{
-				String[] pieces = credential.split( ":" );
-				if( pieces[0].equals( mEmail ) )
-				{
-					// Account exists, return true if the password matches.
-					return pieces[1].equals( mPassword );
-				}
-			}
-
-			// TODO: register the new account here.
 			return true;
 		}
 
@@ -419,14 +437,16 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
 			if( success )
 			{
+				Log.i( "Registration", mPatient.toString() );
 				finish();
 			}
 			else
 			{
-				mPasswordView.setError( getString( R.string.error_incorrect_password ) );
+				mPasswordView.setError( getString( R.string.error_something_went_wrong ) );
 				mPasswordView.requestFocus();
 			}
-		}
+
+		} // onPostExecute
 
 		@Override
 		protected void onCancelled()
@@ -434,6 +454,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			mAuthTask = null;
 			showProgress( false );
 		}
-	}
-}
+
+	} // UserRegisterTask
+
+} // class
 

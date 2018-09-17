@@ -3,13 +3,14 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_something_went_wrong">Something went wrong</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -20,8 +21,10 @@
     <string name="log_glucose">Log Glucose</string>
     <string name="title_activity_settings">Settings</string>
     <string name="register">Register</string>
+    <string name="register_account">Register New Account</string>
     <string name="login">Log In</string>
     <string name="logout">Log Out</string>
+    <string name="select_a_doctor">Select a doctor:</string>
     <string name="title_activity_register">Register</string>
 
     <!-- Strings related to Settings -->

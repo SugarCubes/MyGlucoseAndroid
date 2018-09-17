@@ -17,6 +17,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
@@ -30,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class DbPatientRepository implements IPatientRepository
 {
@@ -51,8 +53,14 @@ public class DbPatientRepository implements IPatientRepository
 	} // constructor
 
 
+	/**
+	 * populate - Fetches information for the logged-in user in the database
+	 * @param patientSingleton - Explicitly require the patient object
+	 * @param cursor - The cursor to get the information from. This is typically retrieved and
+	 *               returned by the CursorLoader.
+	 */
 	@Override
-	public void logIn( PatientSingleton patientSingleton, Cursor cursor )
+	public void populate( PatientSingleton patientSingleton, Cursor cursor )
 	{
 		if( cursor != null )
 		{
@@ -91,11 +99,11 @@ public class DbPatientRepository implements IPatientRepository
 
 		} // if
 
-	} // logIn
+	} // populate
 
 
 	@Override
-	public boolean logOut( PatientSingleton patientSingleton )
+	public boolean delete( PatientSingleton patientSingleton )
 	{
 		ContentResolver contentResolver = context.getContentResolver();
 		int a = contentResolver.delete( MyGlucoseContentProvider.USERS_URI,
@@ -113,17 +121,19 @@ public class DbPatientRepository implements IPatientRepository
 
 		return false;
 
-	} // logIn
+	} // populate
 
 
 	@Override
-	public boolean createLogin( PatientSingleton patientSingleton )
+	public boolean create( PatientSingleton patientSingleton )
 	{
 		// There has to be two tables updated: "users" and "patients":
+		long timestamp = new Date().getTime();
 		ContentValues patientValues = new ContentValues();
 		if( patientSingleton.getDoctor() != null )
 			patientValues.put( DB.KEY_DR_ID, patientSingleton.getDoctor().getEmail() );
 		patientValues.put( DB.KEY_USER_EMAIL, patientSingleton.getEmail() );
+		patientValues.put( DB.KEY_TIMESTAMP, timestamp );
 		Uri patientUri = contentResolver.insert(
 				MyGlucoseContentProvider.PATIENTS_URI, patientValues );
 
@@ -140,6 +150,7 @@ public class DbPatientRepository implements IPatientRepository
 		userValues.put( DB.KEY_USER_LOGGED_IN, 1 );
 		userValues.put( DB.KEY_USER_PHONE, patientSingleton.getPhoneNumber() );
 		userValues.put( DB.KEY_USERNAME, patientSingleton.getUserName() );
+		userValues.put( DB.KEY_TIMESTAMP, timestamp );
 		Uri userUri = contentResolver.insert(
 				MyGlucoseContentProvider.USERS_URI, userValues );
 
@@ -148,6 +159,42 @@ public class DbPatientRepository implements IPatientRepository
 
 		return false;
 
-	} // createLogin
+	} // create
+
+
+	@Override
+	public Cursor getCursorForLoggedInUser()
+	{
+		try
+		{
+			return new GetLoggedInUserTask().execute( contentResolver ).get();
+		}
+		catch( InterruptedException e )
+		{
+			e.printStackTrace();
+		}
+		catch( ExecutionException e )
+		{
+			e.printStackTrace();
+		}
+
+		return null;
+
+	} // getCursorForLoggedInUser
+
+
+
+	public static class GetLoggedInUserTask extends AsyncTask<ContentResolver, Void, Cursor>
+	{
+		@Override
+		protected Cursor doInBackground( ContentResolver... contentResolvers )
+		{
+			return contentResolvers[0].query( MyGlucoseContentProvider.PATIENT_USERS_URI,
+					null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
+					new String[]{ String.valueOf( 1 ) }, null );
+
+		} // doInBackground
+
+	} // AsyncTask
 
 } // repository
