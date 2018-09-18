@@ -18,29 +18,22 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
-import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class DbPatientRepository implements IPatientRepository
 {
 
 	private ContentResolver contentResolver;
-	private Uri uri = MyGlucoseContentProvider.PATIENTS_URI;
-	private Uri usersUri = MyGlucoseContentProvider.USERS_URI;
-	private ApplicationUser user;
 	private Context context;
+	private DbApplicationUserRepository dbApplicationUserRepository;
 
 	private final String LOG_TAG = this.getClass().getName();
 
@@ -49,57 +42,9 @@ public class DbPatientRepository implements IPatientRepository
 	{
 		this.context = context;
 		contentResolver = context.getContentResolver();
+		dbApplicationUserRepository = new DbApplicationUserRepository( context );
 
 	} // constructor
-
-
-	/**
-	 * populate - Fetches information for the logged-in user in the database
-	 * @param patientSingleton - Explicitly require the patient object
-	 * @param cursor - The cursor to get the information from. This is typically retrieved and
-	 *               returned by the CursorLoader.
-	 */
-	@Override
-	public void populate( PatientSingleton patientSingleton, Cursor cursor )
-	{
-		if( cursor != null )
-		{
-			cursor.moveToFirst();
-
-			patientSingleton.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
-			patientSingleton.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
-			patientSingleton.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) )  );
-			patientSingleton.setCity( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) ) );
-			try {
-				// TODO: Test
-				SimpleDateFormat formatter = new SimpleDateFormat( "E yyyy.MM.dd 'at' hh:mm:ss a zzz", Locale.US );
-				if( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) != null )
-				{
-					Date date = formatter.parse( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
-					Log.d( LOG_TAG, "Date found: " + date.toString() );
-					patientSingleton.setDate( date );
-				}
-			}
-			catch( Exception e )
-			{
-				e.printStackTrace();
-			}
-			patientSingleton.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
-			patientSingleton.setFirstName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
-			patientSingleton.setLastName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) ) );
-			patientSingleton.setPhoneNumber( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) ) );
-			patientSingleton.setState( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_STATE ) ) );
-			patientSingleton.setZip1( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) ) );
-			patientSingleton.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
-			patientSingleton.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
-			patientSingleton.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
-			patientSingleton.setLoggedIn( true );
-
-			cursor.close();
-
-		} // if
-
-	} // populate
 
 
 	@Override
@@ -107,13 +52,13 @@ public class DbPatientRepository implements IPatientRepository
 	{
 		ContentResolver contentResolver = context.getContentResolver();
 		int a = contentResolver.delete( MyGlucoseContentProvider.USERS_URI,
-				DB.KEY_USER_EMAIL + "=?",
+				DB.KEY_USERNAME + "=?",
 				new String[]{ patientSingleton.getEmail() } );
 		int b = contentResolver.delete( MyGlucoseContentProvider.PATIENTS_URI,
-				DB.KEY_USER_EMAIL + "=?",
+				DB.KEY_USERNAME + "=?",
 				new String[]{ patientSingleton.getEmail() } );
 		int c = contentResolver.delete( MyGlucoseContentProvider.DOCTORS_URI, // (For good measure)
-				DB.KEY_USER_EMAIL + "=?",
+				DB.KEY_USERNAME + "=?",
 				new String[]{ patientSingleton.getEmail() } );
 
 		if( a > 0 && ( b > 0 || c > 0 ) )
@@ -122,6 +67,46 @@ public class DbPatientRepository implements IPatientRepository
 		return false;
 
 	} // populate
+
+	@Override
+	public void delete( String id )
+	{
+		dbApplicationUserRepository.delete( id );			// delete from application users
+		contentResolver.delete( MyGlucoseContentProvider.PATIENTS_URI, DB.KEY_USERNAME + "=?",
+				new String[]{ id } );					// delete patient entry
+
+	} // delete
+
+
+	public Cursor getApplicationUserCursor( String username )
+	{
+		return dbApplicationUserRepository.getApplicationUserCursor( username );
+
+	}
+
+
+	@Override
+	public PatientSingleton getLoggedInUser()
+	{
+		int loggedIn = 1;		// SQLite stores boolean values as 0=false, 1=true
+		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.USERS_URI, null, DB.KEY_USER_LOGGED_IN + "=?",
+				new String[]{ String.valueOf( loggedIn ) }, null );
+
+		if( cursor != null )
+		{
+			cursor.moveToFirst();
+
+			PatientSingleton user = readFromCursor( PatientSingleton.getInstance(), cursor );
+
+			cursor.close();
+
+			return user;
+
+		} // if cursor != null
+
+		return null;
+
+	} // getLoggedInUser
 
 
 	@Override
@@ -132,33 +117,71 @@ public class DbPatientRepository implements IPatientRepository
 		ContentValues patientValues = new ContentValues();
 		if( patientSingleton.getDoctor() != null )
 			patientValues.put( DB.KEY_DR_ID, patientSingleton.getDoctor().getEmail() );
-		patientValues.put( DB.KEY_USER_EMAIL, patientSingleton.getEmail() );
+		patientValues.put( DB.KEY_USERNAME, patientSingleton.getUserName() );
 		Uri patientUri = contentResolver.insert(
 				MyGlucoseContentProvider.PATIENTS_URI, patientValues );
 
 		// Now insert the "users" information:
-		ContentValues userValues = new ContentValues();
-		userValues.put( DB.KEY_USER_EMAIL, patientSingleton.getEmail() );
-		userValues.put( DB.KEY_USER_ADDRESS1, patientSingleton.getAddress1() );
-		userValues.put( DB.KEY_USER_ADDRESS2, patientSingleton.getAddress2() );
-		userValues.put( DB.KEY_USER_CITY, patientSingleton.getCity() );
-		userValues.put( DB.KEY_USER_ZIP1, patientSingleton.getZip1() );
-		userValues.put( DB.KEY_USER_ZIP2, patientSingleton.getZip2() );
-		userValues.put( DB.KEY_USER_FIRST_NAME, patientSingleton.getFirstName() );
-		userValues.put( DB.KEY_USER_LAST_NAME, patientSingleton.getLastName() );
-		userValues.put( DB.KEY_USER_LOGGED_IN, 1 );
-		userValues.put( DB.KEY_USER_PHONE, patientSingleton.getPhoneNumber() );
-		userValues.put( DB.KEY_USERNAME, patientSingleton.getUserName() );
-		userValues.put( DB.KEY_TIMESTAMP, timestamp );
-		Uri userUri = contentResolver.insert(
-				MyGlucoseContentProvider.USERS_URI, userValues );
+		boolean userInserted = dbApplicationUserRepository.create( patientSingleton );
 
-		if( patientUri != null && userUri != null )
+		if( patientUri != null && userInserted )
 			return true;
 
 		return false;
 
 	} // create
+
+
+	@Override
+	public PatientSingleton read( String username )
+	{
+		PatientSingleton patientSingleton = PatientSingleton.getInstance();
+		Cursor userCursor = contentResolver.query( MyGlucoseContentProvider.USERS_URI, null,
+				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
+		dbApplicationUserRepository.readFromCursor( patientSingleton, userCursor );	// Populate appUser
+		Cursor patientCursor = contentResolver.query( MyGlucoseContentProvider.PATIENTS_URI, null,
+				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
+		readFromCursor( patientSingleton, patientCursor );								// Populate patient
+		return patientSingleton;
+
+	} // read
+
+
+	@Override
+	public ArrayList<PatientSingleton> readAll()
+	{
+		ArrayList<PatientSingleton> arrayList = new ArrayList<>(  );
+		arrayList.add( read( "ArbitraryDefaultUserUsername" ) );
+
+		return arrayList;
+
+	} // readAll
+
+
+	@Override
+	public PatientSingleton readFromCursor( PatientSingleton patientSingleton, Cursor cursor )
+	{
+		DbDoctorRepository doctorRepository = new DbDoctorRepository( context );
+		patientSingleton.setDoctor( doctorRepository.readAll().get( 0 ) );
+		return patientSingleton;
+
+	} // readFromCursor
+
+	@Override
+	public ContentValues getContentValues( PatientSingleton item )
+	{
+		ContentValues values = new ContentValues(  );
+		values.put( DB.KEY_DR_ID, item.getDoctor().getUserName() );
+		return values;
+	}
+
+	@Override
+	public void update( String username, PatientSingleton item )
+	{
+		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, getContentValues( item ),
+				DB.KEY_USERNAME + "=?", new String[]{ username } );
+
+	} // update
 
 
 	@Override

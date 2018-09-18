@@ -7,7 +7,7 @@ public class MealEntry
 {
 	private int id;
 	private String remoteId;
-	private String userEmail;
+	private String userName;
 	private int totalCarbs;
 	private Date date;
 	private long timestamp;
@@ -41,14 +41,14 @@ public class MealEntry
 		this.remoteId = remoteId;
 	}
 
-	public String getUserEmail()
+	public String getUserName()
 	{
-		return userEmail;
+		return userName;
 	}
 
-	public void setUserEmail( String userEmail )
+	public void setUserName( String userName )
 	{
-		this.userEmail = userEmail;
+		this.userName = userName;
 	}
 
 	public int getTotalCarbs()

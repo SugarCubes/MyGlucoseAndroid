@@ -15,6 +15,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
@@ -22,10 +23,14 @@ import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class DbApplicationUserRepository implements IApplicationUserRepository<ApplicationUser>
 {
+	private final String LOG_TAG = getClass().getName();
 	private ContentResolver contentResolver;
 	private Uri uri = MyGlucoseContentProvider.USERS_URI;
 
@@ -39,26 +44,30 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 
 	@Override
-	public void create( ApplicationUser user )
+	public boolean create( ApplicationUser user )
 	{
 		ContentValues values = getContentValues( user );
-		contentResolver.insert( uri, values );
+		Uri create = contentResolver.insert( uri, values );
 		user.setLoggedIn( true );
+
+		return create != null;
 
 	} // create
 
 
 	@Override
-	public ApplicationUser read( String id )
+	public ApplicationUser read( String username )
 	{
-		Cursor cursor = contentResolver.query( uri, null, DB.KEY_ID + "=?",
-				new String[]{ id }, null );
+		Cursor cursor = contentResolver.query( uri, null, DB.KEY_USERNAME + "=?",
+				new String[]{ username }, null );
 
 		if( cursor != null )
 		{
 			cursor.moveToFirst();
 
-			ApplicationUser user = readFromCursor( cursor );
+			ApplicationUser newUser = new ApplicationUser();
+
+			ApplicationUser user = readFromCursor( newUser, cursor );
 
 			cursor.close();
 
@@ -84,7 +93,8 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 			while( cursor.moveToNext() )
 			{
-				allUsers.add( readFromCursor( cursor ) );
+				ApplicationUser user = new ApplicationUser();
+				allUsers.add( readFromCursor( user, cursor ) );
 			}
 
 			cursor.close();
@@ -97,29 +107,44 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 
 	@Override
-	public ApplicationUser readFromCursor( Cursor cursor )
+	public ApplicationUser readFromCursor( ApplicationUser user, Cursor cursor )
 	{
-		// NOTE: Do not check if not null, moveToFirst, or moveToNext. This is left
-		// 	to the calling class/method.
+		if( cursor != null )
+		{
+			cursor.moveToFirst();
 
-		ApplicationUser user = new ApplicationUser();
+			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
+			user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
+			user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) )  );
+			user.setCity( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) ) );
+			try {
+				// TODO: Test
+				SimpleDateFormat formatter = new SimpleDateFormat( "E yyyy.MM.dd 'at' hh:mm:ss a zzz", Locale.US );
+				if( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) != null )
+				{
+					Date date = formatter.parse( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
+					Log.d( LOG_TAG, "Date found: " + date.toString() );
+					user.setDate( date );
+				}
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
+			user.setFirstName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
+			user.setLastName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) ) );
+			user.setPhoneNumber( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) ) );
+			user.setState( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_STATE ) ) );
+			user.setZip1( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) ) );
+			user.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
+			user.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
+			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
 
-		user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
-		user.setFirstName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
-		user.setLastName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) ) );
-		user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
-		user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) ) );
-		user.setCity( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) ) );
-		user.setState( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_STATE ) ) );
-		user.setZip1( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) ) );
-		user.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
-		user.setPhoneNumber( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) ) );
-		user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
-		user.setDate( DateUtilities.convertStringToDate(
-				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) )
-		) );
-		user.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
-		user.setLoggedIn( true );
+			cursor.close();
+
+		} // if
 
 		return user;
 
@@ -144,6 +169,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_USERNAME, user.getUserName() );
 		values.put( DB.KEY_DATE, user.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
+		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() );
 		return values;
 
 	} // getContentValues
@@ -153,15 +179,18 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	public void update( String id, ApplicationUser item )
 	{
 		ContentValues values = getContentValues( item );
-		contentResolver.update( uri, values, DB.KEY_USER_EMAIL + "=?", new String[]{ id } );
+		contentResolver.update( uri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
 
 	} // update
 
 
 	@Override
-	public void delete( ApplicationUser item )
+	public boolean delete( ApplicationUser item )
 	{
-		contentResolver.delete( uri, DB.KEY_USER_EMAIL + "=?", new String[]{ item.getEmail() } );
+		int delete = contentResolver.delete( uri,
+				DB.KEY_USERNAME + "=?", new String[]{ item.getEmail() } );
+
+		return delete > 0;
 
 	} // delete
 
@@ -169,32 +198,16 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	@Override
 	public void delete( String email )
 	{
-		contentResolver.delete( uri, DB.KEY_USER_EMAIL + "=?", new String[]{ email } );
+		contentResolver.delete( uri, DB.KEY_USERNAME + "=?", new String[]{ email } );
 
 	} // delete
 
 
-	@Override
-	public ApplicationUser getLoggedInUser()
+	public Cursor getApplicationUserCursor( String username )
 	{
-		int loggedIn = 1;		// SQLite stores boolean values as 0=false, 1=true
-		Cursor cursor = contentResolver.query( uri, null, DB.KEY_USER_LOGGED_IN + "=?",
-				new String[]{ String.valueOf( loggedIn ) }, null );
+		return contentResolver.query( MyGlucoseContentProvider.USERS_URI, null,
+				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
 
-		if( cursor != null )
-		{
-			cursor.moveToFirst();
-
-			ApplicationUser user = readFromCursor( cursor );
-
-			cursor.close();
-
-			return user;
-
-		} // if cursor != null
-
-		return null;
-
-	} // getLoggedInUser
+	} // getApplicationUserCursor
 
 } // repository

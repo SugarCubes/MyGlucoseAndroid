@@ -1,17 +1,10 @@
 package com.sugarcubes.myglucose.singletons;
 
-import android.content.ContentValues;
-import android.content.Context;
-
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.entities.MealEntry;
-import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
-import com.sugarcubes.myglucose.repositories.DbPatientRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 
 import java.util.ArrayList;
 
