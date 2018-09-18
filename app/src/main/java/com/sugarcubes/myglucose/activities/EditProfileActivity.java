@@ -1,5 +1,6 @@
 package com.sugarcubes.myglucose.activities;
 
+import android.annotation.SuppressLint;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -42,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity  {
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(this);*/
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(final Bundle savedInstanceState)
     {
@@ -50,7 +52,7 @@ public class EditProfileActivity extends AppCompatActivity  {
 
         Button button = findViewById(R.id.submitButton);
 
-       button.setOnTouchListener(new View.OnTouchListener(){
+        button.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event){
                 if(event.getAction() == MotionEvent.ACTION_UP) {

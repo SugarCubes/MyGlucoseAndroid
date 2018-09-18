@@ -179,8 +179,8 @@ public class DB extends SQLiteOpenHelper
 
 		// Create Indexes:
 		// CREATE PATIENTS ENTRIES INDEX ON user_id
-		String CREATE_PATIENTS_INDEX = "CREATE INDEX `patients_index` ON " +
-				TABLE_PATIENTS + "(" + DB.KEY_USER_ID + ");";
+		//String CREATE_PATIENTS_INDEX = "CREATE INDEX `patients_index` ON " +
+		//		TABLE_PATIENTS + "(" + DB.KEY_USER_ID + ");";
 //
 //		// CREATE DOCTORS ENTRIES INDEX ON user_id
 //		String CREATE_DOCTORS_INDEX = "CREATE INDEX `patients_index` ON " +
@@ -202,7 +202,7 @@ public class DB extends SQLiteOpenHelper
 //		String CREATE_EXERCISE_ENTRIES_INDEX = "CREATE INDEX `exercise_entries_index` ON " +
 //				TABLE_EXERCISE_ENTRIES + "(" + DB.KEY_USER_ID + ");";
 //
-		db.execSQL( CREATE_PATIENTS_INDEX );
+//		db.execSQL( CREATE_PATIENTS_INDEX );
 //		db.execSQL( CREATE_DOCTORS_INDEX );
 //		db.execSQL( CREATE_MEAL_ENTRIES_INDEX );
 //		db.execSQL( CREATE_MEAL_ITEMS_INDEX );
