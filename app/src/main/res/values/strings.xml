@@ -26,6 +26,7 @@
     <string name="logout">Log Out</string>
     <string name="select_a_doctor">Select a doctor:</string>
     <string name="title_activity_register">Register</string>
+    <string name="edit_profile">Edit Profile</string>
 
     <!-- Strings related to Settings -->
 

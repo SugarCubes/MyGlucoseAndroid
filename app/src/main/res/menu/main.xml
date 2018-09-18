@@ -14,6 +14,12 @@
         app:showAsAction="collapseActionView" />
 
     <item
+        android:id="@+id/action_edit_profile"
+        android:orderInCategory="100"
+        android:title="@string/edit_profile"
+        app:showAsAction="collapseActionView" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

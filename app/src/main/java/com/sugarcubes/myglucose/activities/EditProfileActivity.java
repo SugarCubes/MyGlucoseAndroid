@@ -58,7 +58,7 @@ public class EditProfileActivity extends AppCompatActivity  {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
 
                     DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
-                    PatientSingleton patientSingleton = new PatientSingleton();
+                    PatientSingleton patientSingleton = PatientSingleton.getInstance();
 
                     Intent redirect = new Intent(EditProfileActivity.this, MainActivity.class);
                     //String firstname, lastname, phonenumber, city, state, address, weight, height;
@@ -83,8 +83,8 @@ public class EditProfileActivity extends AppCompatActivity  {
 
                     Log.v("EditText", patientSingleton.getFirstName());
 
-                    dbPatientRepository.create(patientSingleton);
-                    startActivity(redirect);
+                    dbPatientRepository.update( patientSingleton.getUserName(), patientSingleton );
+                    //startActivity(redirect);
                     finish();
                     return true;
                 }

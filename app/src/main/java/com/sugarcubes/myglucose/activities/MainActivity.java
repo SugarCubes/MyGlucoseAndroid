@@ -58,11 +58,11 @@ public class MainActivity
 		Button glucoseButton = findViewById( R.id.glucose_button );
 		Button mealsButton = findViewById( R.id.meals_button );
 		Button exerciseButton = findViewById( R.id.exercise_button );
-		Button editButton = findViewById (R.id.edit);
+//		Button editButton = findViewById (R.id.edit);
 		glucoseButton.setOnTouchListener( this );
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
-		editButton.setOnTouchListener( this );
+//		editButton.setOnTouchListener( this );
 
 
 	} // onCreate
@@ -110,6 +110,10 @@ public class MainActivity
 
 			case R.id.action_register:
 				startRegisterActivity();
+				break;
+
+			case R.id.action_edit_profile:
+				startEditProfileActivity();
 				break;
 
 			default:
@@ -264,13 +268,6 @@ public class MainActivity
 				}
 				break;
 
-            case R.id.edit:
-                if(event.getAction() == MotionEvent.ACTION_UP)
-                {
-                    Intent editIntent = new Intent(this, EditProfileActivity.class);
-                    startActivity(editIntent);
-                }
-                break;
 		} // switch
 
 		return false;
@@ -300,6 +297,14 @@ public class MainActivity
 		startActivity( intent );
 
 	} // startSettingsActivity
+
+
+	private void startEditProfileActivity()
+	{
+		Intent intent = new Intent( this, EditProfileActivity.class );
+		startActivity( intent );
+
+	} // startEditProfileActivity
 
 
 	private void setMenuTexts()
