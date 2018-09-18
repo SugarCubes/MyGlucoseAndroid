@@ -57,8 +57,11 @@ public class EditProfileActivity extends AppCompatActivity  {
             public boolean onTouch(View v, MotionEvent event){
                 if(event.getAction() == MotionEvent.ACTION_UP) {
 
+                    DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
+                    PatientSingleton patientSingleton = new PatientSingleton();
+
                     Intent redirect = new Intent(EditProfileActivity.this, MainActivity.class);
-                    String firstname, lastname, phonenumber, city, state, address, weight, height;
+                    //String firstname, lastname, phonenumber, city, state, address, weight, height;
 
                     EditText firstNameInput = findViewById(R.id.firstNameInput);
                     EditText lastNameInput = findViewById(R.id.lastNameInput);
@@ -69,20 +72,18 @@ public class EditProfileActivity extends AppCompatActivity  {
                     EditText weightInput = findViewById(R.id.weightInput);
                     EditText heightInput = findViewById(R.id.heightInput);
 
-                    lastname = lastNameInput.getText().toString();
-                    phonenumber = phoneNumInput.getText().toString();
-                    city = cityInput.getText().toString();
-                    state = stateInput.getText().toString();
-                    address = addressInput.getText().toString();
-                    weight = weightInput.getText().toString();
-                    height = heightInput.getText().toString();
+                    patientSingleton.firstname = firstNameInput.getText().toString();
+                    patientSingleton.lastname = lastNameInput.getText().toString();
+                    patientSingleton.phonenumber = phoneNumInput.getText().toString();
+                    patientSingleton.city = cityInput.getText().toString();
+                    patientSingleton.state = stateInput.getText().toString();
+                    patientSingleton.address = addressInput.getText().toString();
+                    patientSingleton.weight = weightInput.getText().toString();
+                    patientSingleton.height = heightInput.getText().toString();
 
-                    EditText mEdit = findViewById(R.id.firstNameRead);
+                    Log.v("EditText", patientSingleton.getFirstName());
 
-                    mEdit = firstNameInput;
-
-                    Log.v("EditText", mEdit.getText().toString());
-
+                    dbPatientRepository.create(patientSingleton);
                     startActivity(redirect);
                     finish();
                     return true;
