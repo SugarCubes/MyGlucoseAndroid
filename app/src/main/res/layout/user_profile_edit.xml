@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="First Name"
+        android:hint="First Name"
         app:layout_constraintBottom_toTopOf="@+id/lastNameInput"
         app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintHorizontal_bias="0.5"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Last Name"
+        android:hint="Last Name"
         app:layout_constraintBottom_toTopOf="@+id/phoneNumInput"
         app:layout_constraintStart_toStartOf="@+id/firstNameInput"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
