@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
@@ -42,13 +43,15 @@ public class EditProfileActivity extends AppCompatActivity  {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(this);*/
-    PatientSingleton patientSingleton = new PatientSingleton();
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(final Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_edit);
+
+
 
         Button button = findViewById(R.id.submitButton);
 
@@ -58,14 +61,8 @@ public class EditProfileActivity extends AppCompatActivity  {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
 
                     DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
-<<<<<<< HEAD
-=======
-                    PatientSingleton patientSingleton = PatientSingleton.getInstance();
->>>>>>> master
 
-                    patientSingleton.getInstance();
-                    Intent redirect = new Intent(EditProfileActivity.this, MainActivity.class);
-                    //String firstname, lastname, phonenumber, city, state, address, weight, height;
+                    PatientSingleton patientSingleton = PatientSingleton.getInstance();
 
                     EditText firstNameInput = findViewById(R.id.firstNameInput);
                     EditText lastNameInput = findViewById(R.id.lastNameInput);
@@ -76,23 +73,16 @@ public class EditProfileActivity extends AppCompatActivity  {
                     EditText weightInput = findViewById(R.id.weightInput);
                     EditText heightInput = findViewById(R.id.heightInput);
 
-                    patientSingleton.firstname = firstNameInput.getText().toString();
-                    patientSingleton.lastname = lastNameInput.getText().toString();
-                    patientSingleton.phonenumber = phoneNumInput.getText().toString();
-                    patientSingleton.city = cityInput.getText().toString();
-                    patientSingleton.state = stateInput.getText().toString();
-                    patientSingleton.address = addressInput.getText().toString();
-                    patientSingleton.weight = weightInput.getText().toString();
-                    patientSingleton.height = heightInput.getText().toString();
+                    patientSingleton.setFirstName(firstNameInput.getText().toString());
+                    patientSingleton.setLastName(lastNameInput.getText().toString());
+                    patientSingleton.setPhoneNumber(phoneNumInput.getText().toString());
+                    patientSingleton.setCity(cityInput.getText().toString());
+                    patientSingleton.setState(stateInput.getText().toString());
+                    patientSingleton.setAddress1(addressInput.getText().toString());
+                    //patientSingleton.setWeight(weightInput.getText().toString());
+                    //patientSingleton.setHeight(heightInput.getText().toString());
 
-                    Log.v("EditText", patientSingleton.getFirstName());
-
-<<<<<<< HEAD
-                    dbPatientRepository.create(patientSingleton);
-=======
                     dbPatientRepository.update( patientSingleton.getUserName(), patientSingleton );
-                    //startActivity(redirect);
->>>>>>> master
                     finish();
                     return true;
                 }

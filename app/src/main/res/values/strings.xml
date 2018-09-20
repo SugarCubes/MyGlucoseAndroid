@@ -134,5 +134,6 @@
 =======
     <string name="developer_settings">Developer Settings</string>
     <string name="patient_settings">Patient Settings</string>
->>>>>>> master
+    <string name="first_name">First Name</string>
+    >>>>>>> master
 </resources>

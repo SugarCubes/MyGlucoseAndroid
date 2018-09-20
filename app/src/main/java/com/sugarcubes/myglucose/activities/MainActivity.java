@@ -116,6 +116,12 @@ public class MainActivity
 				startEditProfileActivity();
 				break;
 
+			case R.id.action_view_profile:
+				startViewProfileActivity();
+				break;
+
+
+
 			default:
 				return super.onOptionsItemSelected( item );
 		}
@@ -306,6 +312,12 @@ public class MainActivity
 
 	} // startEditProfileActivity
 
+	private void startViewProfileActivity()
+	{
+		Intent intent = new Intent( this, ViewProfileActivity.class );
+		startActivity( intent );
+
+	} // startEditProfileActivity
 
 	private void setMenuTexts()
 	{

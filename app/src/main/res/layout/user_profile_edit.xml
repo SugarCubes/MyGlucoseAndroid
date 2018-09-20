@@ -124,11 +124,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addressInput" />
 
-    <EditText
+    <TextView
         android:id="@+id/firstNameRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text=""
         tools:layout_editor_absoluteX="162dp"
         tools:layout_editor_absoluteY="519dp" />
 
