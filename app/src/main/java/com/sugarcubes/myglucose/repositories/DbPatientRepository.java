@@ -161,10 +161,17 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public PatientSingleton readFromCursor( PatientSingleton patientSingleton, Cursor cursor )
 	{
-		DbDoctorRepository doctorRepository = new DbDoctorRepository( context );
-		patientSingleton.setDoctor( doctorRepository.readAll().get( 0 ) );
-		return patientSingleton;
-
+	    try
+        {
+            DbDoctorRepository doctorRepository = new DbDoctorRepository(context);
+            patientSingleton.setDoctor(doctorRepository.readAll().get(0));
+            return patientSingleton;
+        }
+        catch(IndexOutOfBoundsException indexOoB)
+        {
+            patientSingleton = null;
+            return patientSingleton;
+        }
 	} // readFromCursor
 
 	@Override

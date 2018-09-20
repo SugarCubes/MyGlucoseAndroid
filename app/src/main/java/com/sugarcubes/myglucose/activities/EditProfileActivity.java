@@ -42,7 +42,7 @@ public class EditProfileActivity extends AppCompatActivity  {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(this);*/
-
+    PatientSingleton patientSingleton = new PatientSingleton();
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(final Bundle savedInstanceState)
@@ -58,8 +58,8 @@ public class EditProfileActivity extends AppCompatActivity  {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
 
                     DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
-                    PatientSingleton patientSingleton = new PatientSingleton();
 
+                    patientSingleton.getInstance();
                     Intent redirect = new Intent(EditProfileActivity.this, MainActivity.class);
                     //String firstname, lastname, phonenumber, city, state, address, weight, height;
 
@@ -84,7 +84,6 @@ public class EditProfileActivity extends AppCompatActivity  {
                     Log.v("EditText", patientSingleton.getFirstName());
 
                     dbPatientRepository.create(patientSingleton);
-                    startActivity(redirect);
                     finish();
                     return true;
                 }
