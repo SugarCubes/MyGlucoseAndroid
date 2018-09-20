@@ -38,16 +38,20 @@ import android.widget.Toast;
 
 public class ViewProfileActivity extends AppCompatActivity {
 
+    private final String LOG_TAG = getClass().getCanonicalName();
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile);
+
+        Log.d( LOG_TAG, "View opened!" );
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
 
         TextView firstName = findViewById(R.id.firstNameView);
         firstName.setText(patientSingleton.getFirstName());
 
-        finish();
+//        finish();                     // finish() closes the activity
     }
 }

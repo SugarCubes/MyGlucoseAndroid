@@ -117,6 +117,7 @@ public class MainActivity
 				break;
 
 			case R.id.action_view_profile:
+				Log.d( LOG_TAG, "View Profile clicked!" );
 				startViewProfileActivity();
 				break;
 

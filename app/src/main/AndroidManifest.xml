@@ -46,6 +46,15 @@
         </activity>
 
         <activity
+            android:name=".activities.ViewProfileActivity"
+            android:label="@string/view_profile_activity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
+
+        <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings">
             <meta-data
