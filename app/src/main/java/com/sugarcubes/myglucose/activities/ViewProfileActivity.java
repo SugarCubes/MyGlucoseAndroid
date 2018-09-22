@@ -51,7 +51,21 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         TextView firstName = findViewById(R.id.firstNameView);
         firstName.setText(patientSingleton.getFirstName());
+        TextView lastName = findViewById(R.id.lastNameView);
+        lastName.setText(patientSingleton.getLastName());
+        TextView phoneNum = findViewById(R.id.phoneNumView);
+        phoneNum.setText(patientSingleton.getPhoneNumber());
+        TextView cityView = findViewById(R.id.cityView);
+        cityView.setText(patientSingleton.getCity());
+        TextView stateView = findViewById(R.id.stateView);
+        stateView.setText(patientSingleton.getState());
+        TextView addressView = findViewById(R.id.addressView);
+        addressView.setText(patientSingleton.getAddress1());
+        TextView weightView = findViewById(R.id.weightView);
+        weightView.setText(patientSingleton.getWeight());
+        TextView heightView = findViewById(R.id.heightView);
+        heightView.setText(patientSingleton.getHeight());
 
-//        finish();                     // finish() closes the activity
+//      finish();                     // finish() closes the activity
     }
 }

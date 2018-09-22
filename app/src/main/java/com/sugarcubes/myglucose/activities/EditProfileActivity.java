@@ -79,8 +79,8 @@ public class EditProfileActivity extends AppCompatActivity  {
                     patientSingleton.setCity(cityInput.getText().toString());
                     patientSingleton.setState(stateInput.getText().toString());
                     patientSingleton.setAddress1(addressInput.getText().toString());
-                    //patientSingleton.setWeight(weightInput.getText().toString());
-                    //patientSingleton.setHeight(heightInput.getText().toString());
+                    patientSingleton.setWeight(weightInput.getText().toString());
+                    patientSingleton.setHeight(heightInput.getText().toString());
 
                     dbPatientRepository.update( patientSingleton.getUserName(), patientSingleton );
                     finish();

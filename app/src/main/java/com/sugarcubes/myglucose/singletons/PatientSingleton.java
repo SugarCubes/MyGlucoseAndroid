@@ -18,7 +18,8 @@ public class PatientSingleton extends ApplicationUser
 	protected ArrayList<GlucoseEntry> glucoseEntries;
 	protected ArrayList<MealEntry> mealEntries;
 	protected ArrayList<ExerciseEntry> exerciseEntries;
-	public String firstname, lastname, phonenumber, city, state, address, weight, height;
+	public String firstname, lastname, phonenumber, city, state, address;
+	public double weight, height;
 
 
 	public PatientSingleton()
@@ -36,8 +37,8 @@ public class PatientSingleton extends ApplicationUser
 		city = "";
 		state = "";
 		address = "";
-		weight = "";
-		height = "";
+		weight = 0;
+		height = 0;
 
 	} // constructor
 

@@ -13,7 +13,6 @@ public class ApplicationUser
 	protected String firstName;
 	protected String lastName;
 	protected String userName;
-
 	protected String address1;
 	protected String address2;
 	protected String city;
@@ -21,6 +20,8 @@ public class ApplicationUser
 	protected int zip1;
 	protected int zip2;
 	protected String phoneNumber;
+	protected String height;
+	protected String weight;
 
 	protected Date date;
 	protected long timestamp;
@@ -38,6 +39,8 @@ public class ApplicationUser
 		zip1		= -1;
 		zip2		= -1;
 		phoneNumber = "";
+		height = "";
+		weight = "";
 		date		= new Date();
 		timestamp	= -1;
 
@@ -152,6 +155,26 @@ public class ApplicationUser
 	public void setZip2( int zip2 )
 	{
 		this.zip2 = zip2;
+	}
+
+	public String getWeight()
+	{
+		return weight;
+	}
+
+	public void setWeight( String weight )
+	{
+		this.weight = weight;
+	}
+
+	public String getHeight()
+	{
+		return height;
+	}
+
+	public void setHeight( String height )
+	{
+		this.height = height;
 	}
 
 	public String getPhoneNumber()

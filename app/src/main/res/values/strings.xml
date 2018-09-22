@@ -135,6 +135,13 @@
     <string name="developer_settings">Developer Settings</string>
     <string name="patient_settings">Patient Settings</string>
     <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="address">Address</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
     <string name="view_profile_activity">View Profile</string>
     >>>>>>> master
 </resources>

@@ -54,6 +54,8 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_USER_ZIP1 = "Zip1";
 	public static final String KEY_USER_ZIP2 = "Zip2";
 	public static final String KEY_USER_PHONE = "PhoneNumber";
+	public static final String KEY_USER_HEIGHT = "Height";
+	public static final String KEY_USER_WEIGHT = "Weight";
 	// Patient table keys:
 	public static final String KEY_DR_EMAIL = "DoctorEmail";
 	// Doctor table keys:
@@ -110,7 +112,9 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USER_ZIP1 + " INTEGER,"
 				+ KEY_USER_ZIP2 + " INTEGER,"
 				+ KEY_USER_PHONE + " TEXT,"
-				+ KEY_DATE + " TEXT, "
+				+ KEY_USER_HEIGHT + "INTEGER,"
+				+ KEY_USER_WEIGHT + "INTEGER,"
+ 				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER );";	// Retrieve as a *long* value
 
 		// CREATE PATIENTS TABLE

@@ -11,14 +11,14 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="42dp"
+        android:layout_marginBottom="194dp"
         android:layout_marginEnd="49dp"
         android:layout_marginLeft="49dp"
         android:layout_marginRight="49dp"
         android:layout_marginStart="49dp"
         android:layout_marginTop="16dp"
         android:text="Please add the following fields to your profile"
-        app:layout_constraintBottom_toTopOf="@+id/lastNameInput"
+        app:layout_constraintBottom_toTopOf="@+id/addressInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,35 +27,36 @@
         android:id="@+id/firstNameInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="38dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="First Name"
-        app:layout_constraintBottom_toTopOf="@+id/lastNameInput"
-        app:layout_constraintEnd_toStartOf="@+id/textView2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView2" />
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/lastNameInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/lastNameInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="Last Name"
+        android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/phoneNumInput"
-        app:layout_constraintStart_toStartOf="@+id/firstNameInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
         android:id="@+id/phoneNumInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="42dp"
         android:ems="10"
+        android:hint="Phone Number"
         android:inputType="phone"
-        android:text="Phone Number"
-        app:layout_constraintBottom_toTopOf="@+id/heightInput"
-        app:layout_constraintStart_toStartOf="@+id/lastNameInput"
+        app:layout_constraintBottom_toTopOf="@+id/cityInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastNameInput" />
 
     <EditText
@@ -63,73 +64,73 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="City"
         android:inputType="textPersonName"
-        android:text="Address"
         app:layout_constraintBottom_toTopOf="@+id/stateInput"
-        app:layout_constraintStart_toStartOf="@+id/heightInput"
-        app:layout_constraintTop_toBottomOf="@+id/heightInput" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumInput" />
 
     <EditText
         android:id="@+id/stateInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="47dp"
         android:ems="10"
-        android:inputType="number"
-        android:text="Weight"
-        app:layout_constraintBottom_toTopOf="@+id/addressInput"
-        app:layout_constraintStart_toStartOf="@+id/cityInput"
+        android:hint="State"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/weightInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cityInput" />
 
     <EditText
         android:id="@+id/addressInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="261dp"
         android:ems="10"
+        android:hint="Address"
         android:inputType="textPersonName"
-        android:text="Height"
-        app:layout_constraintBottom_toTopOf="@+id/submitButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/stateInput"
-        app:layout_constraintTop_toBottomOf="@+id/stateInput" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
         android:id="@+id/weightInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="City"
-        app:layout_constraintStart_toStartOf="@+id/phoneNumInput"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumInput" />
+        android:hint="Weight"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/heightInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stateInput" />
 
     <EditText
         android:id="@+id/heightInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="51dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="State"
-        app:layout_constraintBottom_toTopOf="@+id/cityInput"
-        app:layout_constraintStart_toStartOf="@+id/weightInput"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumInput" />
+        android:hint="Height"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/submitButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weightInput" />
 
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="87dp"
+        android:layout_marginBottom="69dp"
         android:text="Submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressInput" />
-
-    <TextView
-        android:id="@+id/firstNameRead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="519dp" />
+        app:layout_constraintTop_toBottomOf="@+id/heightInput" />
 
 </android.support.constraint.ConstraintLayout>
