@@ -31,16 +31,14 @@ public class ViewLatestGlucoseEntry extends AppCompatActivity {
         setContentView(R.layout.view_latest_glucose_entry);
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
+        DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
+        GlucoseEntry glucoseEntry = patientSingleton.getGlucoseEntries().get(dbGlucoseEntryRepository.readAll().size() - 1);
 
         TextView glucoseLevel = findViewById(R.id.glucoseLevelView);
-        glucoseLevel.setText(
-                Float.toString(patientSingleton.getGlucoseEntries().get(patientSingleton
-                        .getGlucoseEntries().size() - 1).getMeasurement()));
+        glucoseLevel.setText(Float.toString(glucoseEntry.getMeasurement()));
         TextView whichMeal = findViewById(R.id.whichMealView);
-        whichMeal.setText(patientSingleton.getGlucoseEntries().get(patientSingleton
-                .getGlucoseEntries().size() - 1).getWhichMeal().toString());
+        whichMeal.setText(glucoseEntry.getWhichMeal().toString());
         TextView beforeAfter = findViewById(R.id.beforeAfterView);
-        beforeAfter.setText(patientSingleton.getGlucoseEntries().get(patientSingleton
-                .getGlucoseEntries().size() - 1).getBeforeAfter().toString());
+        beforeAfter.setText(glucoseEntry.getBeforeAfter().toString());
     }
 }

@@ -60,7 +60,7 @@ public class LogGlucoseActivity extends AppCompatActivity
                     glucoseEntry.setDate(new Timestamp(date.getTime()));
                     patientSingleton.glucoseEntries.add(glucoseEntry);
                     dbPatientRepository.update(patientSingleton.getUserName(), patientSingleton);
-                    dbGlucoseEntryRepository.create(glucoseEntry);
+                    dbGlucoseEntryRepository.update(glucoseEntry.getId(), glucoseEntry);
 
 					finish();
 					return true;
