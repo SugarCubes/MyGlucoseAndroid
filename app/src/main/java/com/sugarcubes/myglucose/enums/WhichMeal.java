@@ -4,5 +4,7 @@ public enum WhichMeal
 {
 	BREAKFAST,
 	LUNCH,
-	DINNER
+	DINNER,
+	SNACK,
+	OTHER
 }

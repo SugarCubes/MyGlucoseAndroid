@@ -15,9 +15,9 @@ public class PatientSingleton extends ApplicationUser
 	private String doctorEmail;
 	protected Doctor doctor;
 
-	protected ArrayList<GlucoseEntry> glucoseEntries;
-	protected ArrayList<MealEntry> mealEntries;
-	protected ArrayList<ExerciseEntry> exerciseEntries;
+	public ArrayList<GlucoseEntry> glucoseEntries;
+	public ArrayList<MealEntry> mealEntries;
+	public ArrayList<ExerciseEntry> exerciseEntries;
 	public String firstname, lastname, phonenumber, city, state, address;
 	public double weight, height;
 

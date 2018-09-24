@@ -8,14 +8,14 @@
     tools:layout_editor_absoluteY="81dp">
 
     <Spinner
-        android:id="@+id/spinner2"
+        android:id="@+id/beforeAfter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="11dp"
         android:layout_marginStart="11dp"
         android:layout_marginTop="8dp"
         android:entries="@array/beforeAfter"
-        app:layout_constraintStart_toStartOf="@+id/spinner"
+        app:layout_constraintStart_toStartOf="@+id/whichMeal"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
@@ -26,10 +26,10 @@
         android:text="When was your meal?"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/glucoseLevel" />
 
     <EditText
-        android:id="@+id/textView4"
+        android:id="@+id/glucoseLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="7dp"
@@ -48,10 +48,10 @@
         android:text="Did you record your glucose before, or after?"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/whichMeal" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/whichMeal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="1dp"
@@ -62,33 +62,33 @@
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/submitGlucose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="11dp"
         android:layout_marginStart="11dp"
         android:layout_marginTop="14dp"
         android:text="Submit"
-        app:layout_constraintStart_toStartOf="@+id/spinner2"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintStart_toStartOf="@+id/beforeAfter"
+        app:layout_constraintTop_toBottomOf="@+id/beforeAfter" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/viewLatest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:text="View Latest Entry"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/submitGlucose" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/viewHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:text="View Entry History"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/viewLatest" />
 </android.support.constraint.ConstraintLayout>

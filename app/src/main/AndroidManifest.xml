@@ -32,9 +32,6 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" />
-        <activity android:name=".activities.LogGlucoseActivity" />
-        <activity android:name=".activities.LogMealsActivity" />
-        <activity android:name=".activities.LogExerciseActivity" />
 
         <activity
             android:name=".activities.EditProfileActivity"
@@ -48,6 +45,15 @@
         <activity
             android:name=".activities.ViewProfileActivity"
             android:label="@string/view_profile_activity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.LogGlucoseActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
