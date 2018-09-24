@@ -39,7 +39,7 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_ID = "_id";
 	public static final String KEY_DATE = "Date";
 	public static final String KEY_TIMESTAMP = "Timestamp";
-	public static final String KEY_REMOTE_KEY = "RemoteKey";
+	public static final String KEY_REMOTE_ID = "RemoteKey";
 	// ApplicationUser table keys:
 	public static final String KEY_USER_LOGGED_IN = "LoggedIn";
 	public static final String KEY_USERNAME = "Username";
@@ -130,7 +130,7 @@ public class DB extends SQLiteOpenHelper
 		// CREATE GLUCOSE TABLE
 		String CREATE_GLUCOSE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_GLUCOSE_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
-				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_GLUCOSE_MEASUREMENT + " REAL, "	// DEFAULT: mmol/L. May need conversion
 				+ KEY_GLUCOSE_BEFORE_AFTER + " INTEGER, "
@@ -141,7 +141,7 @@ public class DB extends SQLiteOpenHelper
 		// CREATE MEALS TABLE
 		String CREATE_MEAL_ENTRIES_TABLE = "CREATE TABLE " + TABLE_MEAL_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
-				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_MEAL_ENTRY_TOTAL_CARBS + " INTEGER, "
 				+ KEY_DATE + " TEXT, "
@@ -150,7 +150,7 @@ public class DB extends SQLiteOpenHelper
 		// CREATE MEAL ITEMS TABLE
 		String CREATE_MEAL_ITEMS_TABLE = "CREATE TABLE " + TABLE_MEAL_ITEMS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
-				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_MEAL_ID + " TEXT, "
 				+ KEY_MEAL_ITEM_NAME + " TEXT, "
 				+ KEY_MEAL_ITEM_CARBS + " INTEGER, "
@@ -161,7 +161,7 @@ public class DB extends SQLiteOpenHelper
 		// CREATE EXERCISE TABLE
 		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
-				+ KEY_REMOTE_KEY + " TEXT, "
+				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_EXERCISE_NAME + " TEXT, "
 				+ KEY_EXERCISE_MINUTES_SPENT + " INTEGER, "

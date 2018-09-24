@@ -21,6 +21,8 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
 
@@ -32,13 +34,22 @@ public class ViewLatestGlucoseEntry extends AppCompatActivity {
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
         DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
-        GlucoseEntry glucoseEntry = patientSingleton.getGlucoseEntries().get(dbGlucoseEntryRepository.readAll().size() - 1);
+        //GlucoseEntry glucoseEntry = patientSingleton.getGlucoseEntries().get(dbGlucoseEntryRepository.readAll().size() - 1);
+        ArrayList<GlucoseEntry> glucoseEntries = dbGlucoseEntryRepository.readAll();    // Get all from db
+        GlucoseEntry glucoseEntry;
+        if( glucoseEntries.size() > 0 )
+        {
+            glucoseEntry = glucoseEntries.get( 0 );    // Get last entry
 
-        TextView glucoseLevel = findViewById(R.id.glucoseLevelView);
-        glucoseLevel.setText(Float.toString(glucoseEntry.getMeasurement()));
-        TextView whichMeal = findViewById(R.id.whichMealView);
-        whichMeal.setText(glucoseEntry.getWhichMeal().toString());
-        TextView beforeAfter = findViewById(R.id.beforeAfterView);
-        beforeAfter.setText(glucoseEntry.getBeforeAfter().toString());
+            TextView glucoseLevel = findViewById(R.id.glucoseLevelView);
+            glucoseLevel.setText(Float.toString(glucoseEntry.getMeasurement()));
+            TextView whichMeal = findViewById(R.id.whichMealView);
+            whichMeal.setText(glucoseEntry.getWhichMeal().toString());
+            TextView beforeAfter = findViewById(R.id.beforeAfterView);
+            beforeAfter.setText(glucoseEntry.getBeforeAfter().toString());
+        }
+        else
+            glucoseEntry = new GlucoseEntry();
+
     }
 }

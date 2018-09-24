@@ -15,6 +15,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 
 public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 {
+	private final String LOG_TAG = getClass().getSimpleName();
 	private ContentResolver contentResolver;
 	private Uri uri = MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI;
 
@@ -42,7 +44,9 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void create( GlucoseEntry item )
 	{
-		contentResolver.insert(  uri, getContentValues( item ) );
+		ContentValues values = getContentValues( item );
+		Log.w( LOG_TAG, "URI: " + uri + "; Values: " + values.toString() );
+		contentResolver.insert(  uri, values );
 
 	} // create
 
@@ -79,7 +83,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		Cursor cursor = contentResolver.query( uri,
 				//null, DB.KEY_USER_ID + "=?", new String[]{ userId },	// Just return ALL entries
 				null, null, null,
-				DB.KEY_TIMESTAMP + " ASC" );
+				DB.KEY_ID + " DESC" );
 
 		if( cursor != null )
 		{
@@ -105,8 +109,8 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	public ContentValues getContentValues( GlucoseEntry item )
 	{
 		ContentValues values = new ContentValues();
-		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+//		values.put( DB.KEY_ID, item.getId() );
+		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
@@ -151,7 +155,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
 		entry.setRemoteId( cursor.getString(
-				cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
+				cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setMeasurement( cursor.getFloat(
 				cursor.getColumnIndex( DB.KEY_GLUCOSE_MEASUREMENT ) ) );
 		entry.setBeforeAfter( BeforeAfter.valueOf( cursor.getString(

@@ -103,7 +103,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		ExerciseEntry entry = new ExerciseEntry();
 
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
-		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
+		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ));
 		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES_SPENT ) ));
 
@@ -124,8 +124,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	public ContentValues getContentValues( ExerciseEntry item )
 	{
 		ContentValues values = new ContentValues();
-		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+//		values.put( DB.KEY_ID, item.getId() );
+		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );
 		values.put( DB.KEY_EXERCISE_MINUTES_SPENT, item.getMinutes() );

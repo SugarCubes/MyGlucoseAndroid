@@ -13,32 +13,28 @@ public class GlucoseEntry
 	private int id;
 	private String remoteId;
 	private String userName;
+	private PatientSingleton patient;
 	private float measurement;			// DEFAULT: mmol/L. May need conversion to display correctly
 //	private GlucoseUnits units;			// enum	mmol/L or mg/dL
 	private BeforeAfter beforeAfter;	// enum representing before or after a meal
 	private WhichMeal whichMeal;		// enum representing which meal entry taken before/after
 	private Date date;
 	private long timeStamp;
-	private PatientSingleton patient;
 
 
 	public GlucoseEntry()
 	{
+		id = -1;
+		remoteId = "";
+		patient = PatientSingleton.getInstance();
+		userName = patient.getUserName();
+		measurement = 0f;
+		beforeAfter = BeforeAfter.BEFORE;
+		whichMeal = WhichMeal.OTHER;
+		date = new Date();
+		timeStamp = 0;
 
-	}
-
-	public void loadFromCursor( Cursor glucoseCursor )
-	{
-
-	}
-
-//	public void load( Context context, String glucoseEntryId )
-//	{
-//		ContentResolver contentResolver = context.getContentResolver();
-//		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI, null,
-//				DB.KEY_ID + "=?", new String[]{ glucoseEntryId }, null );
-//
-//	} // load
+	} // constructor
 
 
 	public int getId()

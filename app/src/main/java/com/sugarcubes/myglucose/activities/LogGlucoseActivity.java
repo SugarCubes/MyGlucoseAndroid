@@ -1,6 +1,7 @@
 package com.sugarcubes.myglucose.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -57,10 +58,10 @@ public class LogGlucoseActivity extends AppCompatActivity
                     Date date = new Date();
 
                     glucoseEntry.setTimeStamp(timestamp.getTime());
-                    glucoseEntry.setDate(new Timestamp(date.getTime()));
+                    glucoseEntry.setDate(timestamp);
                     patientSingleton.glucoseEntries.add(glucoseEntry);
                     dbPatientRepository.update(patientSingleton.getUserName(), patientSingleton);
-                    dbGlucoseEntryRepository.update(glucoseEntry.getId(), glucoseEntry);
+                    dbGlucoseEntryRepository.create(glucoseEntry);
 
 					finish();
 					return true;
@@ -69,17 +70,37 @@ public class LogGlucoseActivity extends AppCompatActivity
 			}
 		});
 
-        viewLatest.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
+//        viewLatest.setOnTouchListener(new View.OnTouchListener(){
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//
+//                    setContentView(R.layout.view_latest_glucose_entry);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
-                    setContentView(R.layout.view_latest_glucose_entry);
-                    return true;
-                }
-                return false;
-            }
-        });
+		viewLatest.setOnTouchListener(new View.OnTouchListener(){
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					startViewLatestGlucoseActivity();
+					return true;
+				}
+				return false;
+			}
+		});
 
-	}
-}
+	} // onCreate
+
+
+	private void startViewLatestGlucoseActivity()
+	{
+		Intent intent = new Intent( this, ViewLatestGlucoseEntry.class );
+		startActivity( intent );
+
+	} // startEditProfileActivity
+
+} // class

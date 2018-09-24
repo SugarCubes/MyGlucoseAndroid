@@ -132,7 +132,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	{
 		MealEntry entry = new MealEntry();
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
-		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ) );
+		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setTotalCarbs( cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) ) );
 		entry.setMealItems( readAllMealItems( entry.getId() ) );	// Access MealItems by meal id
 		// Convert the date string to a Date object:
@@ -150,8 +150,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	public ContentValues getContentValues( MealEntry item )
 	{
 		ContentValues values = new ContentValues();
-		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+//		values.put( DB.KEY_ID, item.getId() );
+		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, item.getTotalCarbs() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
@@ -238,7 +238,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	{
 		return new MealItem(
 				cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ),
-				cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_KEY ) ),
+				cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ),
 				cursor.getString( cursor.getColumnIndex( DB.KEY_MEAL_ID ) ),
 				cursor.getString( cursor.getColumnIndex( DB.KEY_MEAL_ITEM_NAME ) ),
 				cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ITEM_CARBS ) ),
@@ -253,7 +253,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_ID, item.getId() );
-		values.put( DB.KEY_REMOTE_KEY, item.getRemoteId() );
+		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_MEAL_ID, item.getMealId() );
 		values.put( DB.KEY_MEAL_ITEM_NAME, item.getName() );
 		values.put( DB.KEY_MEAL_ITEM_CARBS, item.getCarbs() );
