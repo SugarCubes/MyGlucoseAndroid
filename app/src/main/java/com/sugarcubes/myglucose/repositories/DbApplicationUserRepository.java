@@ -21,7 +21,6 @@ import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
-import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.SimulateLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// TODO
 		// TODO: Change to live LoginAction when switching to production:
 		// TODO
-		loginAction = new SimulateLoginAction( appUser );
+		loginAction = new RemoteLoginAction();
 
 
 		mPasswordView = findViewById( R.id.password );
@@ -177,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 	{
 		if( requestCode == REQUEST_READ_CONTACTS )
 		{
-			if( grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED )
+			if( grantResults.length == 1 && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED )
 			{
 				populateAutoComplete();
 			}
@@ -375,7 +376,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 	}
 
 
-
 	private interface ProfileQuery
 	{
 		String[] PROJECTION = {
@@ -395,6 +395,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
 	{
 
+		private static final String LOG_TAG = "UserLoginTask";
 		private final String mEmail;
 		private final String mPassword;
 
@@ -409,7 +410,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		@Override
 		protected Boolean doInBackground( Void... params )
 		{
-			return loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
+			try
+			{
+
+//				UrlConnectionManager connectionManager = new UrlConnectionManager( LoginActivity.this );
+//				JSONObject json = connectionManager.sendRequest( "/Account/LoginRemote", values, Request.Method.POST );    // Do the request
+				loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
+				return true;
+
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+				return false;
+			}
 
 		} // doInBackground
 
@@ -424,9 +438,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			{
 				appUser.setLoggedIn( true );
 				Intent returnData = new Intent();
-				returnData.setData( Uri.parse("logged in") );
-				setResult( RESULT_OK, returnData );			// Return ok result for activity result
-				finish();									// Close the activity
+				returnData.setData( Uri.parse( "logged in" ) );
+				setResult( RESULT_OK, returnData );            // Return ok result for activity result
+				finish();                                    // Close the activity
 			}
 			else
 			{

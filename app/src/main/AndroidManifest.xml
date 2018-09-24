@@ -3,6 +3,7 @@
     package="com.sugarcubes.myglucose">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -15,10 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name=".contentproviders.MyGlucoseContentProvider"
             android:authorities="com.sugarcubes.myglucose.provider"
             android:exported="false" />
+
+        <service android:name=".services.SyncService"
+            android:exported="false"
+            android:process=":myglucose_sync_service" />
 
         <activity
             android:name=".activities.MainActivity"
@@ -29,12 +35,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" />
-        <activity android:name=".activities.LogGlucoseActivity" />
-        <activity android:name=".activities.LogMealsActivity" />
-        <activity android:name=".activities.LogExerciseActivity" />
+
+        <activity android:name=".activities.LogGlucoseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
+
+        <activity android:name=".activities.LogMealsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
+
+        <activity android:name=".activities.LogExerciseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sugarcubes.myglucose.activities.MainActivity" />
+        </activity>
 
         <activity
             android:name=".activities.EditProfileActivity"
@@ -61,6 +83,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
+
         <activity
             android:name=".activities.RegisterActivity"
             android:label="@string/title_activity_register"
@@ -69,6 +92,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>

@@ -22,12 +22,12 @@ public class SimulateLoginAction implements ILoginAction
 
 
 	@Override
-	public boolean attemptLogin( String username, String password, Context context )
+	public ApplicationUser attemptLogin( String username, String password, Context context )
 	{
 		try {
+			PatientSingleton patientSingleton = PatientSingleton.getInstance();
 //			Thread.sleep( 2000 );
 			DbPatientRepository patientRepository = new DbPatientRepository( context );
-			PatientSingleton patientSingleton = PatientSingleton.getInstance();
 //			Cursor cursor = context.getContentResolver().query( MyGlucoseContentProvider.PATIENT_USERS_URI,
 //					null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
 //					new String[]{ String.valueOf( 1 ) }, null );
@@ -52,13 +52,14 @@ public class SimulateLoginAction implements ILoginAction
 			patientSingleton.setDoctor( dr );
 
 			patientRepository.create( patientSingleton );
+
+			return patientSingleton;
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
+			return null;
 		}
-
-		return true;
 
 	} // attemptLogin
 

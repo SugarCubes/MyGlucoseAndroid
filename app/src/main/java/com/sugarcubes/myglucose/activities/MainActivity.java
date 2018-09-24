@@ -43,6 +43,8 @@ public class MainActivity
 	private final int USER_LOADER = 100;
 	private final int LOGIN_REQUEST = 200;
 
+	public static final boolean DEBUG = true;
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState)
 	{
