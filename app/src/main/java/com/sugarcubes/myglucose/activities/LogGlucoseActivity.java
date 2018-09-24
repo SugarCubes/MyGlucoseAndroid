@@ -29,6 +29,7 @@ public class LogGlucoseActivity extends AppCompatActivity
 		setContentView( R.layout.activity_log_glucose );
 
 		Button button = findViewById(R.id.submitGlucose);
+        Button viewLatest = findViewById(R.id.viewLatest);
 
 		button.setOnTouchListener(new View.OnTouchListener(){
 			@Override
@@ -36,7 +37,7 @@ public class LogGlucoseActivity extends AppCompatActivity
 				if(event.getAction() == MotionEvent.ACTION_UP) {
 
                     DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
-                    //DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
+                    DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
                     PatientSingleton patientSingleton = PatientSingleton.getInstance();
 					GlucoseEntry glucoseEntry = new GlucoseEntry();
 
@@ -59,6 +60,7 @@ public class LogGlucoseActivity extends AppCompatActivity
                     glucoseEntry.setDate(new Timestamp(date.getTime()));
                     patientSingleton.glucoseEntries.add(glucoseEntry);
                     dbPatientRepository.update(patientSingleton.getUserName(), patientSingleton);
+                    dbGlucoseEntryRepository.create(glucoseEntry);
 
 					finish();
 					return true;
@@ -66,5 +68,18 @@ public class LogGlucoseActivity extends AppCompatActivity
 				return false;
 			}
 		});
+
+        viewLatest.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    setContentView(R.layout.view_latest_glucose_entry);
+                    return true;
+                }
+                return false;
+            }
+        });
+
 	}
 }
