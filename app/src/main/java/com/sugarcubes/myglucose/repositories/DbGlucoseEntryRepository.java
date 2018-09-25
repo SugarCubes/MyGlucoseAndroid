@@ -89,12 +89,12 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		{
 			cursor.moveToFirst();
 
-			while( cursor.moveToNext() )
+			do
 			{
 				GlucoseEntry entry = readFromCursor( cursor );
 				entryArrayList.add( entry );				// Add the entry to the ArrayList
 
-			} // while
+			} while( cursor.moveToNext() ); // do...while
 
 			cursor.close();
 

@@ -81,12 +81,12 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		{
 			cursor.moveToFirst();
 
-			while( cursor.moveToNext() )
+			do
 			{
 				ExerciseEntry entry = readFromCursor( cursor );
-				entryArrayList.add( entry );				// Add the entry to the ArrayList
+				entryArrayList.add( entry );                // Add the entry to the ArrayList
 
-			} // while
+			} while( cursor.moveToNext() ); // do...while
 
 			cursor.close();
 

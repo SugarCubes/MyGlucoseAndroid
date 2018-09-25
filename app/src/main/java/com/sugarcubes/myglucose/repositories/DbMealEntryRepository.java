@@ -112,12 +112,12 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		if( cursor != null )
 		{
 			cursor.moveToFirst();
-			while( cursor.moveToNext() )
+			do
 			{
 				MealEntry mealEntry = readFromCursor( cursor );
 				mealEntries.add( mealEntry );				// Add the entry to the ArrayList
 
-			} // while
+			} while( cursor.moveToNext() ); // do...while
 			cursor.close();
 
 		} // if
