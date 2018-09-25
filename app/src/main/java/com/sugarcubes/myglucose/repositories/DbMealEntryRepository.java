@@ -41,7 +41,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	@Override
 	public void create( MealEntry item )
 	{
-		contentResolver.insert( uriEntries, getContentValues( item ) );
+		contentResolver.insert( uriEntries, putContentValues( item ) );
 		if( item.getMealItems() != null && item.getMealItems().size() > 0 )
 		{
 			// Create MealItems if they exist
@@ -147,7 +147,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public ContentValues getContentValues( MealEntry item )
+	public ContentValues putContentValues( MealEntry item )
 	{
 		ContentValues values = new ContentValues();
 //		values.put( DB.KEY_ID, item.getId() );
@@ -157,13 +157,13 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
 
-	} // getContentValues
+	} // putContentValues
 
 
 	@Override
 	public void update( int id, MealEntry item )
 	{
-		contentResolver.update( uriEntries, getContentValues( item ),		// Update the MealEntry
+		contentResolver.update( uriEntries, putContentValues( item ),		// Update the MealEntry
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 		if( item.getMealItems() != null && item.getMealItems().size() > 0 )	// If !null

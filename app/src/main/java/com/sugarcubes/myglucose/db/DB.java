@@ -14,15 +14,15 @@ public class DB extends SQLiteOpenHelper
 	public static final String DB_NAME = "myglucose";
 
 	// Table names:
-	public static final String TABLE_USERS = "users";
-	public static final String TABLE_PATIENTS = "patients";
-	public static final String TABLE_DOCTORS = "doctors";
-	public static final String TABLE_GLUCOSE_ENTRIES = "glucose_entries";
-	public static final String TABLE_MEAL_ENTRIES = "meal_entries";
-	public static final String TABLE_MEAL_ITEMS = "meal_items";
-	public static final String TABLE_EXERCISE_ENTRIES = "exercise_entries";
+	public static final String TABLE_USERS = "Users";
+	public static final String TABLE_PATIENTS = "Patient";
+	public static final String TABLE_DOCTORS = "Doctor";
+	public static final String TABLE_GLUCOSE_ENTRIES = "GlucoseEntry";
+	public static final String TABLE_MEAL_ENTRIES = "MealEntry";
+	public static final String TABLE_MEAL_ITEMS = "MealItem";
+	public static final String TABLE_EXERCISE_ENTRIES = "ExerciseEntry";
 
-	public static final String PATIENT_USERS = "patient_users";		// Use in ContentProvider to do joins
+	public static final String PATIENT_USERS = "PatientUser";		// Use in ContentProvider to do joins
 
 	// Also add tables here to use in a for loop:
 	private String[] tables = {
@@ -112,8 +112,8 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USER_ZIP1 + " INTEGER,"
 				+ KEY_USER_ZIP2 + " INTEGER,"
 				+ KEY_USER_PHONE + " TEXT,"
-				+ KEY_USER_HEIGHT + "INTEGER,"
-				+ KEY_USER_WEIGHT + "INTEGER,"
+				+ KEY_USER_HEIGHT + "REAL,"
+				+ KEY_USER_WEIGHT + "REAL,"
  				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER );";	// Retrieve as a *long* value
 

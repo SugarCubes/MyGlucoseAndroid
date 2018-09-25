@@ -45,7 +45,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	@Override
 	public boolean create( ApplicationUser user )
 	{
-		ContentValues values = getContentValues( user );
+		ContentValues values = putContentValues( user );
 		Uri create = contentResolver.insert( uri, values );
 		user.setLoggedIn( true );
 
@@ -152,7 +152,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 	@NonNull
 	@Override
-	public ContentValues getContentValues( ApplicationUser user )
+	public ContentValues putContentValues( ApplicationUser user )
 	{
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_USER_EMAIL, user.getEmail() );
@@ -171,13 +171,13 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() );
 		return values;
 
-	} // getContentValues
+	} // putContentValues
 
 
 	@Override
 	public void update( String id, ApplicationUser item )
 	{
-		ContentValues values = getContentValues( item );
+		ContentValues values = putContentValues( item );
 		contentResolver.update( uri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
 
 	} // update

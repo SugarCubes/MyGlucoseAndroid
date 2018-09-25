@@ -34,7 +34,7 @@ public class DbDoctorRepository implements IDoctorRepository
 	public boolean create( Doctor item )
 	{
 		boolean createUser = dbApplicationUserRepository.create( item );
-		Uri createUri = contentResolver.insert( doctorsUri, getContentValues( item ) );
+		Uri createUri = contentResolver.insert( doctorsUri, putContentValues( item ) );
 
 		return createUser && createUri != null;
 
@@ -101,7 +101,7 @@ public class DbDoctorRepository implements IDoctorRepository
 
 
 	@Override
-	public ContentValues getContentValues( Doctor doctor )
+	public ContentValues putContentValues( Doctor doctor )
 	{
 		ContentValues values = new ContentValues();
 
@@ -109,13 +109,13 @@ public class DbDoctorRepository implements IDoctorRepository
 
 		return values;
 
-	} // getContentValues
+	} // putContentValues
 
 
 	@Override
 	public void update( String id, Doctor doctor )
 	{
-		ContentValues values = getContentValues( doctor );
+		ContentValues values = putContentValues( doctor );
 		contentResolver.update( doctorsUri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
 
 	} // update

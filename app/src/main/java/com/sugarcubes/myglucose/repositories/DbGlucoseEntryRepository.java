@@ -44,7 +44,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void create( GlucoseEntry item )
 	{
-		ContentValues values = getContentValues( item );
+		ContentValues values = putContentValues( item );
 		Log.w( LOG_TAG, "URI: " + uri + "; Values: " + values.toString() );
 		contentResolver.insert(  uri, values );
 
@@ -106,7 +106,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 
 	@Override
-	public ContentValues getContentValues( GlucoseEntry item )
+	public ContentValues putContentValues( GlucoseEntry item )
 	{
 		ContentValues values = new ContentValues();
 //		values.put( DB.KEY_ID, item.getId() );
@@ -119,13 +119,13 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
 
-	} // getContentValues
+	} // putContentValues
 
 
 	@Override
 	public void update( int id, GlucoseEntry item )
 	{
-		contentResolver.update( uri, getContentValues( item ),
+		contentResolver.update( uri, putContentValues( item ),
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 	} // update

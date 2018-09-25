@@ -175,7 +175,7 @@ public class DbPatientRepository implements IPatientRepository
 	} // readFromCursor
 
 	@Override
-	public ContentValues getContentValues( PatientSingleton item )
+	public ContentValues putContentValues( PatientSingleton item )
 	{
 		ContentValues values = new ContentValues(  );
 		values.put( DB.KEY_DR_ID, item.getDoctor().getUserName() );
@@ -185,7 +185,7 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public void update( String username, PatientSingleton item )
 	{
-		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, getContentValues( item ),
+		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, putContentValues( item ),
 				DB.KEY_USERNAME + "=?", new String[]{ username } );
 
 	} // update

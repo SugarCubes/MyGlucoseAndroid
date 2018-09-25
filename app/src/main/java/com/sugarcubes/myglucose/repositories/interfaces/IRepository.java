@@ -39,7 +39,7 @@ public interface IRepository<T>
 	 * @param item - The item to get the content values for
 	 * @return ContentValues
 	 */
-	ContentValues getContentValues( T item );
+	ContentValues putContentValues( T item );
 
 	void update( int id, T item );
 
