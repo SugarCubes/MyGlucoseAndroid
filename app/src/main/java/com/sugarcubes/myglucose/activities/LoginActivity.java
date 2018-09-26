@@ -79,7 +79,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// TODO
 		// TODO: Change to live LoginAction when switching to production:
 		// TODO
-		loginAction = new RemoteLoginAction();
+//		loginAction = new RemoteLoginAction();
+		loginAction = new SimulateLoginAction( PatientSingleton.getInstance() );
 
 
 		mPasswordView = findViewById( R.id.password );

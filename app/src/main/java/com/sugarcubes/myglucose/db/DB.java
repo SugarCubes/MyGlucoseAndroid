@@ -8,13 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
 
 	// Table names:
-	public static final String TABLE_USERS = "Users";
+	public static final String TABLE_USERS = "User";
 	public static final String TABLE_PATIENTS = "Patient";
 	public static final String TABLE_DOCTORS = "Doctor";
 	public static final String TABLE_GLUCOSE_ENTRIES = "GlucoseEntry";
