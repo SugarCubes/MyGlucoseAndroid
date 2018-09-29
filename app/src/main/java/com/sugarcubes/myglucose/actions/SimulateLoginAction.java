@@ -12,17 +12,8 @@ import java.util.Date;
 
 public class SimulateLoginAction implements ILoginAction
 {
-	ApplicationUser user;
-
-	public SimulateLoginAction( ApplicationUser user )
-	{
-		this.user = user;
-
-	} // constructor
-
-
 	@Override
-	public ApplicationUser attemptLogin( String username, String password, Context context )
+	public PatientSingleton attemptLogin( String username, String password, Context context )
 	{
 		try {
 			PatientSingleton patientSingleton = PatientSingleton.getInstance();

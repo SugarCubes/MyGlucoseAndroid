@@ -1,14 +1,11 @@
 package com.sugarcubes.myglucose.entities;
 
-import android.database.Cursor;
-
-import com.sugarcubes.myglucose.db.DB;
-
 import java.util.Date;
 
 public class ApplicationUser
 {
 	protected static boolean loggedIn = false;
+	protected String id;
 	protected String email;					// Primary key
 	protected String firstName;
 	protected String lastName;
@@ -28,6 +25,8 @@ public class ApplicationUser
 
 	public ApplicationUser()
 	{
+		Date newDate = new Date();
+		id 			= "";
 		email 		= "";
 		firstName 	= "";
 		lastName 	= "";
@@ -41,11 +40,20 @@ public class ApplicationUser
 		phoneNumber = "";
 		height = "";
 		weight = "";
-		date		= new Date();
-		timestamp	= -1;
+		date		= newDate;
+		timestamp	= newDate.getTime();
 
 	} // constructor
 
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId( String id )
+	{
+		id = id;
+	}
 
 	public String getEmail()
 	{
@@ -211,7 +219,8 @@ public class ApplicationUser
 	public String toString()
 	{
 		return "ApplicationUser{" +
-				"email='" + email + '\'' +
+				"loggedIn: '" + loggedIn + '\'' +
+				", email='" + email + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", userName='" + userName + '\'' +

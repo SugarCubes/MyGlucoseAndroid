@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -39,23 +39,23 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_ID = "_id";
 	public static final String KEY_DATE = "Date";
 	public static final String KEY_TIMESTAMP = "Timestamp";
-	public static final String KEY_REMOTE_ID = "RemoteKey";
+	public static final String KEY_REMOTE_ID = "id";
 	// ApplicationUser table keys:
 	public static final String KEY_USER_LOGGED_IN = "LoggedIn";
-	public static final String KEY_USERNAME = "Username";
-	public static final String KEY_USER_FIRST_NAME = "FistName";
-	public static final String KEY_USER_LAST_NAME = "LastName";
+	public static final String KEY_USERNAME = "userName";
+	public static final String KEY_USER_FIRST_NAME = "firstName";
+	public static final String KEY_USER_LAST_NAME = "lastName";
 	public static final String KEY_USER_TYPE = "UserType";
-	public static final String KEY_USER_EMAIL = "Email";
-	public static final String KEY_USER_ADDRESS1 = "Address1";
-	public static final String KEY_USER_ADDRESS2 = "Address2";
-	public static final String KEY_USER_CITY = "City";
-	public static final String KEY_USER_STATE = "State";
-	public static final String KEY_USER_ZIP1 = "Zip1";
-	public static final String KEY_USER_ZIP2 = "Zip2";
-	public static final String KEY_USER_PHONE = "PhoneNumber";
-	public static final String KEY_USER_HEIGHT = "Height";
-	public static final String KEY_USER_WEIGHT = "Weight";
+	public static final String KEY_USER_EMAIL = "email";
+	public static final String KEY_USER_ADDRESS1 = "address1";
+	public static final String KEY_USER_ADDRESS2 = "address2";
+	public static final String KEY_USER_CITY = "city";
+	public static final String KEY_USER_STATE = "state";
+	public static final String KEY_USER_ZIP1 = "zip1";
+	public static final String KEY_USER_ZIP2 = "zip2";
+	public static final String KEY_USER_PHONE = "phoneNumber";
+	public static final String KEY_USER_HEIGHT = "height";
+	public static final String KEY_USER_WEIGHT = "weight";
 	// Patient table keys:
 	public static final String KEY_DR_EMAIL = "DoctorEmail";
 	// Doctor table keys:

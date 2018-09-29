@@ -3,22 +3,20 @@ package com.sugarcubes.myglucose.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,7 +30,6 @@ import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
-import com.sugarcubes.myglucose.actions.SimulateLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -79,8 +76,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// TODO
 		// TODO: Change to live LoginAction when switching to production:
 		// TODO
-//		loginAction = new RemoteLoginAction();
-		loginAction = new SimulateLoginAction( PatientSingleton.getInstance() );
+		loginAction = new RemoteLoginAction();
+//		loginAction = new SimulateLoginAction( PatientSingleton.getInstance() );
 
 
 		mPasswordView = findViewById( R.id.password );
@@ -413,11 +410,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		{
 			try
 			{
-
-//				UrlConnectionManager connectionManager = new UrlConnectionManager( LoginActivity.this );
-//				JSONObject json = connectionManager.sendRequest( "/Account/LoginRemote", values, Request.Method.POST );    // Do the request
-				loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
-				return true;
+				// Send the http request and either setup the patient or return null
+				PatientSingleton patient =
+						loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
+				return patient != null;
 
 			}
 			catch( Exception e )

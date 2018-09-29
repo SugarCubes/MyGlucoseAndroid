@@ -10,20 +10,7 @@
 
 package com.sugarcubes.myglucose.urlconnections;
 
-import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.sugarcubes.myglucose.TLSSocketFactory;
-import com.sugarcubes.myglucose.activities.SettingsActivity;
-import com.sugarcubes.myglucose.db.DB;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -35,14 +22,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
-
-import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class UrlConnection
 {
@@ -166,33 +149,6 @@ public class UrlConnection
 		return result.toString();
 
 	} // getPostDataString
-
-
-	private void saveJsonItemsToDb( Context context, String codeStr, String arrayKey )
-	{
-		contentResolver = context.getContentResolver();
-		//parse json data
-		try
-		{
-			JSONObject jsonObject = new JSONObject( codeStr );		// Convert string to Json
-			JSONArray jArray = jsonObject.getJSONArray( arrayKey );	// Get an array using the key
-
-			for( int i = 0; i < jArray.length(); i++ )				// Break each array into a new object
-			{
-				JSONObject jsonData = jArray.getJSONObject( i );
-				// TODO: Use jsonData.getInt( String key ), etc to get data from the object
-
-				// TODO: Use contentResolver to add the objects to the database
-
-			} // for
-
-		}
-		catch( JSONException e )
-		{
-			if( DEBUG ) Log.e( LOG_TAG, "Error parsing data " + e.toString() );
-		}
-
-	} // saveJsonItemsToDb
 
 
 } // class

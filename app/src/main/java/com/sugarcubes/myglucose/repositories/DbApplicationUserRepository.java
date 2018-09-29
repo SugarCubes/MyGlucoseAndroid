@@ -116,9 +116,9 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
 			user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) )  );
 			user.setCity( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) ) );
+			String pattern = "EEE MMM d HH:mm:ss z yyyy";
+			SimpleDateFormat formatter = new SimpleDateFormat( pattern, Locale.US );
 			try {
-				// TODO: Test
-				SimpleDateFormat formatter = new SimpleDateFormat( "E yyyy.MM.dd 'at' hh:mm:ss a zzz", Locale.US );
 				if( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) != null )
 				{
 					Date date = formatter.parse( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
@@ -128,6 +128,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			}
 			catch( Exception e )
 			{
+				Log.e( LOG_TAG, "DATE TO PARSE: " + cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
 				e.printStackTrace();
 			}
 			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
@@ -168,7 +169,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_USERNAME, user.getUserName() );
 		values.put( DB.KEY_DATE, user.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
-		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() );
+		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() ? 1 : 0 );
 		return values;
 
 	} // putContentValues
