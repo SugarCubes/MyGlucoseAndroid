@@ -9,6 +9,7 @@
 
 package com.sugarcubes.myglucose.activities;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -21,16 +22,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.app.LoaderManager.LoaderCallbacks;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
-import android.widget.Spinner;
 
 public class MainActivity
 		extends AppCompatActivity
@@ -46,7 +44,7 @@ public class MainActivity
 	public static final boolean DEBUG = true;
 
 	@Override
-	protected void onCreate( Bundle savedInstanceState)
+	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_main );
@@ -65,7 +63,6 @@ public class MainActivity
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
 //		editButton.setOnTouchListener( this );
-
 
 	} // onCreate
 
@@ -98,11 +95,14 @@ public class MainActivity
 			case R.id.action_login:
 				if( patientUser.isLoggedIn() )
 				{
-					patientUser.setLoggedIn( false );
-					DbPatientRepository patientRepository =
+					DbPatientRepository patientRepository =	// Get reference to repo
 							new DbPatientRepository( getApplicationContext() );
-					patientRepository.delete( patientUser );
-					setMenuTexts();		// Show Log in/out, Register
+					boolean deleted = patientRepository.delete( patientUser );// Delete from db
+					if( deleted )
+					{
+						PatientSingleton.eraseData();			// deletes data and sets logged in to false
+						setMenuTexts();							// Show Log in/out, Register
+					}
 				}
 				else
 				{
@@ -195,6 +195,8 @@ public class MainActivity
 				patientRepository.readFromCursor( patientUser, cursor );
 
 			} // if
+			else if( DEBUG )
+				Log.e( LOG_TAG, "No user is returned from the database" );
 
 			Log.d( LOG_TAG, patientUser.toString() );
 
@@ -202,6 +204,8 @@ public class MainActivity
 			{
 				startLoginActivity();
 			}
+
+			setMenuTexts();										// Show Log in/out, Register
 
 			synchronized( cursor )
 			{
@@ -324,17 +328,17 @@ public class MainActivity
 
 	private void setMenuTexts()
 	{
-//		MenuItem loginMenuItem = menu.findItem( R.id.action_login );
-//		if( loginMenuItem != null )
-//			loginMenuItem.setTitle( R.string.logout );
+		if( menu != null )
+		{
+			menu.findItem( R.id.action_login )
+					.setTitle( patientUser.isLoggedIn()
+							? R.string.logout
+							: R.string.login );
 
-		menu.findItem( R.id.action_login )
-				.setTitle( patientUser.isLoggedIn()
-						? R.string.logout
-						: R.string.login );
+			menu.findItem( R.id.action_register )
+					.setVisible( !patientUser.isLoggedIn() );
 
-		menu.findItem( R.id.action_register )
-				.setVisible( !patientUser.isLoggedIn() );
+		} // if
 
 	} // setMenuTexts
 
