@@ -37,6 +37,8 @@ public class PatientSingleton extends ApplicationUser
 	public PatientSingleton()
 	{
 		id 					= "";
+		loginToken			= "";
+		loginExpirationTimestamp = 0;
 		applicationUserId 	= "";
 		firstname 			= "";
 		lastname 			= "";
@@ -92,6 +94,9 @@ public class PatientSingleton extends ApplicationUser
 				patientSingleton.setState( jsonObject.getString( DB.KEY_USER_STATE ) );
 				patientSingleton.setZip1( jsonObject.getInt( DB.KEY_USER_ZIP1 ) );
 				patientSingleton.setZip2( jsonObject.getInt( DB.KEY_USER_ZIP2 ) );
+				patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
+				patientSingleton.setLoginExpirationTimestamp(
+						jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) );
 
 			} // if !null
 
@@ -125,6 +130,8 @@ public class PatientSingleton extends ApplicationUser
 				patientSingleton.setState( applicationUser.getState() );
 				patientSingleton.setZip1( applicationUser.getZip1() );
 				patientSingleton.setZip2( applicationUser.getZip2() );
+				patientSingleton.setLoginToken( applicationUser.getLoginToken() );
+				patientSingleton.setLoginExpirationTimestamp( applicationUser.getLoginExpirationTimestamp() );
 
 			} // if !null
 

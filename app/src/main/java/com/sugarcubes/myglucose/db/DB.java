@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -42,6 +42,8 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_REMOTE_ID = "id";
 	// ApplicationUser table keys:
 	public static final String KEY_USER_LOGGED_IN = "LoggedIn";
+	public static final String KEY_USER_LOGIN_TOKEN = "remoteLoginToken";
+	public static final String KEY_USER_LOGIN_EXPIRATION_TIMESTAMP = "remoteLoginExpiration";
 	public static final String KEY_USERNAME = "userName";
 	public static final String KEY_USER_FIRST_NAME = "firstName";
 	public static final String KEY_USER_LAST_NAME = "lastName";
@@ -102,6 +104,8 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
 				+ KEY_USER_EMAIL + " TEXT,"
 				+ KEY_USER_LOGGED_IN + " INTEGER,"
+				+ KEY_USER_LOGIN_TOKEN + " TEXT,"
+				+ KEY_USER_LOGIN_EXPIRATION_TIMESTAMP + " INTEGER,"
 				+ KEY_USER_TYPE + " TEXT,"
 				+ KEY_USER_FIRST_NAME + " TEXT,"
 				+ KEY_USER_LAST_NAME + " TEXT,"

@@ -11,7 +11,8 @@ public enum ErrorCode
 	NO_ERROR(0),
 	UNKNOWN(1),
 	INVALID_URL(2),
-	INVALID_EMAIL_PASSWORD(3);
+	INVALID_EMAIL_PASSWORD(3),
+	INVALID_LOGIN_TOKEN(4);
 
 	private int _value;
 

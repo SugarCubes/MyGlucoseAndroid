@@ -5,6 +5,8 @@ import java.util.Date;
 public class ApplicationUser
 {
 	protected static boolean loggedIn = false;
+	protected String loginToken;
+	protected long loginExpirationTimestamp;
 	protected String id;
 	protected String email;					// Primary key
 	protected String firstName;
@@ -42,6 +44,8 @@ public class ApplicationUser
 		weight = "";
 		date		= newDate;
 		timestamp	= newDate.getTime();
+		loginToken 	= "";
+		loginExpirationTimestamp = newDate.getTime();
 
 	} // constructor
 
@@ -215,6 +219,26 @@ public class ApplicationUser
 		this.timestamp = timestamp;
 	}
 
+	public String getLoginToken()
+	{
+		return loginToken;
+	}
+
+	public void setLoginToken( String loginToken )
+	{
+		this.loginToken = loginToken;
+	}
+
+	public long getLoginExpirationTimestamp()
+	{
+		return loginExpirationTimestamp;
+	}
+
+	public void setLoginExpirationTimestamp( long loginExpirationTimestamp )
+	{
+		this.loginExpirationTimestamp = loginExpirationTimestamp;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -233,6 +257,8 @@ public class ApplicationUser
 				", phoneNumber='" + phoneNumber + '\'' +
 				", date=" + date +
 				", timestamp=" + timestamp +
+				", loginToken=" + loginToken +
+				", loginExpiration=" + loginExpirationTimestamp +
 				'}';
 	} // toString
 

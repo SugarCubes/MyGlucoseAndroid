@@ -141,6 +141,9 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
 			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
+			user.setLoginToken( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LOGIN_TOKEN ) ) );
+			user.setLoginExpirationTimestamp( cursor.getLong(
+					cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
 
 			cursor.close();
 
@@ -170,6 +173,8 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_DATE, user.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() ? 1 : 0 );
+		values.put( DB.KEY_USER_LOGIN_TOKEN, user.getLoginToken() );
+		values.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, user.getLoginExpirationTimestamp() );
 		return values;
 
 	} // putContentValues
