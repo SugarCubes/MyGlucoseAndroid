@@ -11,6 +11,7 @@
 package com.sugarcubes.myglucose.urlconnections;
 
 import android.content.ContentResolver;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,10 +28,12 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
+
 public class UrlConnection
 {
 	protected ContentResolver contentResolver;
-	private String LOG_TAG = getClass().getName();
+	private String LOG_TAG = getClass().getSimpleName();
 	private HttpURLConnection httpURLConnection;
 
 	public UrlConnection( URL url )
@@ -93,6 +96,7 @@ public class UrlConnection
 
 			if( responseCode == HttpsURLConnection.HTTP_OK )
 			{
+				if( DEBUG ) Log.e( LOG_TAG, "HTTP Response is OK" );
 				String line;
 				InputStreamReader inputStreamReader 		// Get ref to stream the response
 						= new InputStreamReader( httpURLConnection.getInputStream() );
@@ -105,6 +109,7 @@ public class UrlConnection
 			}
 			else
 			{
+				if( DEBUG ) Log.e( LOG_TAG, "Either no HTTP Response, or bad request..." );
 				responseStringBuilder = new StringBuilder();// At least instantiate the object
 			}
 

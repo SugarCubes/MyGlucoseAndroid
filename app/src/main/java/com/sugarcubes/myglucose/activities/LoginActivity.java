@@ -32,8 +32,10 @@ import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		}
 		else if( !isEmailValid( email ) )
 		{
-			mEmailView.setError( getString( R.string.error_invalid_email ) );
+			mEmailView.setError( getString( R.string.error_invalid_email_password ) );
 			focusView = mEmailView;
 			cancel = true;
 		}
@@ -390,7 +392,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
+	public class UserLoginTask extends AsyncTask<Void, Void, ErrorCode>
 	{
 
 		private static final String LOG_TAG = "UserLoginTask";
@@ -406,43 +408,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
 		@Override
-		protected Boolean doInBackground( Void... params )
+		protected ErrorCode doInBackground( Void... params )
 		{
 			try
 			{
 				// Send the http request and either setup the patient or return null
-				PatientSingleton patient =
-						loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
-				return patient != null;
+				return loginAction.attemptLogin( mEmail, mPassword, getApplicationContext() );
 
 			}
 			catch( Exception e )
 			{
 				e.printStackTrace();
-				return false;
+				return ErrorCode.UNKNOWN;
 			}
 
 		} // doInBackground
 
 
 		@Override
-		protected void onPostExecute( final Boolean success )
+		protected void onPostExecute( final ErrorCode errorCode )
 		{
 			mAuthTask = null;
 			showProgress( false );
 
-			if( success )
+			switch( errorCode )
 			{
-				appUser.setLoggedIn( true );
-				Intent returnData = new Intent();
-				returnData.setData( Uri.parse( "logged in" ) );
-				setResult( RESULT_OK, returnData );            // Return ok result for activity result
-				finish();                                    // Close the activity
-			}
-			else
-			{
-				mPasswordView.setError( getString( R.string.error_incorrect_password ) );
-				mPasswordView.requestFocus();
+				case NO_ERROR:									// 0:	No error
+					appUser.setLoggedIn( true );
+					Intent returnData = new Intent();
+					returnData.setData( Uri.parse( "logged in" ) );
+					setResult( RESULT_OK, returnData );			// Return ok result for activity result
+					finish();									// Close the activity
+					break;
+
+				case UNKNOWN:									// 1:	Unknown - something went wrong
+					mPasswordView.setError( getString( R.string.error_something_went_wrong ) );
+					mPasswordView.requestFocus();
+					break;
+
+				case INVALID_URL:								// 2:	URL
+					mPasswordView.setError( getString( R.string.error_invalid_hostname_or_port ) );
+					mPasswordView.requestFocus();
+					break;
+
+				case INVALID_EMAIL_PASSWORD:					// 3:	Invalid email/password
+					mPasswordView.setError( getString( R.string.error_invalid_email_password ) );
+					mPasswordView.requestFocus();
+					break;
 			}
 
 		} // onPostExecute

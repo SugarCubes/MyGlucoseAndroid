@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -112,8 +112,8 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USER_ZIP1 + " INTEGER,"
 				+ KEY_USER_ZIP2 + " INTEGER,"
 				+ KEY_USER_PHONE + " TEXT,"
-				+ KEY_USER_HEIGHT + "REAL,"
-				+ KEY_USER_WEIGHT + "REAL,"
+				+ KEY_USER_HEIGHT + " REAL,"
+				+ KEY_USER_WEIGHT + " REAL,"
  				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER );";	// Retrieve as a *long* value
 

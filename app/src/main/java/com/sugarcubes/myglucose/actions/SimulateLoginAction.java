@@ -5,6 +5,7 @@ import android.content.Context;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
@@ -13,16 +14,11 @@ import java.util.Date;
 public class SimulateLoginAction implements ILoginAction
 {
 	@Override
-	public PatientSingleton attemptLogin( String username, String password, Context context )
+	public ErrorCode attemptLogin( String username, String password, Context context )
 	{
 		try {
 			PatientSingleton patientSingleton = PatientSingleton.getInstance();
-//			Thread.sleep( 2000 );
 			DbPatientRepository patientRepository = new DbPatientRepository( context );
-//			Cursor cursor = context.getContentResolver().query( MyGlucoseContentProvider.PATIENT_USERS_URI,
-//					null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
-//					new String[]{ String.valueOf( 1 ) }, null );
-//			patientRepository.populate( PatientSingleton.getInstance(), cursor );
 			patientSingleton.setEmail( username );
 			patientSingleton.setUserName( username );
 			patientSingleton.setFirstName( "John" );
@@ -44,12 +40,12 @@ public class SimulateLoginAction implements ILoginAction
 
 			patientRepository.create( patientSingleton );
 
-			return patientSingleton;
+			return ErrorCode.NO_ERROR;
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
-			return null;
+			return ErrorCode.UNKNOWN;
 		}
 
 	} // attemptLogin
