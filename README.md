@@ -19,17 +19,17 @@ An Android-based glucose tracker application which syncs with a remote server.
     - Open the applicationhost.config file in Notepad, or other text editor
     - Find the lines:
 
-```
+```xml
 <site...>
 	<bindings>
-		<binding protocol="http" bindingInformation="*:**12345**:localhost" />
+		<binding protocol="http" bindingInformation="*:12345:localhost" />
 		<binding protocol="https" bindingInformation="*:54321:localhost" />
 	</bindings>
 </site>
 ```
 
-    - The port number is the first set of numbers in "**XXXXX**:localhost". Enter this into MyGlucose
-    - Now that the Android app is set up, you need to follow the directions [on this page](https://github.com/SugarCubes/MyGlucoseDotNetCore)
-    - Create a user account in the .NET Core application. This creates the login information to be entered in the Android app
-    - Once these directions have been followed and the .NET Core application is running in Administrator mode, you can log in and use the Android app
-    - In the final product, you will be able to log all entries in Android. These will be transmitted to the database on the webserver, where a physician would theoretically be able to log in and view your patient information and make more educated decisions related to your health care.
+- The port number is the first set of numbers in "**XXXXX**:localhost". Enter this into MyGlucose
+- Now that the Android app is set up, you need to follow the directions [on this page](https://github.com/SugarCubes/MyGlucoseDotNetCore)
+- Create a user account in the .NET Core application. This creates the login information to be entered in the Android app
+- Once these directions have been followed and the .NET Core application is running in Administrator mode, you can log in and use the Android app
+- In the final product, you will be able to log all entries in Android. These will be transmitted to the database on the webserver, where a physician would theoretically be able to log in and view your patient information and make more educated decisions related to your health care.
