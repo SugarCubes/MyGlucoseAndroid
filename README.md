@@ -18,6 +18,7 @@ An Android-based glucose tracker application which syncs with a remote server.
     - In the .NET Core project folder, navigate to **.vs > config > applicationhost.config**
     - Open the applicationhost.config file in Notepad, or other text editor
     - Find the lines:
+
 ```
 <site...>
 	<bindings>
@@ -26,6 +27,7 @@ An Android-based glucose tracker application which syncs with a remote server.
 	</bindings>
 </site>
 ```
+
     - The port number is the first set of numbers in "**XXXXX**:localhost". Enter this into MyGlucose
     - Now that the Android app is set up, you need to follow the directions [on this page](https://github.com/SugarCubes/MyGlucoseDotNetCore)
     - Create a user account in the .NET Core application. This creates the login information to be entered in the Android app
