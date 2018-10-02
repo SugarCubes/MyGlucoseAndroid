@@ -1,4 +1,4 @@
-# MyGlucoseAndroid
+# MyGlucose (Android patient application)
 An Android-based glucose tracker application which syncs with a remote server.
 
 - Meant to be used in conjunction with the [.NET Core web server application](https://github.com/SugarCubes/MyGlucoseDotNetCore).
