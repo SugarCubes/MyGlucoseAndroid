@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 public interface IMealEntryRepository extends IRepository<MealEntry>
 {
-	void createMealItem( MealItem item );
+	void createMealItem( MealItem mealItem );
 	ArrayList<MealItem> readAllMealItems( int mealId );
 	MealItem readMealItemFromCursor( Cursor cursor );
-	ContentValues getMealItemContentValues( MealItem item );
+	ContentValues putMealItemContentValues( MealItem mealItem );
 	void updateMealItem( int mealItemId, MealItem mealItem );
 	void deleteMealEntryMealItems( int mealEntryId );
 	void deleteMealItem( int mealItemId );

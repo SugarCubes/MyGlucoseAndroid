@@ -11,7 +11,14 @@ public class MealItem
 
 	public MealItem()
 	{
-	}
+		id			= -1;
+		remoteId	= "";
+		mealId		= "";
+		name		= "";
+		carbs		= 0;
+		servings	= 0;
+
+	} // default constructor
 
 	public MealItem( int id, String remoteId, String mealId, String name, int carbs, int servings )
 	{
@@ -19,7 +26,8 @@ public class MealItem
 		this.name = name;
 		this.carbs = carbs;
 		this.servings = servings;
-	}
+
+	} // constructor
 
 	public String getRemoteId()
 	{

@@ -1,7 +1,9 @@
 package com.sugarcubes.myglucose.dependencies;
 
 import android.app.Application;
+import android.content.Context;
 
+import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.SimulateLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
@@ -20,13 +22,13 @@ class ObjectGraph
 {
 	private final Map<Class<?>, Object> dependencies = new HashMap<>();	// Holds all dependencies
 
-	ObjectGraph()	// package-private
+	ObjectGraph( Context context )	// package-private
 	{
 		// Step 1.  create dependency graph
-		SimulateLogMealEntryAction logMealEntryAction = new SimulateLogMealEntryAction();
-		RemoteLoginAction remoteLoginAction = new RemoteLoginAction();
-		SimulateRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
-		SimulateRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
+		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();
+		ILoginAction remoteLoginAction = new RemoteLoginAction();
+		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
+		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
 
 		// Step 2. add models to a dependencies map if you will need them later
 		dependencies.put( ILogMealEntryAction.class, logMealEntryAction );

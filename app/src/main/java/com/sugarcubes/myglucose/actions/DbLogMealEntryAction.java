@@ -5,14 +5,17 @@ import android.content.Context;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.entities.MealEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
+import com.sugarcubes.myglucose.repositories.DbMealEntryRepository;
 
-public class SimulateLogMealEntryAction implements ILogMealEntryAction
+public class DbLogMealEntryAction implements ILogMealEntryAction
 {
 	@Override
 	public ErrorCode logMealEntry( Context context, MealEntry mealEntry ) throws InterruptedException
 	{
-		Thread.sleep( 2000 );		// Simulate working for 2 seconds
-		return ErrorCode.NO_ERROR;
+		DbMealEntryRepository mealEntryRepository = new DbMealEntryRepository( context );
+		mealEntryRepository.create( mealEntry );
+
+		return null;
 
 	} // logMealEntry
 

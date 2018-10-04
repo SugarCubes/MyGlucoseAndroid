@@ -146,6 +146,7 @@ public class LogMealsActivity extends AppCompatActivity implements View.OnTouchL
 
 				case R.id.button_save:
 					//Snackbar.make( coordinatorLayout, "Save button pressed", Snackbar.LENGTH_LONG ).show();
+					// TODO: populate the MealEntry object
 					MealEntry mealEntry = new MealEntry();
 					new LogMealTask( mealEntry ).execute();
 					break;
@@ -186,8 +187,8 @@ public class LogMealsActivity extends AppCompatActivity implements View.OnTouchL
 		{
 			try
 			{
-				// TODO Send to Db
-				return logMealEntryAction.logMealEntry( mealEntry );
+				// Save the MealEntry and its MealItems
+				return logMealEntryAction.logMealEntry( getApplicationContext(), mealEntry );
 
 			}
 			catch( Exception e )

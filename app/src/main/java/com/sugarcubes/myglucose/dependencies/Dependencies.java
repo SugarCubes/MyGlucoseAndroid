@@ -14,7 +14,7 @@ public class Dependencies extends Application
 	{
 		super.onCreate();
 
-		objectGraph = new ObjectGraph();
+		objectGraph = new ObjectGraph( getApplicationContext() );
 
 	} // onCreate
 
