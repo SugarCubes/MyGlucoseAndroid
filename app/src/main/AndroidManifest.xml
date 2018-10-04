@@ -9,20 +9,22 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Created .dependencies.Dependencies as an application and require it here: -->
     <application
+        android:name=".dependencies.Dependencies"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name=".contentproviders.MyGlucoseContentProvider"
             android:authorities="com.sugarcubes.myglucose.provider"
             android:exported="false" />
 
-        <service android:name=".services.SyncService"
+        <service
+            android:name=".services.SyncService"
             android:exported="false"
             android:process=":myglucose_sync_service" />
 
@@ -32,32 +34,31 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" />
-
         <activity android:name=".activities.LogGlucoseActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
-        <activity android:name=".activities.LogMealsActivity">
+        <activity
+            android:name=".activities.LogMealsActivity"
+            android:label="@string/title_activity_log_meals"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
         <activity android:name=".activities.LogExerciseActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.EditProfileActivity"
             android:label="@string/app_name"
@@ -66,7 +67,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.ViewProfileActivity"
             android:label="@string/view_profile_activity"
@@ -75,7 +75,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.ViewLatestGlucoseEntry"
             android:label="@string/app_name"
@@ -84,7 +83,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.LogGlucoseActivity" />
         </activity>
-
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings">
@@ -92,7 +90,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.RegisterActivity"
             android:label="@string/title_activity_register">
@@ -100,7 +97,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
-
     </application>
 
 </manifest>

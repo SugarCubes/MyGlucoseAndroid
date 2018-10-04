@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
+import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -75,12 +76,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		mEmailView = findViewById( R.id.email );
 		populateAutoComplete();
 
-		// TODO
-		// TODO: Change to live LoginAction when switching to production:
-		// TODO
-		loginAction = new RemoteLoginAction();
-//		loginAction = new SimulateLoginAction( PatientSingleton.getInstance() );
-
+		// Dependency Injection:
+		loginAction = Dependencies.get( ILoginAction.class );
 
 		mPasswordView = findViewById( R.id.password );
 		mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener()

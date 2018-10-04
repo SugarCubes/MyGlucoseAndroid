@@ -40,6 +40,7 @@ import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
+import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
@@ -82,13 +83,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		setContentView( R.layout.activity_register );
 		setupActionBar();
 
-		// TODO
-		// TODO: Change to live actions when going into production
-		// TODO
-		retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
-		registerPatientAction = new SimulateRegisterPatientAction();
+		// Dependency Injection:
+		retrieveDoctorsAction = Dependencies.get( IRetrieveDoctorsAction.class );
+		registerPatientAction = Dependencies.get( IRegisterPatientAction.class );
+
 		patientRepository = new DbPatientRepository( getApplicationContext() );
-		// TODO
 
 		// Set up the login form.
 		mEmailView = (AutoCompleteTextView) findViewById( R.id.email );
