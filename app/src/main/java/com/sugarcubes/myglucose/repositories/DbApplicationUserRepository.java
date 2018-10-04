@@ -142,8 +142,9 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
 			user.setLoginToken( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LOGIN_TOKEN ) ) );
-			user.setLoginExpirationTimestamp( cursor.getLong(
-					cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
+			// TODO crashes:
+//			user.setLoginExpirationTimestamp( cursor.getLong(
+//					cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
 
 			cursor.close();
 
