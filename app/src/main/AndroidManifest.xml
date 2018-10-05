@@ -17,7 +17,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <provider
             android:name=".contentproviders.MyGlucoseContentProvider"
             android:authorities="com.sugarcubes.myglucose.provider"
@@ -47,7 +48,7 @@
                 android:value="com.sugarcubes.myglucose.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.LogMealsActivity"
+            android:name=".activities.LogMealActivity"
             android:label="@string/title_activity_log_meals"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

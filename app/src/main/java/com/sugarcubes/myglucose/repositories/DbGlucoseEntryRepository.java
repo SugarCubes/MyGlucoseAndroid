@@ -114,7 +114,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
-		values.put( DB.KEY_GLUCOSE_WHICH_MEAL, item.getWhichMeal().toString() );
+		values.put( DB.KEY_WHICH_MEAL, item.getWhichMeal().toString() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
@@ -161,7 +161,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		entry.setBeforeAfter( BeforeAfter.valueOf( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_GLUCOSE_BEFORE_AFTER ) ) ) );
 		entry.setWhichMeal( WhichMeal.valueOf( cursor.getString(
-				cursor.getColumnIndex( DB.KEY_GLUCOSE_WHICH_MEAL ) ) ) );
+				cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
 
 		// Convert the date string to a Date object:
 		entry.setDate( DateUtilities.convertStringToDate(

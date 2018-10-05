@@ -25,7 +25,7 @@ class ObjectGraph
 	ObjectGraph( Context context )	// package-private
 	{
 		// Step 1.  create dependency graph
-		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();
+		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();//SimulateLogMealEntryAction();//
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
 		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
 		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();

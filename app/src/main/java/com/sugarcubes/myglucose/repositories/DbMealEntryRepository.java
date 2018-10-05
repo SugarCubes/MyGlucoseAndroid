@@ -20,6 +20,7 @@ import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.MealEntry;
 import com.sugarcubes.myglucose.entities.MealItem;
+import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
 
@@ -107,7 +108,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 				while( cursor.moveToNext() )
 				{
 					MealItem mealItem = new MealItem();
-					// TODO: Populate the MealItem
+					// TODO: Populate the MealItems
 
 				} // while
 //				entry.setMealItems( readMealItemsFromCursor( mealItemsCursor ) );
@@ -163,6 +164,9 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		// Retrieve as a long:
 		entry.setTimestamp(
 				cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
+		entry.setWhichMeal( WhichMeal.valueOf(
+				String.valueOf( cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) )
+		) );
 		return entry;
 
 	} // readFromCursor
@@ -176,6 +180,16 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		values.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, item.getTotalCarbs() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
+		int whichMeal = 0;
+		try
+		{
+			whichMeal = item.getWhichMeal().getValue();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		values.put( DB.KEY_WHICH_MEAL, whichMeal );
 		return values;
 
 	} // putContentValues

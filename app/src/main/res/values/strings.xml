@@ -42,8 +42,8 @@
     <string name="submit">Save</string>
     <string name="carbs">Carbs</string>
     <string name="meal_item_name">Serving Name</string>
-    <string name="view_latest_entry">View Latest Entry</string>
-    <string name="view_entry_history">View Entry History</string>
+    <string name="view_latest_entry">View Latest</string>
+    <string name="view_entry_history">View History</string>
     <string name="Plus">+</string>
 
     <!-- Strings related to Settings -->
@@ -135,6 +135,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="minus">-</string>
+    <string name="servings">Servings</string>
+    <string name="Meal">Meal: </string>
 
 
     <!--Unused currently, for the EditProfileActivity. 9/12/2018 8:32PM-->

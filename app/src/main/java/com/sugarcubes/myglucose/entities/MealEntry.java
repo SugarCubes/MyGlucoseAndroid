@@ -1,5 +1,7 @@
 package com.sugarcubes.myglucose.entities;
 
+import com.sugarcubes.myglucose.enums.WhichMeal;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -11,6 +13,7 @@ public class MealEntry
 	private int totalCarbs;
 	private Date date;
 	private long timestamp;
+	private WhichMeal whichMeal;
 
 	private ArrayList<MealItem> mealItems;
 
@@ -18,6 +21,15 @@ public class MealEntry
 	public MealEntry()
 	{
 		mealItems = new ArrayList<>();
+		id = -1;
+		remoteId = "";
+		userName = "";
+		totalCarbs = 0;
+		timestamp = 0;
+		whichMeal = WhichMeal.OTHER;
+		Date date = new Date();
+		this.date = date;
+		timestamp = date.getTime();
 
 	} // constructor
 
@@ -91,4 +103,13 @@ public class MealEntry
 		this.mealItems = mealItems;
 	}
 
+	public WhichMeal getWhichMeal()
+	{
+		return whichMeal;
+	}
+
+	public void setWhichMeal( WhichMeal whichMeal )
+	{
+		this.whichMeal = whichMeal;
+	}
 } // class

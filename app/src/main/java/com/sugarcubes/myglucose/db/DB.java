@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -40,6 +40,7 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_DATE = "Date";
 	public static final String KEY_TIMESTAMP = "Timestamp";
 	public static final String KEY_REMOTE_ID = "id";
+	public static final String KEY_WHICH_MEAL = "WhichMeal";
 	// ApplicationUser table keys:
 	public static final String KEY_USER_LOGGED_IN = "LoggedIn";
 	public static final String KEY_USER_LOGIN_TOKEN = "remoteLoginToken";
@@ -66,7 +67,6 @@ public class DB extends SQLiteOpenHelper
 	// GlucoseEntry table keys:
 	public static final String KEY_GLUCOSE_MEASUREMENT = "Measurement";
 	public static final String KEY_GLUCOSE_BEFORE_AFTER = "BeforeAfter";
-	public static final String KEY_GLUCOSE_WHICH_MEAL = "WhichMeal";
 	// MealEntry table keys:
 	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS = "TotalCarbohydrates";
 	// MealItem table keys:
@@ -138,7 +138,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_GLUCOSE_MEASUREMENT + " REAL, "	// DEFAULT: mmol/L. May need conversion
 				+ KEY_GLUCOSE_BEFORE_AFTER + " INTEGER, "
-				+ KEY_GLUCOSE_WHICH_MEAL + " INTEGER, "
+				+ KEY_WHICH_MEAL + " INTEGER, "
 				+ KEY_DATE + " TEXT, "					// Parse and restrict readings to 3 per day
 				+ KEY_TIMESTAMP + " INTEGER);";			// Retrieve as a *long* value
 
@@ -148,6 +148,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_MEAL_ENTRY_TOTAL_CARBS + " INTEGER, "
+				+ KEY_WHICH_MEAL + " INTEGER, "
 				+ KEY_DATE + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
 
@@ -158,9 +159,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_MEAL_ID + " TEXT, "
 				+ KEY_MEAL_ITEM_NAME + " TEXT, "
 				+ KEY_MEAL_ITEM_CARBS + " INTEGER, "
-				+ KEY_MEAL_ITEM_SERVINGS + " INTEGER, "
-				+ KEY_DATE + " TEXT, "
-				+ KEY_TIMESTAMP + " INTEGER);";	// Retrieve as a *long* value
+				+ KEY_MEAL_ITEM_SERVINGS + " INTEGER);";
 
 		// CREATE EXERCISE TABLE
 		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("

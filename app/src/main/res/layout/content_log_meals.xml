@@ -5,110 +5,184 @@
     android:id="@+id/meal_form"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activities.LogMealsActivity"
+    app:layout_constraintHeight_percent="1"
+    tools:context=".activities.LogMealActivity"
     tools:showIn="@layout/activity_log_meals">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
-        <TableLayout
-            android:id="@+id/entry_table"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_gravity="center">
 
-            <TableRow android:gravity="center_vertical">
+            <TableLayout
+                android:id="@+id/meal_item_table"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp">
 
-                <EditText
-                    android:id="@+id/textView16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:hint="@string/meal_item_name"
-                    android:inputType="textAutoComplete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteY="29dp" />
+                <TableRow>
 
-                <EditText
-                    android:id="@+id/textView25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:hint="@string/carbs"
-                    android:inputType="textAutoComplete"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteY="95dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_span="5"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp">
 
-                <Button
-                    android:id="@+id/push_button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/button_round"
-                    android:gravity="center"
-                    android:text="@string/Plus"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:typeface="normal" />
-            </TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:text="@string/Meal"
+                            android:textSize="16sp" />
 
-        </TableLayout>
+                        <Spinner
+                            android:id="@+id/whichMeal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/whichMeal" />
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
+                    </LinearLayout>
+                </TableRow>
 
-            <TableRow android:gravity="end">
+                <TableRow
+                    android:id="@+id/table_row"
+                    android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/button_save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:text="@string/submit" />
+                    <EditText
+                        android:id="@+id/edit_serving_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:hint="@string/meal_item_name"
+                        android:inputType="textAutoComplete"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:layout_editor_absoluteY="29dp" />
 
-            </TableRow>
+                    <EditText
+                        android:id="@+id/edit_carbs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:hint="@string/carbs"
+                        android:inputType="number"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:layout_editor_absoluteY="95dp" />
 
-            <TableRow
-                android:gravity="center_horizontal"
-                android:paddingTop="30dp">
+                    <EditText
+                        android:id="@+id/number_servings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:hint="@string/servings"
+                        android:inputType="number"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <Button
-                    android:id="@+id/button_view_latest"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="40dp"
-                    android:text="@string/view_latest_entry" />
+                    <Button
+                        android:id="@+id/add_meal_item_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:text="@string/Plus"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:typeface="normal" />
 
-            </TableRow>
+                    <Button
+                        android:id="@+id/remove_meal_item_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:text="@string/minus"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:typeface="normal"
+                        android:visibility="invisible" />
 
-            <TableRow android:gravity="center_horizontal">
+                </TableRow>
 
-                <Button
-                    android:id="@+id/button_view_history"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="40dp"
-                    android:text="@string/view_entry_history" />
+            </TableLayout>
 
-            </TableRow>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
-        </TableLayout>
+                <TableRow android:gravity="end">
+
+                    <Button
+                        android:id="@+id/button_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/submit" />
+
+                </TableRow>
+
+            </TableLayout>
+
+
+        </LinearLayout>
+
+
+        <!-- Display buttons at bottom of screen -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <Button
+                android:id="@+id/button_view_latest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/view_latest_entry" />
+
+            <Button
+                android:id="@+id/button_view_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/view_entry_history" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

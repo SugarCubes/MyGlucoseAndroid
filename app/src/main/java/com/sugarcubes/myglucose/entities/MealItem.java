@@ -89,4 +89,17 @@ public class MealItem
 		this.mealId = mealId;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "MealItem{" +
+				"id=" + id +
+				", remoteId='" + remoteId + '\'' +
+				", mealId='" + mealId + '\'' +
+				", name='" + name + '\'' +
+				", carbs=" + carbs +
+				", servings=" + servings +
+				'}';
+	}
+
 } // class

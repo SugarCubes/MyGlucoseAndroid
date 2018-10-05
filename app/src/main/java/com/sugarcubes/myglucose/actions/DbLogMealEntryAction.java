@@ -15,7 +15,7 @@ public class DbLogMealEntryAction implements ILogMealEntryAction
 		DbMealEntryRepository mealEntryRepository = new DbMealEntryRepository( context );
 		mealEntryRepository.create( mealEntry );
 
-		return null;
+		return ErrorCode.NO_ERROR;
 
 	} // logMealEntry
 
