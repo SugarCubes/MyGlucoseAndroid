@@ -32,7 +32,7 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <include layout="@layout/content_log_meals" />
+    <include layout="@layout/content_log_meal" />
 
     <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/fab"-->

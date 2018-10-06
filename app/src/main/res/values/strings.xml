@@ -41,7 +41,7 @@
     <string name="title_activity_log_meals">Log Meal</string>
     <string name="submit">Save</string>
     <string name="carbs">Carbs</string>
-    <string name="meal_item_name">Serving Name</string>
+    <string name="meal_item_name">Food</string>
     <string name="view_latest_entry">View Latest</string>
     <string name="view_entry_history">View History</string>
     <string name="Plus">+</string>
@@ -205,4 +205,5 @@
         <item>Before</item>
         <item>After</item>
     </string-array>
+    <string name="title_activity_view_latest_meal_entry">ViewLatestMealEntry</string>
 </resources>

@@ -9,36 +9,35 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     app:layout_constraintHeight_percent="1"
     tools:context=".activities.LogMealActivity"
-    tools:showIn="@layout/activity_log_meals">
+    tools:showIn="@layout/activity_log_meal">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/fab_margin">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
             <TableLayout
                 android:id="@+id/meal_item_table"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_span="5"
                         android:orientation="horizontal"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp">
+                        android:paddingBottom="8dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -55,55 +54,47 @@
                             android:entries="@array/whichMeal" />
 
                     </LinearLayout>
+
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/table_row"
-                    android:gravity="center_vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingRight="8dp">
 
                     <EditText
                         android:id="@+id/edit_serving_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
+                        android:layout_weight="1"
                         android:hint="@string/meal_item_name"
                         android:inputType="textAutoComplete"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:layout_editor_absoluteY="29dp" />
+                        android:textSize="14sp" />
 
                     <EditText
                         android:id="@+id/edit_carbs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
                         android:hint="@string/carbs"
                         android:inputType="number"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:layout_editor_absoluteY="95dp" />
+                        android:textSize="14sp" />
 
                     <EditText
                         android:id="@+id/number_servings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
                         android:hint="@string/servings"
                         android:inputType="number"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:textSize="14sp" />
 
                     <Button
                         android:id="@+id/add_meal_item_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/button_round"
                         android:gravity="center"
@@ -118,7 +109,6 @@
                         android:id="@+id/remove_meal_item_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/button_round"
                         android:gravity="center"
@@ -139,13 +129,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
-                <TableRow android:gravity="end">
+                <TableRow
+                    android:gravity="end"
+                    android:paddingBottom="12dp">
 
                     <Button
                         android:id="@+id/button_save"
+                        style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
+                        android:background="@android:color/holo_green_light"
                         android:text="@string/submit" />
 
                 </TableRow>
@@ -160,24 +154,29 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
+            android:layout_weight="1"
             android:gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/button_view_latest"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:background="@android:color/holo_blue_dark"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/view_latest_entry" />
 
             <Button
                 android:id="@+id/button_view_history"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@android:color/holo_purple"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="@string/view_entry_history" />
