@@ -1,14 +1,13 @@
 package com.sugarcubes.myglucose.entities;
 
-import android.database.Cursor;
-
-import com.sugarcubes.myglucose.db.DB;
-
 import java.util.Date;
 
 public class ApplicationUser
 {
 	protected static boolean loggedIn = false;
+	protected String loginToken;
+	protected long loginExpirationTimestamp;
+	protected String id;
 	protected String email;					// Primary key
 	protected String firstName;
 	protected String lastName;
@@ -28,6 +27,8 @@ public class ApplicationUser
 
 	public ApplicationUser()
 	{
+		Date newDate = new Date();
+		id 			= "";
 		email 		= "";
 		firstName 	= "";
 		lastName 	= "";
@@ -41,11 +42,22 @@ public class ApplicationUser
 		phoneNumber = "";
 		height = "";
 		weight = "";
-		date		= new Date();
-		timestamp	= -1;
+		date		= newDate;
+		timestamp	= newDate.getTime();
+		loginToken 	= "";
+		loginExpirationTimestamp = newDate.getTime();
 
 	} // constructor
 
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId( String id )
+	{
+		id = id;
+	}
 
 	public String getEmail()
 	{
@@ -207,11 +219,32 @@ public class ApplicationUser
 		this.timestamp = timestamp;
 	}
 
+	public String getLoginToken()
+	{
+		return loginToken;
+	}
+
+	public void setLoginToken( String loginToken )
+	{
+		this.loginToken = loginToken;
+	}
+
+	public long getLoginExpirationTimestamp()
+	{
+		return loginExpirationTimestamp;
+	}
+
+	public void setLoginExpirationTimestamp( long loginExpirationTimestamp )
+	{
+		this.loginExpirationTimestamp = loginExpirationTimestamp;
+	}
+
 	@Override
 	public String toString()
 	{
 		return "ApplicationUser{" +
-				"email='" + email + '\'' +
+				"loggedIn: '" + loggedIn + '\'' +
+				", email='" + email + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", userName='" + userName + '\'' +
@@ -224,6 +257,8 @@ public class ApplicationUser
 				", phoneNumber='" + phoneNumber + '\'' +
 				", date=" + date +
 				", timestamp=" + timestamp +
+				", loginToken=" + loginToken +
+				", loginExpiration=" + loginExpirationTimestamp +
 				'}';
 	} // toString
 

@@ -2,10 +2,14 @@ package com.sugarcubes.myglucose.actions.interfaces;
 
 import android.content.Context;
 
-import com.sugarcubes.myglucose.entities.ApplicationUser;
+import com.sugarcubes.myglucose.enums.ErrorCode;
+
+import org.json.JSONException;
+
+import java.net.MalformedURLException;
 
 public interface ILoginAction
 {
-	boolean attemptLogin( String username, String password, Context context );
+	ErrorCode attemptLogin( String username, String password, Context context ) throws MalformedURLException, JSONException;
 
 } // interface

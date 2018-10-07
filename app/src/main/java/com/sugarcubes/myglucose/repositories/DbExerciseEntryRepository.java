@@ -40,7 +40,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void create( ExerciseEntry item )
 	{
-		contentResolver.insert( uri, this.getContentValues( item ) );
+		contentResolver.insert( uri, this.putContentValues( item ) );
 
 	} // create
 
@@ -81,12 +81,12 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		{
 			cursor.moveToFirst();
 
-			while( cursor.moveToNext() )
+			do
 			{
 				ExerciseEntry entry = readFromCursor( cursor );
-				entryArrayList.add( entry );				// Add the entry to the ArrayList
+				entryArrayList.add( entry );                // Add the entry to the ArrayList
 
-			} // while
+			} while( cursor.moveToNext() ); // do...while
 
 			cursor.close();
 
@@ -121,7 +121,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 
 
 	@Override
-	public ContentValues getContentValues( ExerciseEntry item )
+	public ContentValues putContentValues( ExerciseEntry item )
 	{
 		ContentValues values = new ContentValues();
 //		values.put( DB.KEY_ID, item.getId() );
@@ -139,7 +139,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void update( int id, ExerciseEntry item )
 	{
-		contentResolver.update( uri, getContentValues( item ), DB.KEY_ID + "=?",
+		contentResolver.update( uri, putContentValues( item ), DB.KEY_ID + "=?",
 				new String[]{ String.valueOf( id ) } );
 
 	} // update

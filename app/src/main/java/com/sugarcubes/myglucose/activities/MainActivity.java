@@ -9,6 +9,7 @@
 
 package com.sugarcubes.myglucose.activities;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -21,30 +22,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.app.LoaderManager.LoaderCallbacks;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
-import android.widget.Spinner;
 
 public class MainActivity
 		extends AppCompatActivity
 		implements LoaderCallbacks<Cursor>,
 		View.OnTouchListener
 {
-	private final String LOG_TAG = "MainActivity";
+	public static final boolean DEBUG = true;            // Activate/deactivate logging
+
+	private final String LOG_TAG = getClass().getSimpleName();
 	private PatientSingleton patientUser = PatientSingleton.getInstance();
-	private Menu menu;
-	private final int USER_LOADER = 100;
-	private final int LOGIN_REQUEST = 200;
+	private final int USER_LOADER = 100;            // Loader ID
+	private final int LOGIN_REQUEST = 200;            // Return code after login
+	private Menu menu;                                        // Reference to change Login/logout text
+
 
 	@Override
-	protected void onCreate( Bundle savedInstanceState)
+	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_main );
@@ -52,18 +53,15 @@ public class MainActivity
 		setSupportActionBar( toolbar );
 		setTitle( R.string.app_name );
 
-		// Initialize loader to handle calls to ContentProvider
+		// Initialize loader to get user information:
 		getLoaderManager().initLoader( USER_LOADER, null, this );
 
 		Button glucoseButton = findViewById( R.id.glucose_button );
 		Button mealsButton = findViewById( R.id.meals_button );
 		Button exerciseButton = findViewById( R.id.exercise_button );
-//		Button editButton = findViewById (R.id.edit);
 		glucoseButton.setOnTouchListener( this );
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
-//		editButton.setOnTouchListener( this );
-
 
 	} // onCreate
 
@@ -76,7 +74,7 @@ public class MainActivity
 
 		this.menu = menu;
 
-		setMenuTexts();					// Show Log in/out, Register
+		setMenuTexts();                    // Show Log in/out, Register
 
 		return true;
 
@@ -96,11 +94,14 @@ public class MainActivity
 			case R.id.action_login:
 				if( patientUser.isLoggedIn() )
 				{
-					patientUser.setLoggedIn( false );
-					DbPatientRepository patientRepository =
+					DbPatientRepository patientRepository =        // Get reference to repo
 							new DbPatientRepository( getApplicationContext() );
-					patientRepository.delete( patientUser );
-					setMenuTexts();		// Show Log in/out, Register
+					boolean deleted = patientRepository.delete( patientUser );// Delete from db
+					if( deleted )
+					{
+						PatientSingleton.eraseData();            // deletes data and sets logged in to false
+						setMenuTexts();                            // Show Log in/out, Register
+					}
 				}
 				else
 				{
@@ -117,10 +118,9 @@ public class MainActivity
 				break;
 
 			case R.id.action_view_profile:
-				Log.d( LOG_TAG, "View Profile clicked!" );
+				if( DEBUG ) Log.d( LOG_TAG, "View Profile clicked!" );
 				startViewProfileActivity();
 				break;
-
 
 
 			default:
@@ -133,8 +133,8 @@ public class MainActivity
 
 
 	/**
-	 * 	loaderReset - Refreshes content resolver when the db changes
- 	 */
+	 * loaderReset - Refreshes content resolver when the db changes
+	 */
 	public void loaderReset()
 	{
 		getLoaderManager().restartLoader( USER_LOADER, null, this );
@@ -193,6 +193,8 @@ public class MainActivity
 				patientRepository.readFromCursor( patientUser, cursor );
 
 			} // if
+			else if( DEBUG )
+				Log.e( LOG_TAG, "No user is returned from the database" );
 
 			Log.d( LOG_TAG, patientUser.toString() );
 
@@ -200,6 +202,8 @@ public class MainActivity
 			{
 				startLoginActivity();
 			}
+
+			setMenuTexts();                                        // Show Log in/out, Register
 
 			synchronized( cursor )
 			{
@@ -215,17 +219,18 @@ public class MainActivity
 	protected void onActivityResult( int requestCode, int resultCode, Intent data )
 	{
 		// Check which request we're responding to
-		if( requestCode == LOGIN_REQUEST )
+		switch( requestCode )
 		{
-			// Make sure the request was successful
-			if( resultCode == RESULT_OK )
-			{
-				setMenuTexts();
+			case LOGIN_REQUEST:
+				// Make sure the request was successful
+				if( resultCode == RESULT_OK )
+				{
+					setMenuTexts();
 
-				// TODO: Do this only if first time logging in:
-				startSettingsActivity();
+					startSettingsActivity();
 
-			} // if RESULT_OK
+				} // if RESULT_OK
+				break;
 
 		} // if LOGIN_REQUEST
 
@@ -249,7 +254,7 @@ public class MainActivity
 		switch( view.getId() )
 		{
 			case R.id.glucose_button:                                // Glucose button tap
-//				Log.i( LOG_TAG, "Glucose button tapped" );
+				if( DEBUG ) Log.d( LOG_TAG, "Glucose button tapped" );
 				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
 					Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
@@ -258,20 +263,20 @@ public class MainActivity
 				break;
 
 			case R.id.meals_button:                                    // Meals button tap
-//				Log.i( LOG_TAG, "Meals button tapped" );
+				if( DEBUG ) Log.d( LOG_TAG, "Meals button tapped" );
 				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
-					Intent mealsIntent = new Intent( this, LogMealsActivity.class );
+					Intent mealsIntent = new Intent( this, LogMealActivity.class );
 					startActivity( mealsIntent );
 				}
 				break;
 
 			case R.id.exercise_button:                                // Exercise button tap
-//				Log.i( LOG_TAG, "Exercise button tapped" );
+				if( DEBUG ) Log.d( LOG_TAG, "Exercise button tapped" );
 				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 				{
-					Intent exerciseIntent = new Intent( this,LogExerciseActivity.class );
-                    startActivity( exerciseIntent );
+					Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
+					startActivity( exerciseIntent );
 				}
 				break;
 
@@ -322,17 +327,17 @@ public class MainActivity
 
 	private void setMenuTexts()
 	{
-//		MenuItem loginMenuItem = menu.findItem( R.id.action_login );
-//		if( loginMenuItem != null )
-//			loginMenuItem.setTitle( R.string.logout );
+		if( menu != null )
+		{
+			menu.findItem( R.id.action_login )
+					.setTitle( patientUser.isLoggedIn()
+							? R.string.logout
+							: R.string.login );
 
-		menu.findItem( R.id.action_login )
-				.setTitle( patientUser.isLoggedIn()
-						? R.string.logout
-						: R.string.login );
+			menu.findItem( R.id.action_register )
+					.setVisible( !patientUser.isLoggedIn() );
 
-		menu.findItem( R.id.action_register )
-				.setVisible( !patientUser.isLoggedIn() );
+		} // if
 
 	} // setMenuTexts
 

@@ -7,10 +7,12 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_email_password">This email address or password is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_invalid_hostname_or_port">The hostname or port entered is either faulty or cannot connect</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -27,8 +29,28 @@
     <string name="select_a_doctor">Select a doctor:</string>
     <string name="title_activity_register">Register</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="address">Address</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="view_profile_activity">View Profile</string>
+    <string name="title_activity_log_meals">Log Meal</string>
+    <string name="submit">Save</string>
+    <string name="carbs">Carbs</string>
+    <string name="meal_item_name">Food</string>
+    <string name="view_latest_entry">View Latest</string>
+    <string name="view_entry_history">View History</string>
+    <string name="Plus">+</string>
 
     <!-- Strings related to Settings -->
+
+
+    <string name="developer_settings">Developer Settings</string>
+    <string name="patient_settings">Patient Settings</string>
 
     <string name="pref_header_general">General</string>
     <string name="pref_title_hostname">Server Hostname</string>
@@ -39,8 +61,8 @@
 
     <string name="pref_title_glucose_units">Units of Measurement</string>
     <string-array name="pref_glucose_units_list_titles">
-    <item>mmol/mL</item>
-    <item>mg/dL</item>
+        <item>mmol/mL</item>
+        <item>mg/dL</item>
     </string-array>
 
     <string-array name="pref_glucose_units_list_values">
@@ -113,39 +135,75 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="minus">-</string>
+    <string name="servings">Servings</string>
+    <string name="Meal">Meal: </string>
 
 
-    //Unused currently, for the EditProfileActivity. 9/12/2018 8:32PM
+    <!--Unused currently, for the EditProfileActivity. 9/12/2018 8:32PM-->
     <string-array name="states">
-        <item>Alabama</item><item>Alaska</item><item>Arizona</item><item>Arkansas</item>
-        <item>California</item><item>Colorado</item><item>Connecticut</item><item>Delaware</item>
-        <item>Florida</item><item>Georgia</item><item>Hawaii</item><item>Idaho</item>
-        <item>Illinois</item><item>Indiana</item><item>Iowa</item><item>Kansas</item>
-        <item>Kentucky</item><item>Louisiana</item><item>Maine</item><item>Maryland</item>
-        <item>Massachusetts</item><item>Michigan</item><item>Minnesota</item>
-        <item>Mississippi</item><item>Missouri</item><item>Montana</item><item>Nebraska</item>
-        <item>Nevada</item><item>New Hampshire</item><item>New Jersey</item><item>New Mexico</item>
-        <item>New York</item><item>North Carolina</item><item>North Dakota</item><item>Ohio</item>
-        <item>Oklahoma</item><item>Oregon</item><item>Pennsylvania</item><item>Rhode Island</item>
-        <item>South Carolina</item><item>South Dakota</item><item>Tennessee</item><item>Texas</item>
-        <item>Utah</item><item>Vermont</item><item>Virginia</item><item>Washington</item>
-        <item>West Virginia</item><item>Wisconsin</item><item>Wyoming</item>
+        <item>Alabama</item>
+        <item>Alaska</item>
+        <item>Arizona</item>
+        <item>Arkansas</item>
+        <item>California</item>
+        <item>Colorado</item>
+        <item>Connecticut</item>
+        <item>Delaware</item>
+        <item>Florida</item>
+        <item>Georgia</item>
+        <item>Hawaii</item>
+        <item>Idaho</item>
+        <item>Illinois</item>
+        <item>Indiana</item>
+        <item>Iowa</item>
+        <item>Kansas</item>
+        <item>Kentucky</item>
+        <item>Louisiana</item>
+        <item>Maine</item>
+        <item>Maryland</item>
+        <item>Massachusetts</item>
+        <item>Michigan</item>
+        <item>Minnesota</item>
+        <item>Mississippi</item>
+        <item>Missouri</item>
+        <item>Montana</item>
+        <item>Nebraska</item>
+        <item>Nevada</item>
+        <item>New Hampshire</item>
+        <item>New Jersey</item>
+        <item>New Mexico</item>
+        <item>New York</item>
+        <item>North Carolina</item>
+        <item>North Dakota</item>
+        <item>Ohio</item>
+        <item>Oklahoma</item>
+        <item>Oregon</item>
+        <item>Pennsylvania</item>
+        <item>Rhode Island</item>
+        <item>South Carolina</item>
+        <item>South Dakota</item>
+        <item>Tennessee</item>
+        <item>Texas</item>
+        <item>Utah</item>
+        <item>Vermont</item>
+        <item>Virginia</item>
+        <item>Washington</item>
+        <item>West Virginia</item>
+        <item>Wisconsin</item>
+        <item>Wyoming</item>
     </string-array>
 
-    <string-array name="whichMeal"><item>Breakfast</item><item>Lunch</item>
-        <item>Dinner</item><item>Snack</item><item>Other</item></string-array>
-    <string-array name="beforeAfter"><item>Before</item><item>After</item></string-array>
-=======
-    <string name="developer_settings">Developer Settings</string>
-    <string name="patient_settings">Patient Settings</string>
-    <string name="first_name">First Name</string>
-    <string name="last_name">Last Name</string>
-    <string name="phone_number">Phone Number</string>
-    <string name="city">City</string>
-    <string name="state">State</string>
-    <string name="address">Address</string>
-    <string name="weight">Weight</string>
-    <string name="height">Height</string>
-    <string name="view_profile_activity">View Profile</string>
-    >>>>>>> master
+    <string-array name="whichMeal">
+        <item>Breakfast</item>
+        <item>Lunch</item>
+        <item>Dinner</item>
+        <item>Snack</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="beforeAfter">
+        <item>Before</item>
+        <item>After</item>
+    </string-array>
+    <string name="title_activity_view_latest_meal_entry">ViewLatestMealEntry</string>
 </resources>

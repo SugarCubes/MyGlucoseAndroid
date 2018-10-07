@@ -44,7 +44,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void create( GlucoseEntry item )
 	{
-		ContentValues values = getContentValues( item );
+		ContentValues values = putContentValues( item );
 		Log.w( LOG_TAG, "URI: " + uri + "; Values: " + values.toString() );
 		contentResolver.insert(  uri, values );
 
@@ -89,12 +89,12 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		{
 			cursor.moveToFirst();
 
-			while( cursor.moveToNext() )
+			do
 			{
 				GlucoseEntry entry = readFromCursor( cursor );
 				entryArrayList.add( entry );				// Add the entry to the ArrayList
 
-			} // while
+			} while( cursor.moveToNext() ); // do...while
 
 			cursor.close();
 
@@ -106,7 +106,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 
 	@Override
-	public ContentValues getContentValues( GlucoseEntry item )
+	public ContentValues putContentValues( GlucoseEntry item )
 	{
 		ContentValues values = new ContentValues();
 //		values.put( DB.KEY_ID, item.getId() );
@@ -114,18 +114,18 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
-		values.put( DB.KEY_GLUCOSE_WHICH_MEAL, item.getWhichMeal().toString() );
+		values.put( DB.KEY_WHICH_MEAL, item.getWhichMeal().toString() );
 		values.put( DB.KEY_DATE, item.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
 
-	} // getContentValues
+	} // putContentValues
 
 
 	@Override
 	public void update( int id, GlucoseEntry item )
 	{
-		contentResolver.update( uri, getContentValues( item ),
+		contentResolver.update( uri, putContentValues( item ),
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
 	} // update
@@ -161,7 +161,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		entry.setBeforeAfter( BeforeAfter.valueOf( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_GLUCOSE_BEFORE_AFTER ) ) ) );
 		entry.setWhichMeal( WhichMeal.valueOf( cursor.getString(
-				cursor.getColumnIndex( DB.KEY_GLUCOSE_WHICH_MEAL ) ) ) );
+				cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
 
 		// Convert the date string to a Date object:
 		entry.setDate( DateUtilities.convertStringToDate(

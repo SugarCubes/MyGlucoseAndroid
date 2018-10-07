@@ -30,7 +30,7 @@ public interface IApplicationUserRepository<T>
 	 * @param item - The item to get the content values for
 	 * @return ContentValues
 	 */
-	ContentValues getContentValues( T item );
+	ContentValues putContentValues( T item );
 
 	/**
 	 * Reads an item from the database and converts it to an entity object.

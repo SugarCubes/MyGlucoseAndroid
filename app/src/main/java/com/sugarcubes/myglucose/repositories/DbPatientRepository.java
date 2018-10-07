@@ -161,31 +161,39 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public PatientSingleton readFromCursor( PatientSingleton patientSingleton, Cursor cursor )
 	{
+		DbApplicationUserRepository applicationUserRepository
+				= new DbApplicationUserRepository( context );
+		applicationUserRepository.readFromCursor( patientSingleton, cursor );
 	    try
         {
-            DbDoctorRepository doctorRepository = new DbDoctorRepository(context);
-            patientSingleton.setDoctor(doctorRepository.readAll().get(0));
+        	// TODO: Get doctor from repository
+//            DbDoctorRepository doctorRepository = new DbDoctorRepository(context);
+//            patientSingleton.setDoctor(doctorRepository.readAll().get(0));
             return patientSingleton;
         }
-        catch(IndexOutOfBoundsException indexOoB)
+        catch( Exception e )
         {
+        	e .printStackTrace();
             patientSingleton = null;
             return patientSingleton;
         }
+
+
 	} // readFromCursor
 
 	@Override
-	public ContentValues getContentValues( PatientSingleton item )
+	public ContentValues putContentValues( PatientSingleton item )
 	{
-		ContentValues values = new ContentValues(  );
-		values.put( DB.KEY_DR_ID, item.getDoctor().getUserName() );
+		ContentValues values = new ContentValues();
+		if( item.getDoctor() != null )
+			values.put( DB.KEY_DR_ID, item.getDoctor().getUserName() );
 		return values;
 	}
 
 	@Override
 	public void update( String username, PatientSingleton item )
 	{
-		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, getContentValues( item ),
+		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, putContentValues( item ),
 				DB.KEY_USERNAME + "=?", new String[]{ username } );
 
 	} // update
@@ -210,7 +218,6 @@ public class DbPatientRepository implements IPatientRepository
 		return null;
 
 	} // getCursorForLoggedInUser
-
 
 
 	public static class GetLoggedInUserTask extends AsyncTask<ContentResolver, Void, Cursor>
