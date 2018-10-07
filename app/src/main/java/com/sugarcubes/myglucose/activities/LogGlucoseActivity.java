@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
+import com.sugarcubes.myglucose.services.AsyncTaskImplement;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.WhichMeal;
@@ -36,7 +37,8 @@ public class LogGlucoseActivity extends AppCompatActivity
 			@Override
 			public boolean onTouch(View v, MotionEvent event){
 				if(event.getAction() == MotionEvent.ACTION_UP) {
-
+					AsyncTaskImplement aSync = new AsyncTaskImplement(getApplicationContext());
+					aSync.execute();
                     DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
                     DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
                     PatientSingleton patientSingleton = PatientSingleton.getInstance();
