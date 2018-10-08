@@ -1,14 +1,12 @@
 package com.sugarcubes.myglucose.dependencies;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
-import com.sugarcubes.myglucose.actions.SimulateLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
-import com.sugarcubes.myglucose.actions.interfaces.DbLogGlucoseEntryAction;
+import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;

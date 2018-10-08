@@ -1,7 +1,8 @@
-package com.sugarcubes.myglucose.actions.interfaces;
+package com.sugarcubes.myglucose.actions;
 
 import android.content.Context;
 
+import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
