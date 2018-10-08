@@ -8,6 +8,8 @@ import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.SimulateLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
+import com.sugarcubes.myglucose.actions.interfaces.DbLogGlucoseEntryAction;
+import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
@@ -26,12 +28,14 @@ class ObjectGraph
 	{
 		// Step 1.  create dependency graph
 		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();//SimulateLogMealEntryAction();//
+		ILogGlucoseEntryAction logGlucoseEntryAction = new DbLogGlucoseEntryAction();
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
 		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
 		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
 
 		// Step 2. add models to a dependencies map if you will need them later
 		dependencies.put( ILogMealEntryAction.class, logMealEntryAction );
+		dependencies.put( ILogGlucoseEntryAction.class, logGlucoseEntryAction );
 		dependencies.put( ILoginAction.class, remoteLoginAction );
 		dependencies.put( IRegisterPatientAction.class, registerPatientAction );
 		dependencies.put( IRetrieveDoctorsAction.class, retrieveDoctorsAction );

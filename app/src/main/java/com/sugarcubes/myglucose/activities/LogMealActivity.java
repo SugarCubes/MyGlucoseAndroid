@@ -67,7 +67,8 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		setContentView( R.layout.activity_log_meal );
 		Toolbar toolbar = findViewById( R.id.toolbar );
 		setSupportActionBar( toolbar );
-		getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+		if( getSupportActionBar() != null )
+			getSupportActionBar().setDisplayHomeAsUpEnabled( true );
 
 		coordinatorLayout = findViewById( R.id.coordinator_layout );
 

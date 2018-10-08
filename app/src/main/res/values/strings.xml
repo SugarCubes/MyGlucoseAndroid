@@ -205,5 +205,13 @@
         <item>Before</item>
         <item>After</item>
     </string-array>
+
     <string name="title_activity_view_latest_meal_entry">ViewLatestMealEntry</string>
+    <string name="title_activity_log_glucose">Log Glucose</string>
+    <string name="when_was_your_meal">When was your meal?</string>
+    <string name="glucose_level">Glucose Level</string>
+    <string name="did_you_record_your_glucose_before_or_after">Did you record your glucose before or after?</string>
+    <string name="none_entered_yet">None entered yet</string>
+    <string name="before_or_after_meal">Before or after meal:</string>
+    <string name="close">Close</string>
 </resources>
