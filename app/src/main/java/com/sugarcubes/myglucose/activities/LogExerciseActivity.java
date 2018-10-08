@@ -8,32 +8,23 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
 import com.sugarcubes.myglucose.R;
-//import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
+import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
-import com.sugarcubes.myglucose.repositories.DbPatientRepository;
-import com.sugarcubes.myglucose.services.AsyncTaskImplement;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
-import com.sugarcubes.myglucose.enums.WhichMeal;
-import com.sugarcubes.myglucose.enums.BeforeAfter;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.sql.Timestamp;
+
+//import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 
 public class LogExerciseActivity extends AppCompatActivity
 {
@@ -46,7 +37,7 @@ public class LogExerciseActivity extends AppCompatActivity
 	/*public TableLayout exerciseItemTable;                      // Holds the exerciseItems on the screen
 	public ArrayList<TableRow> allTableRows;               // Holds all TableRows*/
 	//Create LogExerciseTask method
-	//public LogExerciseActivity.LogExerciseTask mAuthTask = null;
+	private LogExerciseTask mLogExerciseTask = null;
 
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -59,39 +50,33 @@ public class LogExerciseActivity extends AppCompatActivity
 		Button button = findViewById(R.id.submitGlucose);
 		Button viewLatest = findViewById(R.id.viewLatest);
 
-		button.setOnTouchListener(new View.OnTouchListener() {
+		button.setOnTouchListener(new View.OnTouchListener()
+		{
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					AsyncTaskImplement aSync = new AsyncTaskImplement(getApplicationContext());
-					aSync.execute();
-					DbPatientRepository dbPatientRepository = new DbPatientRepository(getApplicationContext());
-					DbExerciseEntryRepository dbExerciseEntryRepository = new DbExerciseEntryRepository(getApplicationContext());
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				if (event.getAction() == MotionEvent.ACTION_UP)
+				{
+					// TODO: vvv Move all of this into a new .actions.interfaces.ILogExerciseEntry interface and its implementation vvv
 					PatientSingleton patientSingleton = PatientSingleton.getInstance();
-					ExerciseEntry exerciseEntry = new ExerciseEntry();
+					String userName = patientSingleton.getUserName();	// Use this to set to the ExerciseEntry
+					DbExerciseEntryRepository dbExerciseEntryRepository
+							= new DbExerciseEntryRepository(getApplicationContext());
+//					dbExerciseEntryRepository.create(exerciseEntry);
+					// TODO: ^^^ Move ^^^
 
 					//Enter EditTexts and Spinners here
-					/* EditText glucoseLevel = findViewById(R.id.glucoseLevel);
-					Spinner whichMeal = findViewById(R.id.whichMeal);
-					Spinner beforeAfter = findViewById(R.id.beforeAfter);
-					WhichMeal whichMealEnum = WhichMeal.OTHER;
-					BeforeAfter beforeAfterEnum = BeforeAfter.BEFORE;
-
-					glucoseEntry.setMeasurement(Float.parseFloat(glucoseLevel.getText().toString()));
-					whichMealEnum = WhichMeal.valueOf(whichMeal.getSelectedItem().toString().toUpperCase());
-					glucoseEntry.setWhichMeal(whichMealEnum);
-					beforeAfterEnum = BeforeAfter.valueOf(beforeAfter.getSelectedItem().toString().toUpperCase());
-					glucoseEntry.setBeforeAfter(beforeAfterEnum);*/
-
-					Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+					// TODO: Create the exerciseEntry to be passed to the AsyncTask (declared at bottom of this Activity)
 					Date date = new Date();
+					ExerciseEntry exerciseEntry = new ExerciseEntry();
+					exerciseEntry.setDate(date);
+					exerciseEntry.setTimestamp( date.getTime() );
+					// TODO: Get the rest of the data from the EditTexts
 
-					//setTimestamp error here
-					//exerciseEntry.setTimeStamp(timestamp.getTime());
-					exerciseEntry.setDate(timestamp);
-					patientSingleton.exerciseEntries.add(exerciseEntry);
-					dbPatientRepository.update(patientSingleton.getUserName(), patientSingleton);
-					dbExerciseEntryRepository.create(exerciseEntry);
+
+					// TODO: This is the reference to the AsyncTask.
+					mLogExerciseTask = new LogExerciseTask( exerciseEntry );
+					mLogExerciseTask.execute();
 
 					finish();
 					return true;
@@ -116,7 +101,7 @@ public class LogExerciseActivity extends AppCompatActivity
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					startViewLatestGlucoseActivity();
+					startViewLatestExerciseActivity();
 					return true;
 				}
 				return false;
@@ -126,7 +111,8 @@ public class LogExerciseActivity extends AppCompatActivity
 	} // onCreate
 
 
-	private void startViewLatestGlucoseActivity() {
+	private void startViewLatestExerciseActivity() {
+		// TODO: Change to ViewLatestExerciseEntry:
 		Intent intent = new Intent(this, ViewLatestGlucoseEntry.class);
 		startActivity(intent);
 
@@ -176,7 +162,7 @@ public class LogExerciseActivity extends AppCompatActivity
 	 */
 	public class LogExerciseTask extends AsyncTask<Void, Void, ErrorCode>
 	{
-		//		private static final String LOG_TAG = "LogGlucoseTask";
+		//		private static final String LOG_TAG = "LogExerciseTask";
 		ExerciseEntry exerciseEntry;
 
 		LogExerciseTask( ExerciseEntry exerciseEntry )
@@ -199,6 +185,8 @@ public class LogExerciseActivity extends AppCompatActivity
 			try
 			{
 				// Save the ExerciseEntry and its ExerciseItems
+				// TODO: Create a new interface in actions/interfaces/ called ILogExerciseEntryAction
+				// TODO: Then, create a new class in actions/ called DbLogExerciseEntryAction to *implement* the interface
 				//return logExerciseEntryAction.logExerciseEntry( getApplicationContext(), exerciseEntry );
 				return null;
 			}
@@ -219,14 +207,14 @@ public class LogExerciseActivity extends AppCompatActivity
 
 			switch( errorCode )
 			{
-				case NO_ERROR:                                    // 0:	No error
+				case NO_ERROR:                              // 0: No error
 					Intent returnData = new Intent();
-					returnData.setData( Uri.parse( "logged in" ) );
-					setResult( RESULT_OK, returnData );            // Return ok result for activity result
-					finish();                                    // Close the activity
+					returnData.setData( Uri.parse( "exercise logged" ) );
+					setResult( RESULT_OK, returnData );     // Return ok result for activity result
+					finish();                               // Close the activity
 					break;
 
-				case UNKNOWN:                                    // 1:	Unknown - something went wrong
+				case UNKNOWN:                               // 1: Unknown - something went wrong
 					Snackbar.make( coordinatorLayout, "Unknown error", Snackbar.LENGTH_LONG ).show();
 					break;
 
@@ -241,12 +229,12 @@ public class LogExerciseActivity extends AppCompatActivity
 		@Override
 		protected void onCancelled()
 		{
-			//mAuthTask = null;
+			mLogExerciseTask = null;
 			showProgress( false );
 
 		} // onCancelled
 
-	} // UserLoginTask
+	} // LogExerciseTask
 
 
 } // class
