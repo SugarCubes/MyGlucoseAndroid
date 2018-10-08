@@ -45,12 +45,12 @@ import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 public class LogMealActivity extends AppCompatActivity implements View.OnTouchListener
 {
 	private final String LOG_TAG = getClass().getSimpleName();
-	CoordinatorLayout coordinatorLayout;                    // The base view (for using Snackbar)
-	private View spinner;                                   // Shows when submitting
-	private View mealForm;                                  // The view to hide when submitting
-	private Spinner whichMeal;								// To select a meal type
+	private CoordinatorLayout   coordinatorLayout;          // The base view (for using Snackbar)
+	private View                spinner;                    // Shows when submitting
+	private View                mealForm;                   // The view to hide when submitting
+	private Spinner             whichMeal;                  // To select a meal type
 	private ILogMealEntryAction logMealEntryAction;         // The command to log the meal
-	private TableLayout mealItemTable;                      // Holds the MealItems on the screen
+	private TableLayout         mealItemTable;              // Holds the MealItems on the screen
 	private ArrayList<MealItem> mealItems;                  // Iterable ArrayList of MealItems
 	private ArrayList<EditText> allServingNameEntries;      // Holds all serving name EditTexts
 	private ArrayList<EditText> allCarbEntries;             // Holds all carb entries EditTexts
@@ -67,7 +67,8 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		setContentView( R.layout.activity_log_meal );
 		Toolbar toolbar = findViewById( R.id.toolbar );
 		setSupportActionBar( toolbar );
-		getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+		if( getSupportActionBar() != null )
+			getSupportActionBar().setDisplayHomeAsUpEnabled( true );
 
 		coordinatorLayout = findViewById( R.id.coordinator_layout );
 
@@ -75,7 +76,7 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		logMealEntryAction = Dependencies.get( ILogMealEntryAction.class );
 
 		Button viewLatestEntryButton = findViewById( R.id.button_view_latest );
-		viewLatestEntryButton.setOnTouchListener( this );    // Add listener to latest entry btn
+		viewLatestEntryButton.setOnTouchListener( this );   // Add listener to latest entry btn
 
 		Button submitButton = findViewById( R.id.button_save );
 		submitButton.setOnTouchListener( this );            // Add listener to save button
@@ -83,20 +84,20 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		Button addButton = findViewById( R.id.add_meal_item_button );
 		addButton.setOnTouchListener( this );
 
-		spinner 		= findViewById( R.id.save_spinner );
-		mealForm 		= findViewById( R.id.meal_form );
-		mealItemTable 	= findViewById( R.id.meal_item_table );
-		whichMeal 		= findViewById( R.id.whichMeal );
+		spinner = findViewById( R.id.save_spinner );
+		mealForm = findViewById( R.id.meal_form );
+		mealItemTable = findViewById( R.id.meal_item_table );
+		whichMeal = findViewById( R.id.whichMeal );
 
-		mealItems 				= new ArrayList<>();		// Instantiate the ArrayLists
-		allServingNameEntries 	= new ArrayList<>();
-		allCarbEntries			= new ArrayList<>();
-		allTableRows			= new ArrayList<>();
+		mealItems = new ArrayList<>();                      // Instantiate the ArrayLists
+		allServingNameEntries = new ArrayList<>();
+		allCarbEntries = new ArrayList<>();
+		allTableRows = new ArrayList<>();
 		allServingNumberEntries = new ArrayList<>();
 
 		// Add each EditText of the first entry to the ArrayLists:
 		TableRow tableRow = findViewById( R.id.table_row );
-		allTableRows.add( tableRow );                // Add the first MealItem to the ArrayList
+		allTableRows.add( tableRow );                    // Add the first MealItem to the ArrayList
 		// Add the first row of EditTexts:
 		allServingNumberEntries.add( (EditText) tableRow.findViewById( R.id.number_servings ) );
 		allServingNameEntries.add( (EditText) tableRow.findViewById( R.id.edit_serving_name ) );
@@ -108,10 +109,10 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 	@Override
 	public boolean onTouch( View view, MotionEvent event )
 	{
-		view.performClick();                                // Perform default action
+		view.performClick();                                    // Perform default action
 		//Log.i( LOG_TAG, "Touch detected: " + view.getId() );
 
-		if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
+		if( event.getAction() == MotionEvent.ACTION_UP )        // Only handle single event
 		{
 			switch( view.getId() )
 			{
@@ -125,23 +126,24 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 				case R.id.button_save:
 					// Create the MealEntry using the MealItems:
-					MealEntry mealEntry = createMealEntryFromInputData();	// Get the data from EditTexts
-					if( mealEntry != null )							// Null if all fields not valid
+					MealEntry mealEntry =
+							createMealEntryFromInputData();     // Get the data from EditTexts
+					if( mealEntry != null )                     // Null if all fields not valid
 					{
-						mAuthTask = new LogMealTask( mealEntry );	// Save it to the database
+						mAuthTask = new LogMealTask( mealEntry );   // Save it to the database
 						mAuthTask.execute();
 
 					} // if
 					break;
 
 				case R.id.add_meal_item_button:
-					TableRow newRow = createTableRow();				// Adds correct views to a new row
-					mealItemTable.addView( newRow );				// Add the row to the layout
+					TableRow newRow = createTableRow();         // Adds correct views to a new row
+					mealItemTable.addView( newRow );            // Add the row to the layout
 					break;
 
 				case R.id.remove_meal_item_button:
-					removeParentTableRow( view );					// Remove row containing the button
-					resetTags();									// To allow indexing/performing actions
+					removeParentTableRow( view );               // Remove row containing the button
+					resetTags();                                // To allow indexing/performing actions
 					break;
 
 			} // switch
@@ -155,8 +157,9 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 	/**
 	 * createCircleButton - Creates a circle button
-	 * @param buttonId - The resource id to be used in the onTouch method to handle
-	 *                 behavior.
+	 *
+	 * @param buttonId         - The resource id to be used in the onTouch method to handle
+	 *                         behavior.
 	 * @param stringResourceId - The string resource to set as the text inside the button.
 	 * @return a new Button
 	 */
@@ -204,20 +207,21 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 	/**
 	 * createEditText - Creates a new EditText View in a uniform style.
+	 *
 	 * @param meal_item_name - Resource id. Used as the EditText hint
-	 * @param inputType - InputType.SOME_TYPE
+	 * @param inputType      - InputType.SOME_TYPE
 	 * @return a new EditText
 	 */
 	@NonNull
 	private EditText createEditText( int meal_item_name, int inputType )
 	{
 		EditText editText = new EditText( getApplicationContext() );
-//		EditText orig = findViewById( R.id.edit_serving_name );
-//		Drawable drawable = orig.getBackground();
-//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN )
-//			editText.setBackground( drawable );
-//		else
-//			editText.setBackgroundDrawable( drawable );
+		//		EditText orig = findViewById( R.id.edit_serving_name );
+		//		Drawable drawable = orig.getBackground();
+		//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN )
+		//			editText.setBackground( drawable );
+		//		else
+		//			editText.setBackgroundDrawable( drawable );
 		int margin = (int) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP,
 				8, getResources().getDisplayMetrics() );
 		TableRow.LayoutParams lp = new TableRow.LayoutParams(
@@ -246,31 +250,32 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		MealEntry mealEntry = new MealEntry();
 		// Create a UUID (or Guid)
 		mealEntry.setRemoteId( UUID.randomUUID().toString() );
-		WhichMeal whichMealValue = WhichMeal.valueOf( whichMeal.getSelectedItem().toString().toUpperCase() );
+		WhichMeal whichMealValue =
+				WhichMeal.valueOf( whichMeal.getSelectedItem().toString().toUpperCase() );
 		mealEntry.setWhichMeal( whichMealValue );
 
 
 		// Create the MealItems based on the number of MealItems on the screen. For each
 		// 		carb entry EditText, there will be a serving name and serving number EditText
-		int totalCarbs = 0;								// Tally up the total carbs
-		int numberEntries = allCarbEntries.size();		// In case ArrayList size changes for some reason
+		int totalCarbs = 0;                                 // Tally up the total carbs
+		int numberEntries = allCarbEntries.size();          // In case ArrayList size changes
 		for( int index = 0; index < numberEntries; index++ )
 		{
-			MealItem mealItem = new MealItem();			// Create the MealItem object
+			MealItem mealItem = new MealItem();             // Create the MealItem object
 			mealItem.setRemoteId( UUID.randomUUID().toString() );
 			mealItem.setMealId( mealEntry.getRemoteId() );
 
 			// The food name is required:
 			EditText servingNameEditText = allServingNameEntries.get( index );
 			String mealName = servingNameEditText.getText().toString();
-			if( errorOnEmpty( servingNameEditText ) )	// Set error if empty
-				return null;							// And signal not to save to DB
-			mealItem.setName( mealName );				// ...otherwise, continue
+			if( errorOnEmpty( servingNameEditText ) )       // Set error if empty
+				return null;                                // And signal not to save to DB
+			mealItem.setName( mealName );                   // ...otherwise, continue
 
-			int carbs = 0;								// Default number of carbs
+			int carbs = 0;                                  // Default number of carbs
 			EditText carbEditText = allCarbEntries.get( index );
-			if( errorOnEmpty( carbEditText ) )			// Set error if empty
-				return null;							// And signal not to save to DB
+			if( errorOnEmpty( carbEditText ) )              // Set error if empty
+				return null;                                // And signal not to save to DB
 			String txt = carbEditText.getText().toString();
 			try
 			{
@@ -281,10 +286,10 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 				e.printStackTrace();
 			}
 
-			int servings = 1;							// Default number of servings
+			int servings = 1;                               // Default number of servings
 			EditText servingNumberEditText = allServingNumberEntries.get( index );
-			if( errorOnEmpty( servingNumberEditText ) )	// Set error if empty
-				return null;							// And signal not to save to DB
+			if( errorOnEmpty( servingNumberEditText ) )     // Set error if empty
+				return null;                                // And signal not to save to DB
 			txt = servingNumberEditText.getText().toString();
 			try
 			{
@@ -305,8 +310,8 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 		} // for
 
-		mealEntry.setMealItems( mealItems );			// Set the new object to our MealEntry
-		mealEntry.setTotalCarbs( totalCarbs );			// The calculated number of carbs
+		mealEntry.setMealItems( mealItems );                // Set the new object to our MealEntry
+		mealEntry.setTotalCarbs( totalCarbs );              // The calculated number of carbs
 
 		return mealEntry;
 
@@ -315,14 +320,16 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 	/**
 	 * createTableRow - Creates a new TableRow item in a uniform style
+	 *
 	 * @return a new TableRow object
 	 */
 	@NonNull
 	private TableRow createTableRow()
 	{
 		// Create the row to be returned:
-		TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams( TableLayout.LayoutParams.MATCH_PARENT,
-				TableLayout.LayoutParams.WRAP_CONTENT );
+		TableLayout.LayoutParams layoutParams =
+				new TableLayout.LayoutParams( TableLayout.LayoutParams.MATCH_PARENT,
+						TableLayout.LayoutParams.WRAP_CONTENT );
 		TableRow newRow = new TableRow( getApplicationContext() );
 		newRow.setLayoutParams( layoutParams );
 		newRow.setGravity( Gravity.CENTER_VERTICAL );
@@ -330,13 +337,17 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		// 		be the size *before* adding new item. This allows us to do 0-based indexing:
 		newRow.setTag( allServingNameEntries.size() );
 
-		EditText newServingNameEditText = createEditText( R.string.meal_item_name, InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE );
-		TableRow.LayoutParams layoutParams1 = new TableRow.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT );
+		EditText newServingNameEditText =
+				createEditText( R.string.meal_item_name, InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE );
+		TableRow.LayoutParams layoutParams1 =
+				new TableRow.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
+						ViewGroup.LayoutParams.WRAP_CONTENT );
 		layoutParams1.weight = 1;
 		newServingNameEditText.setLayoutParams( layoutParams1 );
-		EditText newCarbEditText = createEditText( R.string.carbs, InputType.TYPE_CLASS_NUMBER );
-		EditText newServingNumberEditText = createEditText( R.string.servings, InputType.TYPE_CLASS_NUMBER );
+		EditText newCarbEditText =
+				createEditText( R.string.carbs, InputType.TYPE_CLASS_NUMBER );
+		EditText newServingNumberEditText =
+				createEditText( R.string.servings, InputType.TYPE_CLASS_NUMBER );
 
 		// Create new buttons:
 		Button addButton = createCircleButton( R.id.add_meal_item_button, R.string.Plus );
@@ -368,6 +379,7 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 	/**
 	 * errorOnEmpty - Sets an error message to the EditText if it is empty.
+	 *
 	 * @param editText - The view to check
 	 * @return whether there was an error
 	 */
@@ -386,34 +398,35 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 	/**
 	 * removeParentTableRow - Removes the row based on the view that was clicked
+	 *
 	 * @param view - The view that was clicked
 	 */
 	private void removeParentTableRow( View view )
 	{
-		TableRow tableRow = (TableRow) view.getParent();
-		int tag = (int) tableRow.getTag();
-		allServingNameEntries.remove( tag );
+		TableRow tableRow = (TableRow) view.getParent();    // The button is a direct child of row
+		int tag = (int) tableRow.getTag();                    // Get the index
+		allServingNameEntries.remove( tag );                // Remove all from this index
 		allCarbEntries.remove( tag );
 		allServingNumberEntries.remove( tag );
 		allTableRows.remove( tag );
 
 		TableLayout tableLayout = (TableLayout) tableRow.getParent();
-		tableLayout.removeView( tableRow );
+		tableLayout.removeView( tableRow );                    // Remove this row from the table
 
 	} // removeParentTableRow
 
 
 	/**
 	 * resetTags() - Resets all of the tags of the TableRow objects we have created. This allows
-	 * 	us to avoid errors later. If the user removes a row, we might have a higher index
-	 * 	set as a row's tag than we have in the ArrayLists. When we try to remove the row
-	 * 	with that higher index than the number of items in our ArrayLists, we get an error
+	 * us to avoid errors later. If the user removes a row, we might have a higher index
+	 * set as a row's tag than we have in the ArrayLists. When we try to remove the row
+	 * with that higher index than the number of items in our ArrayLists, we get an error
 	 */
 	private void resetTags()
 	{
-		int tag = 0;
-		for( TableRow row : allTableRows )
-			row.setTag( tag++ );
+		int tag = 0;                                        // Start at index 0
+		for( TableRow row : allTableRows )                    // Iterate through all rows
+			row.setTag( tag++ );                            // Set the tag and increment the index
 
 	} // resetTags
 
@@ -433,7 +446,9 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 				? View.GONE
 				: View.VISIBLE );
 		mealForm.animate().setDuration( shortAnimTime ).alpha(
-				show ? 0 : 1 ).setListener( new AnimatorListenerAdapter()
+				show
+						? 0
+						: 1 ).setListener( new AnimatorListenerAdapter()
 		{
 			@Override
 			public void onAnimationEnd( Animator animation )
@@ -448,7 +463,9 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 				? View.VISIBLE
 				: View.GONE );
 		spinner.animate().setDuration( shortAnimTime ).alpha(
-				show ? 1 : 0 ).setListener( new AnimatorListenerAdapter()
+				show
+						? 1
+						: 0 ).setListener( new AnimatorListenerAdapter()
 		{
 			@Override
 			public void onAnimationEnd( Animator animation )
@@ -532,15 +549,16 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 			switch( errorCode )
 			{
-				case NO_ERROR:                                    // 0:	No error
+				case NO_ERROR:                                   // 0: No error
 					Intent returnData = new Intent();
-					returnData.setData( Uri.parse( "logged in" ) );
-					setResult( RESULT_OK, returnData );            // Return ok result for activity result
+					returnData.setData( Uri.parse( "meal logged" ) );
+					setResult( RESULT_OK, returnData );          // Return ok result for activity result
 					finish();                                    // Close the activity
 					break;
 
-				case UNKNOWN:                                    // 1:	Unknown - something went wrong
-					Snackbar.make( coordinatorLayout, "Unknown error", Snackbar.LENGTH_LONG ).show();
+				case UNKNOWN:                                    // 1: Unknown - something went wrong
+					Snackbar.make( coordinatorLayout, "Unknown error", Snackbar.LENGTH_LONG )
+							.show();
 					break;
 
 				default:
@@ -559,7 +577,7 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 		} // onCancelled
 
-	} // UserLoginTask
+	} // LogMealTask
 
 
 } // class

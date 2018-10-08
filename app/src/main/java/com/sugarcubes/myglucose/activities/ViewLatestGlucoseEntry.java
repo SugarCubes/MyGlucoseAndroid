@@ -7,6 +7,7 @@ import com.sugarcubes.myglucose.R;
 import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,21 @@ public class ViewLatestGlucoseEntry extends AppCompatActivity {
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_latest_glucose_entry);
+        Toolbar toolbar = findViewById( R.id.toolbar );
+        setSupportActionBar( toolbar );
+        if( getSupportActionBar() != null )
+            getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+
+        Button closeButton = findViewById( R.id.close_button );
+        closeButton.setOnClickListener( new View.OnClickListener()
+			{
+				@Override
+				public void onClick( View view )
+				{
+					finish();
+				}
+			}
+		);
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
         DbGlucoseEntryRepository dbGlucoseEntryRepository = new DbGlucoseEntryRepository(getApplicationContext());
