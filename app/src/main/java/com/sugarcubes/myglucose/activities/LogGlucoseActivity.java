@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,11 +22,10 @@ import android.widget.Spinner;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.enums.ErrorCode;
-import com.sugarcubes.myglucose.services.AsyncTaskImplement;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
-import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
+import com.sugarcubes.myglucose.enums.ErrorCode;
+import com.sugarcubes.myglucose.enums.WhichMeal;
 
 import java.util.Date;
 
