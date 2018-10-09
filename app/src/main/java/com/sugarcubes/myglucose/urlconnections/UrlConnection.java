@@ -35,20 +35,22 @@ public class UrlConnection
 	protected ContentResolver contentResolver;
 	private String LOG_TAG = getClass().getSimpleName();
 	private HttpURLConnection httpURLConnection;
+	private URL url;
 
 	public UrlConnection( URL url )
 	{
-		try
-		{
-			httpURLConnection = (HttpURLConnection) url.openConnection();
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
-		}
-		setup();
+		this.url = url;
 
 	} // constructor
+
+
+	private void open() throws IOException
+	{
+		httpURLConnection = (HttpURLConnection) url.openConnection();
+		setup();
+
+	} // open
+
 
 	private void setup()
 	{
@@ -83,6 +85,7 @@ public class UrlConnection
 		StringBuilder responseStringBuilder = new StringBuilder();
 		try
 		{
+			open();																// Open a new connection
 			httpURLConnection.setRequestMethod( "POST" );						// URL is already set in constructor
 			OutputStream outputStream = httpURLConnection.getOutputStream();	// Get ref to stream to write to server
 			BufferedWriter bufferedWriter = new BufferedWriter(
