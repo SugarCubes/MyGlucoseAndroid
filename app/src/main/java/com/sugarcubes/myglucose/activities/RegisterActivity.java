@@ -418,7 +418,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			{
 				// We have populated our PatientSingleton, so now we save that information
 				//		to the appropriate databases:
-				registerPatientAction.registerPatient( mPatient );
+				registerPatientAction.registerPatient( getApplicationContext(), mPatient );
 			}
 			catch( Exception e )
 			{
