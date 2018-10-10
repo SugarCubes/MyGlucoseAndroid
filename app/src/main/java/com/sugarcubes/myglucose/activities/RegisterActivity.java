@@ -3,6 +3,8 @@ package com.sugarcubes.myglucose.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -35,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
-import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
@@ -45,6 +45,8 @@ import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
+
+import org.json.JSONException;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -59,22 +61,24 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 */
 	private static final int REQUEST_READ_CONTACTS = 0;
 
-	private IRetrieveDoctorsAction retrieveDoctorsAction;	// Use to retrieve list of doctors
-	private IRegisterPatientAction registerPatientAction;	// Use to register the patient
-	private IApplicationUserRepository patientRepository;			// Use to log in after registration
+	private IRetrieveDoctorsAction     retrieveDoctorsAction;    // Use to retrieve list of doctors
+	private IRegisterPatientAction     registerPatientAction;    // Use to register the patient
+	private IApplicationUserRepository patientRepository;
+			// Use to log in after registration
 
 
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	private UserRegisterTask mAuthTask = null;
+	private UserRegisterTask    mRegisterTask        = null;
+	private RetrieveDoctorsTask mRetrieveDoctorsTask = null;
 
 	// UI references.
 	private AutoCompleteTextView mEmailView;
-	private EditText mPasswordView;
-	private View mProgressView;
-	private View mLoginFormView;
-	private Spinner mDoctorDropdownSpinner;
+	private EditText             mPasswordView;
+	private View                 mProgressView;
+	private View                 mLoginFormView;
+	private Spinner              mDoctorDropdownSpinner;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -86,6 +90,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		// Dependency Injection:
 		retrieveDoctorsAction = Dependencies.get( IRetrieveDoctorsAction.class );
 		registerPatientAction = Dependencies.get( IRegisterPatientAction.class );
+
+		// Create a background task to retrieve all doctors:
+		mRetrieveDoctorsTask = new RetrieveDoctorsTask();
+		mRetrieveDoctorsTask.execute( this );
 
 		patientRepository = new DbPatientRepository( getApplicationContext() );
 
@@ -107,13 +115,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 				return false;
 			}
 		} );
-		mDoctorDropdownSpinner = findViewById( R.id.doctor_dropdown_spinner );
-		mDoctorDropdownSpinner.setAdapter(
-				new DoctorDropDownAdapter( this,
-						R.layout.doctor_dropdown_item_layout,
-						R.id.doctor_name,
-						retrieveDoctorsAction.retrieveDoctors() )
-		);
 
 		Button mEmailSignInButton = (Button) findViewById( R.id.register_button );
 		mEmailSignInButton.setOnClickListener( new OnClickListener()
@@ -178,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	{
 		if( requestCode == REQUEST_READ_CONTACTS )
 		{
-			if( grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED )
+			if( grantResults.length == 1 && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED )
 			{
 				populateAutoComplete();
 			}
@@ -205,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 */
 	private void attemptRegistration()
 	{
-		if( mAuthTask != null )
+		if( mRegisterTask != null )
 		{
 			return;
 		}
@@ -262,8 +263,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			// TODO: Test
 			patient.setDoctor( doctor );
 
-			mAuthTask = new UserRegisterTask( patient );
-			mAuthTask.execute( (Void) null );
+			mRegisterTask = new UserRegisterTask( patient, password );
+			mRegisterTask.execute( (Void) null );
+
 		}
 	}
 
@@ -393,7 +395,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 				ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
 		};
 
-		int ADDRESS = 0;
+		int ADDRESS    = 0;
 		int IS_PRIMARY = 1;
 	}
 
@@ -403,13 +405,15 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 */
 	public class UserRegisterTask extends AsyncTask<Void, Void, Boolean>
 	{
-
 		private final PatientSingleton mPatient;
+		private final String           mPassword;
 
-		UserRegisterTask( PatientSingleton patient )
+		UserRegisterTask( PatientSingleton patient, String password )
 		{
 			mPatient = patient;
-		}
+			mPassword = password;
+
+		} // constructor
 
 		@Override
 		protected Boolean doInBackground( Void... params )
@@ -418,7 +422,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			{
 				// We have populated our PatientSingleton, so now we save that information
 				//		to the appropriate databases:
-				registerPatientAction.registerPatient( getApplicationContext(), mPatient );
+				registerPatientAction.registerPatient( getApplicationContext(), mPatient, mPassword );
 			}
 			catch( Exception e )
 			{
@@ -431,7 +435,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		@Override
 		protected void onPostExecute( final Boolean success )
 		{
-			mAuthTask = null;
+			mRegisterTask = null;
 			showProgress( false );
 
 			if( success )
@@ -450,11 +454,59 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		@Override
 		protected void onCancelled()
 		{
-			mAuthTask = null;
+			mRegisterTask = null;
 			showProgress( false );
 		}
 
 	} // UserRegisterTask
+
+
+	private class RetrieveDoctorsTask extends AsyncTask<Activity, Void, List<Doctor>>
+	{
+		private Activity context;
+
+		@Override
+		protected List<Doctor> doInBackground( Activity... contexts )
+		{
+			mDoctorDropdownSpinner = findViewById( R.id.doctor_dropdown_spinner );
+			context = contexts[ 0 ];
+
+			try
+			{
+				return retrieveDoctorsAction.retrieveDoctors( getApplicationContext() );
+			}
+			catch( JSONException e )
+			{
+				e.printStackTrace();
+			}
+
+			return null;
+
+		} // doInBackground
+
+		@Override
+		protected void onCancelled()
+		{
+			super.onCancelled();
+			mRetrieveDoctorsTask = null;                // Avoids errors
+		}
+
+		@Override
+		protected void onPostExecute( List<Doctor> doctors )
+		{
+			super.onPostExecute( doctors );
+			mRetrieveDoctorsTask = null;                // Avoids errors
+
+			mDoctorDropdownSpinner.setAdapter(
+					new DoctorDropDownAdapter( context,
+							R.layout.doctor_dropdown_item_layout,
+							R.id.doctor_name,
+							doctors )
+			); // setAdapter
+
+		} // onPostExecute
+
+	} // class RetrieveDoctorsTask
 
 } // class
 
