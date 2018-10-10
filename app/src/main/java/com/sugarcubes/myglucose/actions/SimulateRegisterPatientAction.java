@@ -8,7 +8,7 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 public class SimulateRegisterPatientAction implements IRegisterPatientAction
 {
 	@Override
-	public boolean registerPatient( Context context, PatientSingleton patientSingleton  )
+	public boolean registerPatient( Context context, PatientSingleton patientSingleton, String password )
 	{
 		try
 		{

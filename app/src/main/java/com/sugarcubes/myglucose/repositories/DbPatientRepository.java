@@ -220,6 +220,9 @@ public class DbPatientRepository implements IPatientRepository
 	} // getCursorForLoggedInUser
 
 
+	/**
+	 * Used in getCursorForLoggedInUser to return the logged in user
+	 */
 	public static class GetLoggedInUserTask extends AsyncTask<ContentResolver, Void, Cursor>
 	{
 		@Override
