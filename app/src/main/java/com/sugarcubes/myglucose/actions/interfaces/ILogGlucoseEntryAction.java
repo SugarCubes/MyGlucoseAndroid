@@ -7,6 +7,6 @@ import com.sugarcubes.myglucose.enums.ErrorCode;
 
 public interface ILogGlucoseEntryAction
 {
-    ErrorCode logGlucoseEntry( Context context, GlucoseEntry mealEntry ) throws InterruptedException;
+    ErrorCode logGlucoseEntry( Context context, GlucoseEntry glucoseEntry ) throws InterruptedException;
 
 } // interface
