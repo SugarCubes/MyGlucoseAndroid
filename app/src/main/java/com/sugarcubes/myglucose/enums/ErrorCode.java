@@ -15,11 +15,12 @@ public enum ErrorCode
 	UNKNOWN( 1 ),
 	INVALID_URL( 2 ),
 	INVALID_EMAIL_PASSWORD( 3 ),
-	INVALID_LOGIN_TOKEN( 4 );
+	INVALID_LOGIN_TOKEN( 4 ),
+	USER_ALREADY_REGISTERED( 5 );
 
 	private int _value;
-	private static final String SUCCESS    = "success";
-	private static final String ERROR_CODE = "errorCode";
+	public static final String SUCCESS    = "success";
+	public static final String ERROR_CODE = "errorCode";
 
 	ErrorCode( int Value )
 	{
@@ -44,7 +45,7 @@ public enum ErrorCode
 				return errorCode;
 			}
 		}
-		return null;
+		return ErrorCode.UNKNOWN;
 
 	} // fromInt
 
@@ -72,23 +73,10 @@ public enum ErrorCode
 		{
 			if( !ErrorCode.isSuccess( jsonObject ) )
 			{
-				int error = ErrorCode.getErrorCode( jsonObject );
-				ErrorCode errorCode = ErrorCode.fromInt( error );
+				int error = ErrorCode.getErrorCode( jsonObject );	// Scans json for "errorCode"
+				ErrorCode errorCode = ErrorCode.fromInt( error );	// Convert it to an ErrorCode
 				if( errorCode != null )
-					switch( errorCode )
-					{
-						case NO_ERROR:
-							return ErrorCode.NO_ERROR;
-						case UNKNOWN:
-							return ErrorCode.UNKNOWN;
-						case INVALID_URL:
-							return ErrorCode.INVALID_URL;
-						case INVALID_EMAIL_PASSWORD:
-							return ErrorCode.INVALID_EMAIL_PASSWORD;
-						default:
-							return ErrorCode.UNKNOWN;
-
-					} // switch
+					return errorCode;
 				else
 					return ErrorCode.UNKNOWN;
 

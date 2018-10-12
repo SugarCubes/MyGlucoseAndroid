@@ -214,4 +214,5 @@
     <string name="none_entered_yet">None entered yet</string>
     <string name="before_or_after_meal">Before or after meal:</string>
     <string name="close">Close</string>
+    <string name="error_already_registered">This email has already been registered to the application.</string>
 </resources>

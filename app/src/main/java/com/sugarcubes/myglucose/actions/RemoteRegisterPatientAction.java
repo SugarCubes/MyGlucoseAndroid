@@ -14,6 +14,7 @@ import android.content.Context;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -28,7 +29,7 @@ public class RemoteRegisterPatientAction implements IRegisterPatientAction
 {
 	// TODO: Test
 	@Override
-	public boolean registerPatient( Context context,
+	public ErrorCode registerPatient( Context context,
 									final PatientSingleton patientSingleton,
 									final String password ) throws JSONException
 	{
@@ -40,18 +41,23 @@ public class RemoteRegisterPatientAction implements IRegisterPatientAction
 		values.put( "Password", password );
 		String jsonString = webConnection.sendRegisterRequest( values );
 		if( jsonString.isEmpty() )
-			return false;
+			return ErrorCode.UNKNOWN;
+
 		JSONObject jsonObject = new JSONObject( jsonString );   // Can throw exception
+
+		ErrorCode errorCode = ErrorCode.interpretErrorCode( jsonObject );
+		if( errorCode != ErrorCode.NO_ERROR )
+			return errorCode;
 
 		// Set the id/login info to the information returned:
 		patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
 		patientSingleton.setId( jsonObject.getString( DB.KEY_REMOTE_ID ) );
 
-		// Add the patient info to the database:
+		// The patient hasn't been created in db yet, so add to the database:
 		IPatientRepository patientRepository = Dependencies.get( IPatientRepository.class );
 		patientRepository.create( patientSingleton );
 
-		return true;
+		return ErrorCode.NO_ERROR;
 
 	} // registerPatient
 

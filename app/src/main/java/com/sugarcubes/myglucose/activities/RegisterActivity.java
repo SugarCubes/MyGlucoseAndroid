@@ -4,7 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -42,6 +42,7 @@ import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -55,16 +56,14 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>
 {
-
 	/**
 	 * Id to identity READ_CONTACTS permission request.
 	 */
-	private static final int REQUEST_READ_CONTACTS = 0;
+	private static final int    REQUEST_READ_CONTACTS = 0;
+	private final        String LOG_TAG               = getClass().getSimpleName();
 
-	private IRetrieveDoctorsAction     retrieveDoctorsAction;    // Use to retrieve list of doctors
-	private IRegisterPatientAction     registerPatientAction;    // Use to register the patient
-	private IApplicationUserRepository patientRepository;
-			// Use to log in after registration
+	private IRetrieveDoctorsAction retrieveDoctorsAction;    // Use to retrieve list of doctors
+	private IRegisterPatientAction registerPatientAction;    // Use to register the patient
 
 
 	/**
@@ -80,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	private View                 mLoginFormView;
 	private Spinner              mDoctorDropdownSpinner;
 
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -94,8 +94,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		// Create a background task to retrieve all doctors:
 		mRetrieveDoctorsTask = new RetrieveDoctorsTask();
 		mRetrieveDoctorsTask.execute( this );
-
-		patientRepository = new DbPatientRepository( getApplicationContext() );
 
 		// Set up the login form.
 		mEmailView = (AutoCompleteTextView) findViewById( R.id.email );
@@ -128,7 +126,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
 		mLoginFormView = findViewById( R.id.registration_form );
 		mProgressView = findViewById( R.id.register_progress );
-	}
+
+	} // onCreate
+
 
 	private void populateAutoComplete()
 	{
@@ -138,7 +138,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		}
 
 		getLoaderManager().initLoader( 0, null, this );
-	}
+
+	} // populateAutoComplete
+
 
 	private boolean mayRequestContacts()
 	{
@@ -168,7 +170,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			requestPermissions( new String[]{ READ_CONTACTS }, REQUEST_READ_CONTACTS );
 		}
 		return false;
-	}
+
+	} // mayRequestContacts
+
 
 	/**
 	 * Callback received when a permissions request has been completed.
@@ -177,14 +181,15 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions,
 											@NonNull int[] grantResults )
 	{
-		if( requestCode == REQUEST_READ_CONTACTS )
+		if( requestCode == REQUEST_READ_CONTACTS &&
+				( grantResults.length == 1 &&
+						grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED ) )
 		{
-			if( grantResults.length == 1 && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED )
-			{
-				populateAutoComplete();
-			}
+			populateAutoComplete();
 		}
-	}
+
+	} // onRequestPermissionsResult
+
 
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
@@ -192,12 +197,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	@TargetApi( Build.VERSION_CODES.HONEYCOMB )
 	private void setupActionBar()
 	{
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-		{
+		if( getSupportActionBar() != null )
 			// Show the Up button in the action bar.
 			getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-		}
-	}
+
+	} // setupActionBar
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
@@ -231,7 +235,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			mPasswordView.setError( getString( R.string.error_invalid_password ) );
 			focusView = mPasswordView;
 			cancel = true;
-		}
+
+		} // if
 
 		// Check for a valid email address.
 		if( TextUtils.isEmpty( email ) )
@@ -245,7 +250,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			mEmailView.setError( getString( R.string.error_invalid_email ) );
 			focusView = mEmailView;
 			cancel = true;
-		}
+
+		} // if email empty...else
 
 		if( cancel )
 		{
@@ -266,18 +272,22 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			mRegisterTask = new UserRegisterTask( patient, password );
 			mRegisterTask.execute( (Void) null );
 
-		}
-	}
+		} // If canceled...else
+
+	} // attemptRegistration
+
 
 	private boolean isEmailValid( String email )
 	{
 		return email.contains( "@" );
 	}
 
+
 	private boolean isPasswordValid( String password )
 	{
 		return password.length() > 7;
 	}
+
 
 	/**
 	 * Shows the progress UI and hides the login form.
@@ -285,59 +295,44 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	@TargetApi( Build.VERSION_CODES.HONEYCOMB_MR2 )
 	private void showProgress( final boolean show )
 	{
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 )
-		{
-			int shortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
+		int shortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
 
-			mLoginFormView.setVisibility( show
-					? View.GONE
-					: View.VISIBLE );
-			mLoginFormView.animate().setDuration( shortAnimTime ).alpha(
-					show
-							? 0
-							: 1 ).setListener( new AnimatorListenerAdapter()
-			{
-				@Override
-				public void onAnimationEnd( Animator animation )
-				{
-					mLoginFormView.setVisibility( show
-							? View.GONE
-							: View.VISIBLE );
-				}
-			} );
-
-			mProgressView.setVisibility( show
-					? View.VISIBLE
-					: View.GONE );
-			mProgressView.animate().setDuration( shortAnimTime ).alpha(
-					show
-							? 1
-							: 0 ).setListener( new AnimatorListenerAdapter()
-			{
-				@Override
-				public void onAnimationEnd( Animator animation )
-				{
-					mProgressView.setVisibility( show
-							? View.VISIBLE
-							: View.GONE );
-				}
-			} );
-		}
-		else
+		mLoginFormView.setVisibility( show
+				? View.GONE
+				: View.VISIBLE );
+		mLoginFormView.animate().setDuration( shortAnimTime ).alpha(
+				show
+						? 0
+						: 1 ).setListener( new AnimatorListenerAdapter()
 		{
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
-			mProgressView.setVisibility( show
-					? View.VISIBLE
-					: View.GONE );
-			mLoginFormView.setVisibility( show
-					? View.GONE
-					: View.VISIBLE );
-		}
-	}
+			@Override
+			public void onAnimationEnd( Animator animation )
+			{
+				mLoginFormView.setVisibility( show
+						? View.GONE
+						: View.VISIBLE );
+			}
+		} );
+
+		mProgressView.setVisibility( show
+				? View.VISIBLE
+				: View.GONE );
+		mProgressView.animate().setDuration( shortAnimTime ).alpha(
+				show
+						? 1
+						: 0 ).setListener( new AnimatorListenerAdapter()
+		{
+			@Override
+			public void onAnimationEnd( Animator animation )
+			{
+				mProgressView.setVisibility( show
+						? View.VISIBLE
+						: View.GONE );
+			}
+		} );
+
+	} // showProgress
+
 
 	@Override
 	public Loader<Cursor> onCreateLoader( int i, Bundle bundle )
@@ -355,7 +350,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 				// Show primary email addresses first. Note that there won't be
 				// a primary email address if the user hasn't specified one.
 				ContactsContract.Contacts.Data.IS_PRIMARY + " DESC" );
-	}
+
+	} // onCreateLoader
 
 	@Override
 	public void onLoadFinished( Loader<Cursor> cursorLoader, Cursor cursor )
@@ -369,13 +365,16 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		}
 
 		addEmailsToAutoComplete( emails );
-	}
+
+	} // onLoadFinished
+
 
 	@Override
 	public void onLoaderReset( Loader<Cursor> cursorLoader )
 	{
 
 	}
+
 
 	private void addEmailsToAutoComplete( List<String> emailAddressCollection )
 	{
@@ -403,7 +402,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserRegisterTask extends AsyncTask<Void, Void, Boolean>
+	public class UserRegisterTask extends AsyncTask<Void, Void, ErrorCode>
 	{
 		private final PatientSingleton mPatient;
 		private final String           mPassword;
@@ -416,37 +415,59 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		} // constructor
 
 		@Override
-		protected Boolean doInBackground( Void... params )
+		protected ErrorCode doInBackground( Void... params )
 		{
+			ErrorCode errorCode = ErrorCode.NO_ERROR;
 			try
 			{
 				// We have populated our PatientSingleton, so now we save that information
 				//		to the appropriate databases:
-				registerPatientAction.registerPatient( getApplicationContext(), mPatient, mPassword );
+				errorCode =
+						registerPatientAction.registerPatient( getApplicationContext(), mPatient, mPassword );
 			}
 			catch( Exception e )
 			{
-				return false;
+				return ErrorCode.UNKNOWN;
 			}
 
-			return true;
+			return errorCode;
 		}
 
 		@Override
-		protected void onPostExecute( final Boolean success )
+		protected void onPostExecute( final ErrorCode error )
 		{
 			mRegisterTask = null;
 			showProgress( false );
 
-			if( success )
+			switch( error )
 			{
-				Log.i( "Registration", mPatient.toString() );
-				finish();
-			}
-			else
-			{
-				mPasswordView.setError( getString( R.string.error_something_went_wrong ) );
-				mPasswordView.requestFocus();
+				case NO_ERROR:                                    // 0:	No error
+					PatientSingleton.getInstance().setLoggedIn( true );
+					Intent returnData = new Intent();
+					returnData.setData( Uri.parse( "registered" ) );
+					setResult( RESULT_OK, returnData );          // Return ok result for activity result
+					Log.i( LOG_TAG, mPatient.toString() );
+					finish();                                    // Close the activity
+					break;
+
+				case UNKNOWN:                                    // 1:	Unknown - something went wrong
+					mPasswordView.setError( getString( R.string.error_something_went_wrong ) );
+					mPasswordView.requestFocus();
+					break;
+
+				case INVALID_URL:                                // 2:	URL
+					mPasswordView.setError( getString( R.string.error_invalid_hostname_or_port ) );
+					mPasswordView.requestFocus();
+					break;
+
+				case INVALID_EMAIL_PASSWORD:                    // 3:	Invalid email/password
+					mPasswordView.setError( getString( R.string.error_invalid_email_password ) );
+					mPasswordView.requestFocus();
+					break;
+
+				case USER_ALREADY_REGISTERED:
+					mEmailView.setError( getString( R.string.error_already_registered ) );
+					break;
 			}
 
 		} // onPostExecute
