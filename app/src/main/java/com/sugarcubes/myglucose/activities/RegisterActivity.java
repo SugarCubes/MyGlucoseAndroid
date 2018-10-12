@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -263,6 +265,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		{
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
+			hideKeypad( this );
 			showProgress( true );
 
 			patient.setEmail( email );
@@ -396,6 +399,25 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
 		int ADDRESS    = 0;
 		int IS_PRIMARY = 1;
+	}
+
+
+	public static void hideKeypad( Activity activity )
+	{
+		if( activity != null )
+		{
+			try
+			{
+				InputMethodManager inputMethodManager = (InputMethodManager) activity
+						.getSystemService( Context.INPUT_METHOD_SERVICE );
+				inputMethodManager.hideSoftInputFromWindow( activity
+						.getCurrentFocus().getWindowToken(), 0 );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
