@@ -467,7 +467,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 					PatientSingleton.getInstance().setLoggedIn( true );
 					Intent returnData = new Intent();
 					returnData.setData( Uri.parse( "registered" ) );
-					setResult( RESULT_OK, returnData );          // Return ok result for activity result
+					setResult( MainActivity.RESULT_REGISTER_SUCCESSFUL, returnData ); // Return ok result for activity result
 					Log.i( LOG_TAG, mPatient.toString() );
 					finish();                                    // Close the activity
 					break;

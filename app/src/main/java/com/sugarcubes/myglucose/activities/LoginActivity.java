@@ -110,9 +110,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 			@Override
 			public void onClick( View v )
 			{
-				Intent registerIntent = new Intent( LoginActivity.this, RegisterActivity.class );
-				startActivity( registerIntent );
-				finish();
+				Intent registerIntent = new Intent( getApplicationContext(), RegisterActivity.class );
+				startActivityForResult( registerIntent, MainActivity.REGISTER_REQUEST );
 			}
 		} );
 
@@ -122,6 +121,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		appUser = PatientSingleton.getInstance();
 
 	} // onCreate
+
+
+	@Override
+	protected void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
+		// Check which request we're responding to
+		switch( resultCode )
+		{
+			// Use this so that if the user starts an activity
+			case MainActivity.RESULT_REGISTER_SUCCESSFUL:
+				Intent returnData = new Intent();
+				returnData.setData( Uri.parse( "registered" ) );
+				setResult( MainActivity.RESULT_REGISTER_SUCCESSFUL, returnData );			// Return ok result for activity result
+				finish();
+				break;
+
+		} // switch
+
+	} // onActivityResult
 
 
 	private void populateAutoComplete()
@@ -267,56 +285,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 )
+		int shortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
+
+		mLoginFormView.setVisibility( show
+				? View.GONE
+				: View.VISIBLE );
+		mLoginFormView.animate().setDuration( shortAnimTime ).alpha(
+				show
+						? 0
+						: 1 ).setListener( new AnimatorListenerAdapter()
 		{
-			int shortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
-
-			mLoginFormView.setVisibility( show
-					? View.GONE
-					: View.VISIBLE );
-			mLoginFormView.animate().setDuration( shortAnimTime ).alpha(
-					show
-							? 0
-							: 1 ).setListener( new AnimatorListenerAdapter()
+			@Override
+			public void onAnimationEnd( Animator animation )
 			{
-				@Override
-				public void onAnimationEnd( Animator animation )
-				{
-					mLoginFormView.setVisibility( show
-							? View.GONE
-							: View.VISIBLE );
-				}
-			} );
+				mLoginFormView.setVisibility( show
+						? View.GONE
+						: View.VISIBLE );
+			}
+		} );
 
-			mProgressView.setVisibility( show
-					? View.VISIBLE
-					: View.GONE );
-			mProgressView.animate().setDuration( shortAnimTime ).alpha(
-					show
-							? 1
-							: 0 ).setListener( new AnimatorListenerAdapter()
-			{
-				@Override
-				public void onAnimationEnd( Animator animation )
-				{
-					mProgressView.setVisibility( show
-							? View.VISIBLE
-							: View.GONE );
-				}
-			} );
-		}
-		else
+		mProgressView.setVisibility( show
+				? View.VISIBLE
+				: View.GONE );
+		mProgressView.animate().setDuration( shortAnimTime ).alpha(
+				show
+						? 1
+						: 0 ).setListener( new AnimatorListenerAdapter()
 		{
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
-			mProgressView.setVisibility( show
-					? View.VISIBLE
-					: View.GONE );
-			mLoginFormView.setVisibility( show
-					? View.GONE
-					: View.VISIBLE );
-
-		} // if honeycomb...else...
+			@Override
+			public void onAnimationEnd( Animator animation )
+			{
+				mProgressView.setVisibility( show
+						? View.VISIBLE
+						: View.GONE );
+			}
+		} );
 
 	} // showProgress
 
