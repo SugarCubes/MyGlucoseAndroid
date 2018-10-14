@@ -15,8 +15,15 @@ public class ExerciseEntry
 
 	public ExerciseEntry()
 	{
+		id = -1;
+		remoteId = "";
+		userName = "";
+		exerciseName = "";
+		minutes = -1;
+		date = new Date();
+		timestamp = date.getTime();
 
-	}
+	} // constructor
 
 	public int getId()
 	{

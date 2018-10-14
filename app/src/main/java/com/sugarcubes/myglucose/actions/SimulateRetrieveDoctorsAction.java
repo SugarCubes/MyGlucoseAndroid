@@ -1,5 +1,7 @@
 package com.sugarcubes.myglucose.actions;
 
+import android.content.Context;
+
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.entities.Doctor;
 
@@ -9,7 +11,7 @@ import java.util.List;
 public class SimulateRetrieveDoctorsAction implements IRetrieveDoctorsAction
 {
 	@Override
-	public List<Doctor> retrieveDoctors()
+	public List<Doctor> retrieveDoctors( Context context )
 	{
 		List<Doctor> doctors = new ArrayList<>();
 

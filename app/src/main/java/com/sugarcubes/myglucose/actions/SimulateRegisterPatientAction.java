@@ -3,12 +3,13 @@ package com.sugarcubes.myglucose.actions;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 public class SimulateRegisterPatientAction implements IRegisterPatientAction
 {
 	@Override
-	public boolean registerPatient( Context context, PatientSingleton patientSingleton  )
+	public ErrorCode registerPatient( Context context, PatientSingleton patientSingleton, String password )
 	{
 		try
 		{
@@ -18,7 +19,7 @@ public class SimulateRegisterPatientAction implements IRegisterPatientAction
 		{
 			e.printStackTrace();
 		}
-		return false;
+		return ErrorCode.NO_ERROR;
 
 	} // registerPatient
 

@@ -2,10 +2,21 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.LogExerciseActivity"
     tools:layout_editor_absoluteY="81dp">
+
+    <!-- Progress Spinner -->
+    <ProgressBar
+        android:id="@+id/save_spinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/exercise_form"
@@ -27,7 +38,7 @@
             android:layout_marginLeft="28dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="34dp"
-            android:hint="Exercise Type"
+            android:hint="@string/exercise_type"
             app:layout_constraintStart_toStartOf="@+id/textView12"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +46,7 @@
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ex. jogging, weightlifting etc."
+            android:text="@string/exercise_examples"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/exerciseType" />
@@ -47,7 +58,7 @@
             android:layout_marginEnd="7dp"
             android:layout_marginRight="7dp"
             android:layout_marginTop="6dp"
-            android:hint="Minutes"
+            android:hint="@string/minutes"
             android:inputType="number"
             app:layout_constraintEnd_toEndOf="@+id/submitButton"
             app:layout_constraintTop_toBottomOf="@+id/textView12" />
@@ -64,7 +75,7 @@
             app:layout_constraintTop_toBottomOf="@+id/minutes" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/view_latest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"

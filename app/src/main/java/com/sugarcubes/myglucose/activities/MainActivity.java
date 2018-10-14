@@ -37,11 +37,15 @@ public class MainActivity
 {
 	public static final boolean DEBUG = true;            // Activate/deactivate logging
 
-	private final String LOG_TAG = getClass().getSimpleName();
-	private PatientSingleton patientUser = PatientSingleton.getInstance();
-	private final int USER_LOADER = 100;            // Loader ID
-	private final int LOGIN_REQUEST = 200;            // Return code after login
-	private Menu menu;                                        // Reference to change Login/logout text
+	private final       String           LOG_TAG                    = getClass().getSimpleName();
+	private             PatientSingleton patientUser                =
+			PatientSingleton.getInstance();
+	public static final int              USER_LOADER                = 100;// Loader ID
+	public static final int              LOGIN_REQUEST              = 200;// Return code after login
+	public static final int              REGISTER_REQUEST           = 300;// Return code after register
+	public static final int              RESULT_REGISTER_SUCCESSFUL = 101;
+	private Menu menu;
+	// Reference to change Login/logout text
 
 
 	@Override
@@ -94,14 +98,11 @@ public class MainActivity
 			case R.id.action_login:
 				if( patientUser.isLoggedIn() )
 				{
-					DbPatientRepository patientRepository =        // Get reference to repo
+					DbPatientRepository patientRepository =     // Get reference to repo
 							new DbPatientRepository( getApplicationContext() );
 					boolean deleted = patientRepository.delete( patientUser );// Delete from db
-					if( deleted )
-					{
-						PatientSingleton.eraseData();            // deletes data and sets logged in to false
-						setMenuTexts();                            // Show Log in/out, Register
-					}
+					PatientSingleton.eraseData();                // deletes data and sets logged in to false
+					setMenuTexts();                            // Show Log in/out, Register
 				}
 				else
 				{
@@ -177,9 +178,9 @@ public class MainActivity
 	@Override
 	public void onLoadFinished( Loader<Cursor> loader, Cursor cursor )
 	{
-//		this.cursor = cursor;
-//		if( mAdapter != null )
-//			mAdapter.swapCursor( cursor );
+		//		this.cursor = cursor;
+		//		if( mAdapter != null )
+		//			mAdapter.swapCursor( cursor );
 		if( cursor != null && !cursor.isClosed() )            // This should return Users from db
 		{
 
@@ -232,7 +233,19 @@ public class MainActivity
 				} // if RESULT_OK
 				break;
 
-		} // if LOGIN_REQUEST
+			case REGISTER_REQUEST:
+				setMenuTexts();
+				break;
+
+		} // switch
+
+		switch( resultCode )	// TODO: Not working after registering...
+		{
+			case RESULT_REGISTER_SUCCESSFUL:
+				setMenuTexts();
+				break;
+
+		} // switch
 
 	} // onActivityResult
 
@@ -298,7 +311,7 @@ public class MainActivity
 	private void startRegisterActivity()
 	{
 		Intent registerIntent = new Intent( this, RegisterActivity.class );
-		startActivity( registerIntent );
+		startActivityForResult( registerIntent, REGISTER_REQUEST );
 
 	} // startLoginActivity
 

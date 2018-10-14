@@ -75,7 +75,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		ArrayList<ExerciseEntry> entryArrayList = new ArrayList<>();
 
 		Cursor cursor = contentResolver.query( uri, null, null,
-				null, DB.KEY_TIMESTAMP + " ASC" );
+				null, DB.KEY_TIMESTAMP + " DESC" );
 
 		if( cursor != null )
 		{
@@ -104,8 +104,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
 		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
-		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ));
-		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES_SPENT ) ));
+		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ) );
+		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES_SPENT ) ) );
 
 		// Convert the date string to a Date object:
 		entry.setDate( DateUtilities.convertStringToDate(
@@ -124,7 +124,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	public ContentValues putContentValues( ExerciseEntry item )
 	{
 		ContentValues values = new ContentValues();
-//		values.put( DB.KEY_ID, item.getId() );
+		//		values.put( DB.KEY_ID, item.getId() );
 		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );

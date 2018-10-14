@@ -27,18 +27,19 @@ import java.util.HashMap;
  */
 public class WebClientConnectionSingleton
 {
-	private static WebClientConnectionSingleton webClientConnection;	// The singleton to provide
+	private static WebClientConnectionSingleton webClientConnection;    // The singleton to provide
 
 	private static SharedPreferences sharedPreferences;
-	private static String host;
-	private static int port;
+	private static String            host;
+	private static int               port;
 
-	private final static String LOGIN_STRING           = "/Account/LoginRemote";
-	private final static String REGISTER_STRING        = "/Account/RegisterRemote";
-	private final static String SYNC_GLUCOSE_STRING    = "/GlucoseEntry/Sync";
-	private final static String SYNC_MEAL_ENTRY_STRING = "/MealEntry/Sync";
-	private final static String SYNC_MEAL_ITEM_STRING  = "/MealEntry/SyncItem";
-	private final static String SYNC_EXERCISE_STRING   = "/ExerciseEntry/Sync";
+	private final static String LOGIN_STRING            = "/Account/LoginRemote";
+	private final static String REGISTER_STRING         = "/Account/RegisterRemote";
+	private final static String SYNC_GLUCOSE_STRING     = "/GlucoseEntry/Sync";
+	private final static String SYNC_MEAL_ENTRY_STRING  = "/MealEntry/Sync";
+	private final static String SYNC_MEAL_ITEM_STRING   = "/MealEntry/SyncItem";
+	private final static String SYNC_EXERCISE_STRING    = "/ExerciseEntry/Sync";
+	private final static String RETRIEVE_DOCTORS_STRING = "/ExerciseEntry/Sync";
 
 	private UrlConnection loginConnection;             // The UrlConnections used to
 	private UrlConnection registerConnection;          // 		connect to each URL that
@@ -46,6 +47,7 @@ public class WebClientConnectionSingleton
 	private UrlConnection syncMealEntryConnection;     //		application
 	private UrlConnection syncMealItemConnection;
 	private UrlConnection syncExerciseConnection;
+	private UrlConnection retrieveDoctorsConnection;
 
 	private WebClientConnectionSingleton( Context context ) throws MalformedURLException
 	{
@@ -74,6 +76,9 @@ public class WebClientConnectionSingleton
 		urlString = "http://" + host + ":" + port + SYNC_EXERCISE_STRING;
 		syncExerciseConnection = new UrlConnection( new URL( urlString ) );
 
+		urlString = "http://" + host + ":" + port + RETRIEVE_DOCTORS_STRING;
+		retrieveDoctorsConnection = new UrlConnection( new URL( urlString ) );
+
 	} // constructor
 
 
@@ -85,7 +90,7 @@ public class WebClientConnectionSingleton
 		// Create the client *only* if it hasn't been created, the host or port has changed
 		if( webClientConnection == null
 				|| !host.equals( sharedPreferences.getString(
-						SettingsActivity.PREF_HOSTNAME, "localhost" ) )
+				SettingsActivity.PREF_HOSTNAME, "localhost" ) )
 				|| port != Integer.parseInt(
 				sharedPreferences.getString( SettingsActivity.PREF_PORT, "8080" ) ) )
 		{
@@ -143,6 +148,13 @@ public class WebClientConnectionSingleton
 	public String sendSyncExerciseRequest( HashMap<String, String> values )
 	{
 		return syncExerciseConnection.performRequest( values );
+
+	} // sendSyncExerciseRequest
+
+
+	public String sendRetrieveDoctorsRequest( HashMap<String, String> values )
+	{
+		return retrieveDoctorsConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest
 
