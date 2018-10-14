@@ -31,7 +31,7 @@ public class LogExerciseActivity extends AppCompatActivity
 {
 	private final String LOG_TAG = getClass().getSimpleName();
 	CoordinatorLayout coordinatorLayout;                    // The base view (for using Snackbar)
-	private View                   spinner;                 // Shows when submitting
+	//private View                   spinner;                 // Shows when submitting
 	private View                   exerciseForm;             // The view to hide when submitting
 	private ILogExerciseEntryAction logExerciseEntryAction;   // The command to log the exercise
 	/*public TableLayout exerciseItemTable;    				// Holds the ExerciseItems on the screen
@@ -55,7 +55,7 @@ public class LogExerciseActivity extends AppCompatActivity
 
 		Button button = findViewById( R.id.submitButton );
 		Button viewLatest = findViewById( R.id.viewLatest );
-		spinner = findViewById( R.id.save_spinner );
+		//spinner = findViewById( R.id.save_spinner );
 		exerciseForm = findViewById( R.id.exercise_form );
 
 		button.setOnTouchListener( new View.OnTouchListener()
@@ -127,7 +127,7 @@ public class LogExerciseActivity extends AppCompatActivity
 			}
 		} );
 
-		spinner.setVisibility( show
+/*		spinner.setVisibility( show
 				? View.VISIBLE
 				: View.GONE );
 		spinner.animate().setDuration( shortAnimTime ).alpha(
@@ -142,7 +142,7 @@ public class LogExerciseActivity extends AppCompatActivity
 						? View.VISIBLE
 						: View.GONE );
 			}
-		} );
+		} );*/
 
 	}
 
