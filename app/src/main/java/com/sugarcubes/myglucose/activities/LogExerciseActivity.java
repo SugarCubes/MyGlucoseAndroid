@@ -9,10 +9,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +29,9 @@ import java.util.Date;
 public class LogExerciseActivity extends AppCompatActivity
 {
 	private final String LOG_TAG = getClass().getSimpleName();
-	CoordinatorLayout coordinatorLayout;                    // The base view (for using Snackbar)
-	private View                   spinner;                 // Shows when submitting
-	private View                   exerciseForm;             // The view to hide when submitting
+	ConstraintLayout constraintLayout;                    // The base view (for using Snackbar)
+	private View                    spinner;                 // Shows when submitting
+	private View                    exerciseForm;             // The view to hide when submitting
 	private ILogExerciseEntryAction logExerciseEntryAction;   // The command to log the exercise
 	/*public TableLayout exerciseItemTable;    				// Holds the ExerciseItems on the screen
 	public ArrayList<TableRow> allTableRows;				// Holds all TableRows*/
@@ -54,9 +53,10 @@ public class LogExerciseActivity extends AppCompatActivity
 		logExerciseEntryAction = Dependencies.get( ILogExerciseEntryAction.class );
 
 		Button button = findViewById( R.id.submitButton );
-		Button viewLatest = findViewById( R.id.viewLatest );
+		Button viewLatest = findViewById( R.id.view_latest );
 		spinner = findViewById( R.id.save_spinner );
 		exerciseForm = findViewById( R.id.exercise_form );
+		constraintLayout = findViewById( R.id.contraint_layout );
 
 		button.setOnTouchListener( new View.OnTouchListener()
 		{
@@ -74,7 +74,7 @@ public class LogExerciseActivity extends AppCompatActivity
 			}
 		} );
 
-		/*viewLatest.setOnTouchListener( new View.OnTouchListener()
+		viewLatest.setOnTouchListener( new View.OnTouchListener()
 		{
 			@Override
 			public boolean onTouch( View v, MotionEvent event )
@@ -86,14 +86,14 @@ public class LogExerciseActivity extends AppCompatActivity
 				}
 				return false;
 			}
-		} );*/
+		} );
 
 	} // onCreate
 
 
 	private void startViewLatestExerciseActivity()
 	{
-		Intent intent = new Intent( this, ViewLatestExerciseEntry.class );
+		Intent intent = new Intent( this, ViewLatestExerciseEntryActivity.class );
 		startActivity( intent );
 
 	} // startEditProfileActivity
@@ -169,13 +169,13 @@ public class LogExerciseActivity extends AppCompatActivity
 				ExerciseEntry exerciseEntry = new ExerciseEntry();
 
 				EditText exerciseType = findViewById( R.id.exerciseType );
-				EditText minutes = findViewById(R.id.minutes);
+				EditText minutes = findViewById( R.id.minutes );
 
-				exerciseEntry.setExerciseName(exerciseType.toString());
+				exerciseEntry.setExerciseName( exerciseType.getText().toString() );
 				exerciseEntry.setMinutes( Integer.parseInt( minutes.getText().toString() ) );
 
 				Date date = new Date();
-				//exerciseEntry.setTimeStamp( date.getTime() );
+				exerciseEntry.setTimestamp( date.getTime() );
 				exerciseEntry.setDate( date );
 				// Save the ExerciseEntry and its ExerciseItems
 				return logExerciseEntryAction.logExerciseEntry( getApplicationContext(), exerciseEntry );
@@ -206,11 +206,11 @@ public class LogExerciseActivity extends AppCompatActivity
 					break;
 
 				case UNKNOWN:                                    // 1:	Unknown - something went wrong
-					Snackbar.make( coordinatorLayout, "Unknown error", Snackbar.LENGTH_LONG ).show();
+					Snackbar.make( constraintLayout, "Unknown error", Snackbar.LENGTH_LONG ).show();
 					break;
 
 				default:
-					Snackbar.make( coordinatorLayout, "Error", Snackbar.LENGTH_LONG ).show();
+					Snackbar.make( constraintLayout, "Error", Snackbar.LENGTH_LONG ).show();
 					break;
 			}
 

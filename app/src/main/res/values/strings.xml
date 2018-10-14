@@ -215,4 +215,10 @@
     <string name="before_or_after_meal">Before or after meal:</string>
     <string name="close">Close</string>
     <string name="error_already_registered">This email has already been registered to the application.</string>
+    <string name="exercise_name">Exercise Name</string>
+    <string name="exercise_minutes">Exercise Minutes</string>
+    <string name="date">Date</string>
+    <string name="minutes">Minutes</string>
+    <string name="exercise_examples">ex. jogging, weightlifting etc.</string>
+    <string name="exercise_type">Exercise Type</string>
 </resources>

@@ -2,11 +2,13 @@ package com.sugarcubes.myglucose.dependencies;
 
 import android.content.Context;
 
+import com.sugarcubes.myglucose.actions.DbLogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
+import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
@@ -43,6 +45,10 @@ class ObjectGraph
 		 */
 		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();
 		/*
+			Log Exercise
+		 */
+		ILogExerciseEntryAction logExerciseEntryAction = new DbLogExerciseEntryAction();
+		/*
 			Log Glucose
 		 */
 		ILogGlucoseEntryAction logGlucoseEntryAction = new DbLogGlucoseEntryAction();
@@ -70,6 +76,7 @@ class ObjectGraph
 
 		// Step 2. add models which you will need later to a dependencies map
 		dependencies.put( ILogMealEntryAction.class, logMealEntryAction );
+		dependencies.put( ILogExerciseEntryAction.class, logExerciseEntryAction );
 		dependencies.put( ILogGlucoseEntryAction.class, logGlucoseEntryAction );
 		dependencies.put( ILoginAction.class, remoteLoginAction );
 		dependencies.put( IRegisterPatientAction.class, registerPatientAction );
