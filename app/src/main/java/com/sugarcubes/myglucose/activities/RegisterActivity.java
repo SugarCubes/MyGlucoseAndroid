@@ -376,7 +376,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 	public void onLoaderReset( Loader<Cursor> cursorLoader )
 	{
 
-	}
+	} // onLoaderReset
 
 
 	private void addEmailsToAutoComplete( List<String> emailAddressCollection )
@@ -387,7 +387,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 						android.R.layout.simple_dropdown_item_1line, emailAddressCollection );
 
 		mEmailView.setAdapter( adapter );
-	}
+
+	} // addEmailsToAutoComplete
 
 
 	private interface ProfileQuery
@@ -399,7 +400,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
 		int ADDRESS    = 0;
 		int IS_PRIMARY = 1;
-	}
+
+	} // interface
 
 
 	public static void hideKeypad( Activity activity )
@@ -417,8 +419,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			{
 				e.printStackTrace();
 			}
-		}
-	}
+
+		} // if
+
+	} // hideKeypad
 
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
@@ -444,8 +448,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			{
 				// We have populated our PatientSingleton, so now we save that information
 				//		to the appropriate databases:
-				errorCode =
-						registerPatientAction.registerPatient( getApplicationContext(), mPatient, mPassword );
+				errorCode = registerPatientAction.registerPatient(
+						getApplicationContext(), mPatient, mPassword );
 			}
 			catch( Exception e )
 			{
@@ -453,7 +457,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			}
 
 			return errorCode;
-		}
+
+		} // doInBackground
 
 		@Override
 		protected void onPostExecute( final ErrorCode error )
@@ -490,7 +495,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 				case USER_ALREADY_REGISTERED:
 					mEmailView.setError( getString( R.string.error_already_registered ) );
 					break;
-			}
+
+			} // switch
 
 		} // onPostExecute
 
@@ -532,7 +538,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		{
 			super.onCancelled();
 			mRetrieveDoctorsTask = null;                // Avoids errors
-		}
+
+		} // onCancelled
 
 		@Override
 		protected void onPostExecute( List<Doctor> doctors )
