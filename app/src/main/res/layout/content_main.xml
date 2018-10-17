@@ -16,44 +16,19 @@ guideline.-->
     tools:context=".activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:id="@+id/exercise_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/holo_purple"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/log_exercise"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent=".3"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:shadowColor="@android:color/holo_blue_light"
+        android:text="@string/app_name"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/glucose_button"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/glucose_button"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".45" />
-
-    <Button
-        android:id="@+id/meals_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:background="@android:color/holo_green_light"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/log_meals"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/exercise_button"
-        app:layout_constraintLeft_toRightOf="@+id/exercise_button"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/exercise_button"
-        app:layout_constraintWidth_default="spread" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/glucose_button"
@@ -66,7 +41,7 @@ guideline.-->
         android:text="@string/log_glucose"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintHeight_percent=".15"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -74,17 +49,38 @@ guideline.-->
         app:layout_constraintWidth_default="spread"
         app:layout_constraintWidth_min="wrap" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="347dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:shadowColor="@android:color/holo_blue_light"
-        android:text="@string/app_name"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/glucose_button"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/meals_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_green_light"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/log_meals"
+        android:textSize="18sp"
+        app:layout_constraintHeight_percent=".15"
+        app:layout_constraintLeft_toLeftOf="@+id/glucose_button"
+        app:layout_constraintRight_toRightOf="@+id/glucose_button"
+        app:layout_constraintTop_toBottomOf="@+id/glucose_button"
+        app:layout_constraintWidth_default="spread" />
+
+    <Button
+        android:id="@+id/exercise_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_purple"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/log_exercise"
+        android:textSize="18sp"
+        app:layout_constraintHeight_percent=".15"
+        app:layout_constraintLeft_toLeftOf="@+id/glucose_button"
+        app:layout_constraintRight_toRightOf="@+id/glucose_button"
+        app:layout_constraintTop_toBottomOf="@+id/meals_button"
+        app:layout_constraintWidth_default="spread" />
+
 </android.support.constraint.ConstraintLayout>

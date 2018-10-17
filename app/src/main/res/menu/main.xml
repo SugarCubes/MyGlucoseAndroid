@@ -9,27 +9,32 @@
 
     <item
         android:id="@+id/action_register"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:title="@string/register"
         app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/action_view_profile"
-        android:orderInCategory="100"
-        android:title="View Profile"
+        android:orderInCategory="102"
+        android:title="@string/view_profile"
         app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/action_edit_profile"
-        android:orderInCategory="100"
+        android:orderInCategory="103"
         android:title="@string/edit_profile"
         app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="104"
         android:title="@string/action_settings"
         app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="105"
+        android:title="@string/exit" />
 
 
 </menu>

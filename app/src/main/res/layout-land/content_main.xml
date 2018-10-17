@@ -29,7 +29,7 @@ guideline.-->
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/glucose_button"
         app:layout_constraintHeight_percent=".4"
-        app:layout_constraintLeft_toRightOf="@+id/glucose_button"
+        app:layout_constraintLeft_toRightOf="@+id/meals_button"
         app:layout_constraintTop_toTopOf="@+id/glucose_button"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent=".305" />
@@ -40,17 +40,16 @@ guideline.-->
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
         android:background="@android:color/holo_green_light"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/log_meals"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/exercise_button"
-        app:layout_constraintLeft_toRightOf="@+id/exercise_button"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/exercise_button"
-        app:layout_constraintWidth_default="spread" />
+        app:layout_constraintBottom_toBottomOf="@+id/glucose_button"
+        app:layout_constraintLeft_toRightOf="@+id/glucose_button"
+        app:layout_constraintTop_toTopOf="@+id/glucose_button"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".305" />
 
     <Button
         android:id="@+id/glucose_button"

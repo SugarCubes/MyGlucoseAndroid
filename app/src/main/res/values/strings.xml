@@ -221,4 +221,6 @@
     <string name="minutes">Minutes</string>
     <string name="exercise_examples">ex. jogging, weightlifting etc.</string>
     <string name="exercise_type">Exercise Type</string>
+    <string name="exit">Exit</string>
+    <string name="view_profile">View Profile</string>
 </resources>

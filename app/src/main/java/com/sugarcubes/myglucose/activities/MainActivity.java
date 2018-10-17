@@ -123,6 +123,9 @@ public class MainActivity
 				startViewProfileActivity();
 				break;
 
+			case R.id.action_exit:
+				finish();
+				break;
 
 			default:
 				return super.onOptionsItemSelected( item );
