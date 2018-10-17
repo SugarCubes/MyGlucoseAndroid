@@ -16,7 +16,9 @@ public enum ErrorCode
 	INVALID_URL( 2 ),
 	INVALID_EMAIL_PASSWORD( 3 ),
 	INVALID_LOGIN_TOKEN( 4 ),
-	USER_ALREADY_REGISTERED( 5 );
+	USER_ALREADY_REGISTERED( 5 ),
+	ITEM_ALREADY_EXISTS( 6 ),
+	INVALID_MEAL_ENTRY( 7);
 
 	private int _value;
 	public static final String SUCCESS    = "success";
