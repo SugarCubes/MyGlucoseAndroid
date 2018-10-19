@@ -140,6 +140,8 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
 			user.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
 			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+			user.setWeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_WEIGHT ) ) );
+			user.setHeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_HEIGHT ) ) );
 			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
 			user.setLoginToken( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LOGIN_TOKEN ) ) );
 			// TODO crashes:
@@ -171,6 +173,8 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_USER_ZIP2, user.getZip2() );
 		values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
 		values.put( DB.KEY_USERNAME, user.getUserName() );
+		values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
+		values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
 		values.put( DB.KEY_DATE, user.getDate().toString() );
 		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() ? 1 : 0 );

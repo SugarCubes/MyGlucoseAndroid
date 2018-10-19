@@ -161,9 +161,9 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public PatientSingleton readFromCursor( PatientSingleton patientSingleton, Cursor cursor )
 	{
-		DbApplicationUserRepository applicationUserRepository
-				= new DbApplicationUserRepository( context );
-		applicationUserRepository.readFromCursor( patientSingleton, cursor );
+//		DbApplicationUserRepository applicationUserRepository
+//				= new DbApplicationUserRepository( context );
+		dbApplicationUserRepository.readFromCursor( patientSingleton, cursor );
 	    try
         {
         	// TODO: Get doctor from repository
@@ -194,6 +194,9 @@ public class DbPatientRepository implements IPatientRepository
 	public void update( String username, PatientSingleton item )
 	{
 		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, putContentValues( item ),
+				DB.KEY_USERNAME + "=?", new String[]{ username } );
+		contentResolver.update( MyGlucoseContentProvider.USERS_URI,
+				dbApplicationUserRepository.putContentValues( item ),
 				DB.KEY_USERNAME + "=?", new String[]{ username } );
 
 	} // update

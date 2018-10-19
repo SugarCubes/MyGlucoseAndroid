@@ -30,8 +30,8 @@ public class PatientSingleton extends ApplicationUser
 	public ArrayList<GlucoseEntry> glucoseEntries;
 	public ArrayList<MealEntry> mealEntries;
 	public ArrayList<ExerciseEntry> exerciseEntries;
-	public String firstname, lastname, phonenumber, city, state, address;
-	public double weight, height;
+//	public String firstname, lastname, phonenumber, city, state, address;
+//	public String weight, height;
 
 
 	public PatientSingleton()
@@ -40,15 +40,16 @@ public class PatientSingleton extends ApplicationUser
 		loginToken			= "";
 		loginExpirationTimestamp = 0;
 		applicationUserId 	= "";
-		firstname 			= "";
-		lastname 			= "";
-		phonenumber 		= "";
+		firstName 			= "";
+		lastName 			= "";
+		phoneNumber 		= "";
 		city 				= "";
 		state 				= "";
-		address 			= "";
+		address1 			= "";
+		address2 			= "";
 		doctorEmail 		= "";
-		weight 				= 0;
-		height 				= 0;
+		weight 				= "";
+		height 				= "";
 		// Instantiate the doctor:
 		doctor 				= new Doctor();
 		// Instantiate all ArrayLists:
@@ -97,46 +98,13 @@ public class PatientSingleton extends ApplicationUser
 				patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
 				patientSingleton.setLoginExpirationTimestamp(
 						jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) );
+//				patientSingleton.setHeight( jsonObject.getString( DB.KEY_USER_HEIGHT ) );
+//				patientSingleton.setWeight( jsonObject.getString( DB.KEY_USER_WEIGHT ) );
 
 			} // if !null
 
 		}
 		catch( JSONException e )
-		{
-			if( DEBUG ) Log.e( LOG_TAG, "Error parsing data " + e.toString() );
-		}
-
-	} // copyFrom
-
-
-	public static void copyFrom( final ApplicationUser applicationUser )
-	{
-		PatientSingleton patientSingleton = getInstance();
-		//parse json data
-		try
-		{
-			if( applicationUser != null )
-			{
-				// Use jsonData.getInt( String key ), etc to get data from the object
-				patientSingleton.setUserName( applicationUser.getUserName() );
-				patientSingleton.setAddress1( applicationUser.getAddress1() );
-				patientSingleton.setAddress2( applicationUser.getAddress2() );
-				patientSingleton.setCity( applicationUser.getCity() );
-				patientSingleton.setEmail( applicationUser.getEmail() );
-				patientSingleton.setFirstName( applicationUser.getFirstName() );
-				patientSingleton.setId( applicationUser.getId() );
-				patientSingleton.setLastName( applicationUser.getLastName() );
-				patientSingleton.setPhoneNumber( applicationUser.getPhoneNumber() );
-				patientSingleton.setState( applicationUser.getState() );
-				patientSingleton.setZip1( applicationUser.getZip1() );
-				patientSingleton.setZip2( applicationUser.getZip2() );
-				patientSingleton.setLoginToken( applicationUser.getLoginToken() );
-				patientSingleton.setLoginExpirationTimestamp( applicationUser.getLoginExpirationTimestamp() );
-
-			} // if !null
-
-		}
-		catch( Exception e )
 		{
 			if( DEBUG ) Log.e( LOG_TAG, "Error parsing data " + e.toString() );
 		}

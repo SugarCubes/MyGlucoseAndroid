@@ -40,8 +40,8 @@ public class ApplicationUser
 		zip1		= -1;
 		zip2		= -1;
 		phoneNumber = "";
-		height = "";
-		weight = "";
+		height 		= "";
+		weight 		= "";
 		date		= newDate;
 		timestamp	= newDate.getTime();
 		loginToken 	= "";

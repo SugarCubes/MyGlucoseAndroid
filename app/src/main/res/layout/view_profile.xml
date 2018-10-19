@@ -25,7 +25,7 @@
             android:id="@+id/tv_fname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="First Name"
+            android:text="@string/first_name"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +46,7 @@
             android:id="@+id/tv_lname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last Name"
+            android:text="@string/last_name"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_fname" />
@@ -66,7 +66,7 @@
             android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Phone Number"
+            android:text="@string/phone_number"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_lname" />
@@ -86,7 +86,7 @@
             android:id="@+id/tv_address1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address 1"
+            android:text="@string/address"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_phone" />
@@ -105,7 +105,7 @@
             android:id="@+id/tv_address2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address 2"
+            android:text="@string/address2"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/addressView" />
@@ -114,7 +114,7 @@
             android:id="@+id/address2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address 2"
+            android:text="@string/address2"
             android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addressView" />
@@ -123,7 +123,7 @@
             android:id="@+id/tv_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="City"
+            android:text="@string/city"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_address2" />
@@ -143,7 +143,7 @@
             android:id="@+id/tv_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="State"
+            android:text="@string/state"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_city" />
@@ -163,7 +163,7 @@
             android:id="@+id/tv_zip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zip Code"
+            android:text="@string/zip1"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_state" />
@@ -172,7 +172,7 @@
             android:id="@+id/zip1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zip 1"
+            android:text="@string/zip1"
             android:textSize="16sp"
             app:layout_constraintRight_toLeftOf="@+id/dash"
             app:layout_constraintTop_toBottomOf="@+id/stateView" />
@@ -181,7 +181,7 @@
             android:id="@+id/dash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-"
+            android:text="@string/dash"
             app:layout_constraintRight_toLeftOf="@+id/zip2"
             app:layout_constraintTop_toBottomOf="@+id/stateView" />
 
@@ -189,7 +189,7 @@
             android:id="@+id/zip2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zip 2"
+            android:text="@string/zip2"
             android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stateView" />
@@ -198,7 +198,7 @@
             android:id="@+id/tv_weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight"
+            android:text="@string/weight"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_zip" />
@@ -218,7 +218,7 @@
             android:id="@+id/tv_height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Height"
+            android:text="@string/height"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/tv_weight" />
@@ -250,6 +250,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginTop="12dp"
             android:background="@android:color/holo_orange_light"
             android:paddingLeft="12dp"

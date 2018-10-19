@@ -74,28 +74,19 @@ public class EditProfileActivity extends AppCompatActivity
 		final EditText zipInput = findViewById( R.id.zipInput );
 		final EditText zip2Input = findViewById( R.id.zip2Input );
 
-		if( !patientSingleton.getFirstName().isEmpty() )
-			firstNameInput.setText( patientSingleton.getFirstName() );
-		if( !patientSingleton.getLastName().isEmpty() )
-			lastNameInput.setText( patientSingleton.getLastName() );
-		if( !patientSingleton.getPhoneNumber().isEmpty() )
-			phoneNumInput.setText( patientSingleton.getPhoneNumber() );
-		if( !patientSingleton.getAddress1().isEmpty() )
-			addressInput.setText( patientSingleton.getAddress1() );
-		if( !patientSingleton.getAddress2().isEmpty() )
-			address2Input.setText( patientSingleton.getAddress2() );
-		if( !patientSingleton.getCity().isEmpty() )
-			cityInput.setText( patientSingleton.getCity() );
-		if( !patientSingleton.getState().isEmpty() )
-			stateInput.setText( patientSingleton.getCity() );
+		firstNameInput.setText( patientSingleton.getFirstName() );
+		lastNameInput.setText( patientSingleton.getLastName() );
+		phoneNumInput.setText( patientSingleton.getPhoneNumber() );
+		addressInput.setText( patientSingleton.getAddress1() );
+		address2Input.setText( patientSingleton.getAddress2() );
+		cityInput.setText( patientSingleton.getCity() );
+		stateInput.setText( patientSingleton.getState() );
 		if( patientSingleton.getZip1() > 0 )
 			zipInput.setText( String.valueOf( patientSingleton.getZip1() ) );
 		if( patientSingleton.getZip2() > 0 )
 			zip2Input.setText( String.valueOf( patientSingleton.getZip2() ) );
-		if( !patientSingleton.getWeight().isEmpty() )
-			weightInput.setText( patientSingleton.getWeight() );
-		if( !patientSingleton.getHeight().isEmpty() )
-			heightInput.setText( patientSingleton.getHeight() );
+		weightInput.setText( patientSingleton.getWeight() );
+		heightInput.setText( patientSingleton.getHeight() );
 
 
 		Button button = findViewById( R.id.submitButton );
