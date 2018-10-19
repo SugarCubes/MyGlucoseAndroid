@@ -79,6 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:maxWidth="220dp"
                 android:text="@string/did_you_record_your_glucose_before_or_after" />
 
             <Spinner
@@ -94,7 +95,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_margin="12dp"
+                android:layout_marginEnd="48dp"
+                android:layout_marginTop="12dp"
                 android:background="@android:color/holo_green_light"
                 android:text="@string/submit" />
 

@@ -131,7 +131,9 @@
 
                 <TableRow
                     android:gravity="end"
-                    android:paddingBottom="12dp">
+                    android:paddingBottom="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="12dp">
 
                     <Button
                         android:id="@+id/button_save"

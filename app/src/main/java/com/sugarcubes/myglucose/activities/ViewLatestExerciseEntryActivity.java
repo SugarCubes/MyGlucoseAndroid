@@ -26,6 +26,7 @@ public class ViewLatestExerciseEntryActivity extends AppCompatActivity
 		//change this
 		setContentView( R.layout.activity_view_latest_exercise_entry );
 		Toolbar toolbar = findViewById( R.id.toolbar );
+		toolbar.setTitle( R.string.title_activity_view_latest_exercise_entry );
 		setSupportActionBar( toolbar );
 		if( getSupportActionBar() != null )
 			getSupportActionBar().setDisplayHomeAsUpEnabled( true );

@@ -223,4 +223,10 @@
     <string name="exercise_type">Exercise Type</string>
     <string name="exit">Exit</string>
     <string name="view_profile">View Profile</string>
+    <string name="add_fields">Please add the following fields to your profile</string>
+    <string name="address2">Address 2</string>
+    <string name="zip1">Zip 1</string>
+    <string name="zip2">Zip 2</string>
+    <string name="title_activity_edit_profile">Edit Profile</string>
+    <string name="title_activity_view_latest_exercise_entry">View Latest Exercise Entry</string>
 </resources>

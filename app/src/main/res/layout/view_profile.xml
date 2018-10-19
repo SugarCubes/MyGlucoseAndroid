@@ -11,217 +11,254 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activities.ViewProfileActivity">
 
-    <android.widget.TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
         android:stretchColumns="1">
 
-        <TableRow
+
+        <TextView
+            android:id="@+id/tv_fname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="First Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent=".5" />
 
-            <TextView
-                android:textStyle="bold"
-                android:id="@+id/textView99"
-                android:layout_width="113dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:text="First Name"
-                android:textSize="16dp" />
-
-            <TextView
-                android:id="@+id/firstNameView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/first_name"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/firstNameView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Last Name"
-                android:textSize="16dp" />
-
-            <TextView
-                android:id="@+id/lastNameView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/last_name"
-                android:textSize="16dp" />
+            android:layout_height="wrap_content"
+            android:text="@string/first_name"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent" />
 
 
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/tv_lname"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Last Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_fname" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textView99"
-                android:text="Phone Number"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteY="69dp" />
-
-            <TextView
-                android:id="@+id/phoneNumView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/phone_number"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="47dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/lastNameView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="@string/last_name"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/firstNameView" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="City"
-                android:textSize="16dp" />
 
-            <TextView
-                android:id="@+id/cityView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/city"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="69dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Phone Number"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_lname" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textView99"
-                android:text="State"
-                android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:layout_editor_absoluteX="128dp" />
-
-            <TextView
-                android:id="@+id/stateView"
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_alignTop="@+id/textView99"
-                android:text="@string/state"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="91dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/phoneNumView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="@string/phone_number"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lastNameView" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="Address"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="108dp"
-                tools:layout_editor_absoluteY="135dp" />
 
-            <TextView
-                android:id="@+id/addressView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="@string/address"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="113dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/tv_address1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Address 1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_phone" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView15"
-                android:layout_width="wrap_content"
-                android:layout_height="22dp"
-                android:layout_centerInParent="true"
-                android:text="Weight"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="116dp"
-                tools:layout_editor_absoluteY="157dp" />
-
-            <TextView
-                android:id="@+id/weightView"
-                android:layout_width="wrap_content"
-                android:layout_height="22dp"
-                android:text="@string/weight"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="135dp" />
-
-        </TableRow>
-
-        <TableRow
+        <TextView
+            android:id="@+id/addressView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumView" />
 
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginLeft="80dp"
-                android:id="@+id/textView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Height"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="119dp" />
+        <TextView
+            android:id="@+id/tv_address2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address 2"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/addressView" />
 
-            <TextView
-                android:id="@+id/heightView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/height"
-                android:textSize="16dp"
-                tools:layout_editor_absoluteX="183dp"
-                tools:layout_editor_absoluteY="157dp" />
+        <TextView
+            android:id="@+id/address2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address 2"
+            android:textSize="16sp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addressView" />
 
-        </TableRow>
+        <TextView
+            android:id="@+id/tv_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_address2" />
 
-    </android.widget.TableLayout>
+        <TextView
+            android:id="@+id/cityView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/city"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/address2" />
+
+
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="State"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_city" />
+
+        <TextView
+            android:id="@+id/stateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/state"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cityView" />
+
+
+        <TextView
+            android:id="@+id/tv_zip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zip Code"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_state" />
+
+        <TextView
+            android:id="@+id/zip1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zip 1"
+            android:textSize="16sp"
+            app:layout_constraintRight_toLeftOf="@+id/dash"
+            app:layout_constraintTop_toBottomOf="@+id/stateView" />
+
+        <TextView
+            android:id="@+id/dash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            app:layout_constraintRight_toLeftOf="@+id/zip2"
+            app:layout_constraintTop_toBottomOf="@+id/stateView" />
+
+        <TextView
+            android:id="@+id/zip2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zip 2"
+            android:textSize="16sp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stateView" />
+
+        <TextView
+            android:id="@+id/tv_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_zip" />
+
+
+        <TextView
+            android:id="@+id/weightView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/weight"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/zip1" />
+
+        <TextView
+            android:id="@+id/tv_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Height"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tv_weight" />
+
+        <TextView
+            android:id="@+id/heightView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/height"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weightView" />
+
+        <Button
+            android:id="@+id/close_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/holo_green_light"
+            android:text="@string/close"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heightView" />
+
+        <Button
+            android:id="@+id/edit_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/holo_orange_light"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="@string/edit_profile"
+            app:layout_constraintRight_toLeftOf="@+id/close_button"
+            app:layout_constraintTop_toBottomOf="@+id/heightView" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

@@ -105,6 +105,7 @@
         <TableRow
             android:layout_weight="4"
             android:gravity="bottom|end"
+            android:paddingRight="12dp"
             android:paddingTop="20dp">
 
             <Button
@@ -114,9 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:background="@android:color/holo_green_light"
-                android:text="@string/close"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp" />
+                android:text="@string/close" />
 
         </TableRow>
 

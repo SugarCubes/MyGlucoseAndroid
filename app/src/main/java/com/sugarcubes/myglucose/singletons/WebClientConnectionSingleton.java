@@ -35,11 +35,11 @@ public class WebClientConnectionSingleton
 
 	private final static String LOGIN_STRING            = "/API/AccountApi/Login";
 	private final static String REGISTER_STRING         = "/API/AccountApi/Register";
-	private final static String SYNC_GLUCOSE_STRING     = "/API/GlucoseEntry/Create";
-	private final static String SYNC_MEAL_ENTRY_STRING  = "/API/MealEntry/CreateEntry";
-	private final static String SYNC_MEAL_ITEM_STRING   = "/API/MealEntry/CreateItem";
-	private final static String SYNC_EXERCISE_STRING    = "/API/ExerciseEntry/Create";
-	private final static String RETRIEVE_DOCTORS_STRING = "/API/ExerciseEntry/Create";
+	private final static String SYNC_GLUCOSE_STRING     = "/API/Glucose/Create";
+	private final static String SYNC_MEAL_ENTRY_STRING  = "/API/Meal/CreateEntry";
+	private final static String SYNC_MEAL_ITEM_STRING   = "/API/Meal/CreateItem";
+	private final static String SYNC_EXERCISE_STRING    = "/API/Exercise/Create";
+	private final static String RETRIEVE_DOCTORS_STRING = "/API/Doctor/Retrieve";
 
 	private UrlConnection loginConnection;             // The UrlConnections used to
 	private UrlConnection registerConnection;          // 		connect to each URL that
