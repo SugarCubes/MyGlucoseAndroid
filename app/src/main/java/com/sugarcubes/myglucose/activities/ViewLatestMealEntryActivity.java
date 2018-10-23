@@ -8,6 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.dependencies.Dependencies;
+import com.sugarcubes.myglucose.entities.MealEntry;
+import com.sugarcubes.myglucose.entities.MealItem;
+import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
+
+import java.util.ArrayList;
 
 public class ViewLatestMealEntryActivity extends AppCompatActivity
 {
@@ -20,6 +26,20 @@ public class ViewLatestMealEntryActivity extends AppCompatActivity
 		Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
 		setSupportActionBar( toolbar );
 		getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-	}
+
+		IMealEntryRepository mealEntryRepository = Dependencies.get( IMealEntryRepository.class );
+
+		MealEntry newest;
+		ArrayList<MealEntry> latestMealEntries = mealEntryRepository.readAll();
+		if( latestMealEntries.size() > 0 )
+		{
+			newest = latestMealEntries.get(0);
+			ArrayList<MealItem> mealItems = newest.getMealItems();
+
+			// TODO: Foreach mealItems
+
+		} // if
+
+	} // onCreate
 
 }
