@@ -164,9 +164,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		// Retrieve as a long:
 		entry.setTimestamp(
 				cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
-		entry.setWhichMeal( WhichMeal.valueOf(
-				String.valueOf( cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) )
-		) );
+		entry.setWhichMeal( WhichMeal.fromInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) );
 		return entry;
 
 	} // readFromCursor
