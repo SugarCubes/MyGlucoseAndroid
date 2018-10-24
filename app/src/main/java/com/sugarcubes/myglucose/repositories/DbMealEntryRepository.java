@@ -251,7 +251,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		Cursor cursor = contentResolver.query( uriMealItems,
 				null, DB.KEY_MEAL_ID + "=?",
 				new String[]{ String.valueOf( mealEntryId ) },
-				DB.KEY_TIMESTAMP + " DESC" );
+				null );
 
 		if( cursor != null )
 		{
