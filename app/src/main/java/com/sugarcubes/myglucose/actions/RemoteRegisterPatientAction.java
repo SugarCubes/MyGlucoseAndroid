@@ -52,6 +52,7 @@ public class RemoteRegisterPatientAction implements IRegisterPatientAction
 		// Set the id/login info to the information returned:
 		patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
 		patientSingleton.setId( jsonObject.getString( DB.KEY_REMOTE_ID ) );
+		patientSingleton.setLoggedIn( true );
 
 		// The patient hasn't been created in db yet, so add to the database:
 		IPatientRepository patientRepository = Dependencies.get( IPatientRepository.class );
