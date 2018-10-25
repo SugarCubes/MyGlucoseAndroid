@@ -69,7 +69,7 @@
                 tools:layout_editor_absoluteX="46dp" />
 
             <TextView
-                android:id="@+id/whichMeal"
+                android:id="@+id/whichMealM"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"

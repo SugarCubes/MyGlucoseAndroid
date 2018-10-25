@@ -30,7 +30,7 @@ import java.util.UUID;
 public class DbMealEntryRepository implements IMealEntryRepository
 {
 	private ContentResolver contentResolver;
-	private Uri uriEntries = MyGlucoseContentProvider.MEAL_ENTRIES_URI;
+	private Uri uriEntries   = MyGlucoseContentProvider.MEAL_ENTRIES_URI;
 	private Uri uriMealItems = MyGlucoseContentProvider.MEAL_ITEMS_URI;
 
 	public DbMealEntryRepository( Context context )
@@ -43,23 +43,26 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	/**
 	 * Creates a MealEntry in the database, as well as all of the meal items associated
 	 * with it.
+	 *
 	 * @param mealEntry - the MealEntry object
 	 */
 	@Override
 	public void create( MealEntry mealEntry )
 	{
-		if( mealEntry.getRemoteId().isEmpty() )						// Create an ID
+		if( mealEntry.getRemoteId().isEmpty() )                        // Create an ID
 			mealEntry.setRemoteId( UUID.randomUUID().toString() );
 
 		int totalCarbs = 0;
-		for( MealItem mealItem : mealEntry.getMealItems() )			// Calculate total carbohydrates
+		for( MealItem mealItem : mealEntry.getMealItems() )            // Calculate total carbohydrates
 		{
 			// Add each mealEntry's carbs if not empty
-			totalCarbs += mealItem.getCarbs() < 1 ? 0 : mealItem.getCarbs();
+			totalCarbs += mealItem.getCarbs() < 1
+					? 0
+					: mealItem.getCarbs();
 
 		} // for
 
-		mealEntry.setTotalCarbs( totalCarbs );						// Set the calculated carbs
+		mealEntry.setTotalCarbs( totalCarbs );                        // Set the calculated carbs
 
 		// Insert into the database:
 		contentResolver.insert( uriEntries, putContentValues( mealEntry ) );
@@ -69,8 +72,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 			// Create MealItems in the DB if they exist
 			for( MealItem mealItem : mealEntry.getMealItems() )
 			{
-				mealItem.setRemoteId( mealEntry.getRemoteId() );	// Set the MealItem's MealEntry Id
-				createMealItem( mealItem );							// Create in the database
+				mealItem.setRemoteId( mealEntry.getRemoteId() );    // Set the MealItem's MealEntry Id
+				createMealItem( mealItem );                            // Create in the database
 
 			} // for
 
@@ -87,10 +90,10 @@ public class DbMealEntryRepository implements IMealEntryRepository
 				new String[]{ String.valueOf( id ) },
 				DB.KEY_TIMESTAMP + " ASC" );
 
-		if( cursor != null )							// First, if we have a MealEntry...
+		if( cursor != null )                            // First, if we have a MealEntry...
 		{
 			cursor.moveToFirst();
-			MealEntry entry = readFromCursor( cursor );	// ...Load it from the db
+			MealEntry entry = readFromCursor( cursor );    // ...Load it from the db
 			cursor.close();
 
 
@@ -99,7 +102,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 					new String[]{ String.valueOf( id ) },
 					DB.KEY_TIMESTAMP + " ASC" );
 
-			if( mealItemsCursor != null )				// Then we check for MealItems
+			if( mealItemsCursor != null )                // Then we check for MealItems
 			{
 				mealItemsCursor.moveToFirst();
 
@@ -111,12 +114,12 @@ public class DbMealEntryRepository implements IMealEntryRepository
 					// TODO: Populate the MealItems
 
 				} // while
-//				entry.setMealItems( readMealItemsFromCursor( mealItemsCursor ) );
+				//				entry.setMealItems( readMealItemsFromCursor( mealItemsCursor ) );
 				mealItemsCursor.close();
 
 			} // if
 
-			return entry;								// Return the entry we retrieved
+			return entry;                                // Return the entry we retrieved
 
 		} // if
 
@@ -138,7 +141,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 			do
 			{
 				MealEntry mealEntry = readFromCursor( cursor );
-				mealEntries.add( mealEntry );				// Add the entry to the ArrayList
+				mealEntries.add( mealEntry );                // Add the entry to the ArrayList
 
 			} while( cursor.moveToNext() ); // do...while
 			cursor.close();
@@ -157,14 +160,14 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
 		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setTotalCarbs( cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) ) );
-		entry.setMealItems( readAllMealItems( entry.getId() ) );	// Access MealItems by meal id
+		entry.setMealItems( readAllMealItems( entry.getId() ) );    // Access MealItems by meal id
 		// Convert the date string to a Date object:
 		entry.setDate( DateUtilities.convertStringToDate(
 				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) ) );
 		// Retrieve as a long:
-		entry.setTimestamp(
-				cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
-		entry.setWhichMeal( WhichMeal.fromInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) );
+		entry.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
+		entry.setWhichMeal( WhichMeal.fromInt(
+				cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
 		return entry;
 
 	} // readFromCursor
@@ -196,12 +199,12 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	@Override
 	public void update( int id, MealEntry item )
 	{
-		contentResolver.update( uriEntries, putContentValues( item ),		// Update the MealEntry
+		contentResolver.update( uriEntries, putContentValues( item ),        // Update the MealEntry
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
-		if( item.getMealItems() != null && item.getMealItems().size() > 0 )	// If !null
+		if( item.getMealItems() != null && item.getMealItems().size() > 0 )    // If !null
 			for( MealItem mealItem : item.getMealItems() )
-				updateMealItem( mealItem.getId(), mealItem );				// Also update mealItems
+				updateMealItem( mealItem.getId(), mealItem );                // Also update mealItems
 
 	} // update
 
@@ -249,7 +252,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		Cursor cursor = contentResolver.query( uriMealItems,
 				null, DB.KEY_MEAL_ID + "=?",
 				new String[]{ String.valueOf( mealEntryId ) },
-				null );
+				DB.KEY_TIMESTAMP + " DESC" );
 
 		if( cursor != null )
 		{
@@ -257,7 +260,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 			while( cursor.moveToNext() )
 			{
 				MealItem mealItem = readMealItemFromCursor( cursor );
-				mealItems.add( mealItem );				// Add the entry to the ArrayList
+				mealItems.add( mealItem );                // Add the entry to the ArrayList
 
 			} // while
 			cursor.close();
@@ -311,7 +314,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	public void deleteMealEntryMealItems( int mealEntryId )
 	{
 		contentResolver.delete( uriMealItems, DB.KEY_MEAL_ID + "=?",
-				new String[]{ String.valueOf( mealEntryId )  } );
+				new String[]{ String.valueOf( mealEntryId ) } );
 
 	} // deleteMealEntryMealItems
 
@@ -320,7 +323,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	public void deleteMealItem( int mealItemId )
 	{
 		contentResolver.delete( uriMealItems, DB.KEY_ID + "=?",
-				new String[]{ String.valueOf( mealItemId )  } );
+				new String[]{ String.valueOf( mealItemId ) } );
 
 	} // deleteMealItem
 
