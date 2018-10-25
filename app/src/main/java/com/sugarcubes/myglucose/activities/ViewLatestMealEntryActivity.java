@@ -60,12 +60,6 @@ public class ViewLatestMealEntryActivity extends AppCompatActivity
             TextView whichMealView = findViewById(R.id.whichMealM);
             whichMealView.setText( newest.getWhichMeal().toString() );
 
-            // TODO: Display mealItems
-            for( MealItem mealItem : newest.getMealItems() )
-            {
-                int carbs = mealItem.getCarbs();
-            }
-
         } // if
         else{
             newest = new MealEntry();
