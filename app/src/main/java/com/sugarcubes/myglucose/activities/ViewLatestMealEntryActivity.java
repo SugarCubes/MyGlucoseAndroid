@@ -6,7 +6,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,48 +27,30 @@ public class ViewLatestMealEntryActivity extends AppCompatActivity
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_view_latest_meal_entry );
-        Toolbar toolbar = findViewById( R.id.toolbar );
-        setSupportActionBar( toolbar );
-        if( getSupportActionBar() != null )
-            getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-
-        Button closeButton = findViewById( R.id.close_button );
-        closeButton.setOnClickListener( new View.OnClickListener()
-                                        {
-                                            @Override
-                                            public void onClick( View view )
-                                            {
-                                                finish();
-                                            }
-                                        }
-        );
-
+		Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
+		setSupportActionBar( toolbar );
+		getSupportActionBar().setDisplayHomeAsUpEnabled( true );
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
 		IMealEntryRepository mealEntryRepository = Dependencies.get( IMealEntryRepository.class );
+        DbMealEntryRepository dbMealEntryRepository = new DbMealEntryRepository(getApplicationContext());
+
 
 		MealEntry newest;
 		ArrayList<MealEntry> latestMealEntries = mealEntryRepository.readAll();
 		if( latestMealEntries.size() > 0 )
 		{
 			newest = latestMealEntries.get(0);
+			ArrayList<MealItem> mealItems = newest.getMealItems();
+
+			// TODO: Foreach mealItems
 
             TextView totalCarbsView = findViewById(R.id.totalCarbs);
             totalCarbsView.setText( String.valueOf( newest.getTotalCarbs() ) );
 
-            TextView whichMealView = findViewById(R.id.whichMealM);
+            TextView whichMealView = findViewById(R.id.whichMeal);
             whichMealView.setText( newest.getWhichMeal().toString() );
-
-			// TODO: Display mealItems
-			for( MealItem mealItem : newest.getMealItems() )
-			{
-				int carbs = mealItem.getCarbs();
-			}
-
 		} // if
-        else{
-		    newest = new MealEntry();
-        }
 
 	} // onCreate
 
