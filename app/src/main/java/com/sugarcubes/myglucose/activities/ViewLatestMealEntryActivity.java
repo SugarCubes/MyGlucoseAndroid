@@ -47,29 +47,25 @@ public class ViewLatestMealEntryActivity extends AppCompatActivity
 
         PatientSingleton patientSingleton = PatientSingleton.getInstance();
 		IMealEntryRepository mealEntryRepository = Dependencies.get( IMealEntryRepository.class );
-        //DbMealEntryRepository dbMealEntryRepository = new DbMealEntryRepository(getApplicationContext());
-
 
 		MealEntry newest;
 		ArrayList<MealEntry> latestMealEntries = mealEntryRepository.readAll();
 		if( latestMealEntries.size() > 0 )
 		{
 			newest = latestMealEntries.get(0);
-			ArrayList<MealItem> mealItems = newest.getMealItems();
-
-			// TODO: Foreach mealItems
-
-            int totalCarbsTemp = 0;
-			for(int i =0; i < mealItems.size(); i++)
-            {
-                totalCarbsTemp = mealItems.get(i).getCarbs();
-            }
 
             TextView totalCarbsView = findViewById(R.id.totalCarbs);
-            totalCarbsView.setText(Integer.toString(totalCarbsTemp));
+            totalCarbsView.setText( String.valueOf( newest.getTotalCarbs() ) );
 
             TextView whichMealView = findViewById(R.id.whichMealM);
-            whichMealView.setText(newest.getWhichMeal().toString());
+            whichMealView.setText( newest.getWhichMeal().toString() );
+
+			// TODO: Display mealItems
+			for( MealItem mealItem : newest.getMealItems() )
+			{
+				int carbs = mealItem.getCarbs();
+			}
+
 		} // if
         else{
 		    newest = new MealEntry();
