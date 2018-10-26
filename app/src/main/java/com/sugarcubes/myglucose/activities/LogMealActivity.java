@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -215,24 +217,15 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 	@NonNull
 	private EditText createEditText( int meal_item_name, int inputType )
 	{
-		EditText editText = new EditText( getApplicationContext() );
-		//		EditText orig = findViewById( R.id.edit_serving_name );
-		//		Drawable drawable = orig.getBackground();
-		//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN )
-		//			editText.setBackground( drawable );
-		//		else
-		//			editText.setBackgroundDrawable( drawable );
+		EditText editText = new EditText( new ContextThemeWrapper(this, R.style.EditTextCustomHolo), null, 0 );
 		int margin = (int) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP,
 				8, getResources().getDisplayMetrics() );
 		TableRow.LayoutParams lp = new TableRow.LayoutParams(
 				TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT );
-		editText.setTextSize( TypedValue.COMPLEX_UNIT_SP, 14 );
-		int fgColor = Color.parseColor( "#808080" );
-		editText.setTextColor( fgColor );
-		editText.setHintTextColor( fgColor );
-		editText.setInputType( inputType );
 		lp.setMargins( 0, 0, margin, 0 );
 		editText.setLayoutParams( lp );
+		editText.setTextSize( TypedValue.COMPLEX_UNIT_SP, 14 );
+		editText.setInputType( inputType );
 		editText.setHint( meal_item_name );
 		editText.setRight( margin );
 

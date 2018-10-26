@@ -6,15 +6,47 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@android:color/holo_blue_dark</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:editTextColor">@android:color/white</item>
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <!--<item name="android:textColorTertiary">@android:color/white</item>-->
+        <item name="android:textColorHint">@android:color/holo_blue_bright</item>
+        <item name="android:textColorPrimaryInverse">@android:color/white</item>
+        <item name="android:textColorSecondaryInverse">@android:color/white</item>
+        <item name="android:textColorTertiaryInverse">@android:color/white</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">@android:color/holo_blue_dark</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:editTextColor">@android:color/white</item>
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <!--<item name="android:textColorTertiary">@android:color/white</item>-->
+        <item name="android:textColorHint">@android:color/holo_blue_bright</item>
+        <item name="android:textColorPrimaryInverse">@android:color/white</item>
+        <item name="android:textColorSecondaryInverse">@android:color/white</item>
+        <item name="android:textColorTertiaryInverse">@android:color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="EditTextCustomHolo" parent="android:Widget.EditText">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:editTextColor">@android:color/white</item>
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <!--<item name="android:textColorTertiary">@android:color/white</item>-->
+        <item name="android:textColorHint">@android:color/holo_blue_bright</item>
+        <item name="android:textColorPrimaryInverse">@android:color/white</item>
+        <item name="android:textColorSecondaryInverse">@android:color/white</item>
+        <item name="android:textColorTertiaryInverse">@android:color/white</item>
+    </style>
 
 </resources>
