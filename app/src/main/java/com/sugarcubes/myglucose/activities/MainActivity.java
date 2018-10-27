@@ -9,7 +9,10 @@
 
 package com.sugarcubes.myglucose.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -28,6 +31,8 @@ import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
+import com.sugarcubes.myglucose.services.AuthenticatorService;
+import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 public class MainActivity
@@ -42,10 +47,10 @@ public class MainActivity
 			PatientSingleton.getInstance();
 	public static final int              USER_LOADER                = 100;// Loader ID
 	public static final int              LOGIN_REQUEST              = 200;// Return code after login
-	public static final int              REGISTER_REQUEST           = 300;// Return code after register
+	public static final int              REGISTER_REQUEST           = 300;
+	// Return code after register
 	public static final int              RESULT_REGISTER_SUCCESSFUL = 101;
-	private Menu menu;
-	// Reference to change Login/logout text
+	private Menu menu;                     // Reference to change Login/logout text
 
 
 	@Override
@@ -66,6 +71,9 @@ public class MainActivity
 		glucoseButton.setOnTouchListener( this );
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
+
+		startService( new Intent( this, SyncService.class ) );
+		startService( new Intent( this, AuthenticatorService.class ) );
 
 	} // onCreate
 
@@ -242,7 +250,7 @@ public class MainActivity
 
 		} // switch
 
-		switch( resultCode )	// TODO: Not working after registering...
+		switch( resultCode )    // TODO: Not working after registering...
 		{
 			case RESULT_REGISTER_SUCCESSFUL:
 				setMenuTexts();

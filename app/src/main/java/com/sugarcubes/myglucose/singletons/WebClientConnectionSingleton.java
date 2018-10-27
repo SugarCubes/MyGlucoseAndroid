@@ -33,13 +33,14 @@ public class WebClientConnectionSingleton
 	private static String            host;
 	private static int               port;
 
-	private final static String LOGIN_STRING            = "/API/AccountApi/Login";
-	private final static String REGISTER_STRING         = "/API/AccountApi/Register";
-	private final static String SYNC_GLUCOSE_STRING     = "/API/Glucose/Create";
-	private final static String SYNC_MEAL_ENTRY_STRING  = "/API/Meal/CreateEntry";
-	private final static String SYNC_MEAL_ITEM_STRING   = "/API/Meal/CreateItem";
-	private final static String SYNC_EXERCISE_STRING    = "/API/Exercise/Create";
-	private final static String RETRIEVE_DOCTORS_STRING = "/API/Doctor/Retrieve";
+	private final static String LOGIN_STRING             = "/API/AccountApi/Login";
+	private final static String REGISTER_STRING          = "/API/AccountApi/Register";
+	private final static String SYNC_GLUCOSE_STRING      = "/API/Glucose/Sync";
+	private final static String SYNC_MEAL_ENTRY_STRING   = "/API/Meal/CreateEntry";
+	private final static String SYNC_MEAL_ITEM_STRING    = "/API/Meal/CreateItem";
+	private final static String SYNC_EXERCISE_STRING     = "/API/Exercise/Sync";
+	private final static String SYNC_PATIENT_DATA_STRING = "/API/Patient/Sync";
+	private final static String RETRIEVE_DOCTORS_STRING  = "/API/Doctor/Retrieve";
 
 	private UrlConnection loginConnection;             // The UrlConnections used to
 	private UrlConnection registerConnection;          // 		connect to each URL that
@@ -48,6 +49,7 @@ public class WebClientConnectionSingleton
 	private UrlConnection syncMealItemConnection;
 	private UrlConnection syncExerciseConnection;
 	private UrlConnection retrieveDoctorsConnection;
+	private UrlConnection syncPatientDataConnection;
 
 	private WebClientConnectionSingleton( Context context ) throws MalformedURLException
 	{
@@ -78,6 +80,9 @@ public class WebClientConnectionSingleton
 
 		urlString = "http://" + host + ":" + port + RETRIEVE_DOCTORS_STRING;
 		retrieveDoctorsConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_PATIENT_DATA_STRING;
+		syncPatientDataConnection = new UrlConnection( new URL( urlString ) );
 
 	} // constructor
 
@@ -148,6 +153,13 @@ public class WebClientConnectionSingleton
 	public String sendSyncExerciseRequest( HashMap<String, String> values )
 	{
 		return syncExerciseConnection.performRequest( values );
+
+	} // sendSyncExerciseRequest
+
+
+	public String sendSyncPatientDataRequest( HashMap<String, String> values )
+	{
+		return syncPatientDataConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest
 

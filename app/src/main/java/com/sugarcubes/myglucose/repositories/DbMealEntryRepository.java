@@ -135,7 +135,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		Cursor cursor = contentResolver.query( uriEntries, null, null,
 				null, DB.KEY_TIMESTAMP + " DESC" );
 
-		if( cursor != null )
+		if( cursor != null && cursor.getCount() > 0 )
 		{
 			cursor.moveToFirst();
 			do

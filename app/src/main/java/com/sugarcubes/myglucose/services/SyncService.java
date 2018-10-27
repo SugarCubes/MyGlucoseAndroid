@@ -1,18 +1,24 @@
 package com.sugarcubes.myglucose.services;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -22,6 +28,9 @@ import android.util.Log;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.activities.MainActivity;
+import com.sugarcubes.myglucose.adapters.DataSyncAdapter;
+import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
+import com.sugarcubes.myglucose.db.DB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,293 +42,206 @@ import java.util.Timer;
 
 public class SyncService extends Service
 {
-	private final static String LOG_TAG		= "SyncService";
+	private final static String LOG_TAG      = "SyncService";
+	// An account type, in the form of a domain name
+	public static final  String ACCOUNT_TYPE = "com.sugarcubes";
+	// The account name
+	public static final  String ACCOUNT      = "sugarcubes";
+	// Instance fields
+	Account mAccount;
 
-	public static final int
-			MSG_LOG_GLUCOSE       	= 1000,
-			MSG_LOG_EXERCISE    	= 1001,
-			MSG_LOG_MEAL     		= 1002,
-			MSG_LOGIN				= 1003,
-			MSG_REGISTER			= 1004;
+	/**
+	 * Define a Service that returns an <code><a href="/reference/android/os/IBinder.html">IBinder</a></code> for the
+	 * sync adapter class, allowing the sync adapter framework to call
+	 * onPerformSync().
+	 */
+	// Storage for an instance of the sync adapter
+	private static       DataSyncAdapter sSyncAdapter     = null;
+	// Object to use as a thread-safe lock
+	private static final Object          sSyncAdapterLock = new Object();
+	ContentResolver mResolver; // A content resolver for accessing the provider
 
-	public static final String
-			ACTION_START 	= LOG_TAG + ".START", 		// Action to start
-			ACTION_STOP		= LOG_TAG + ".STOP", 		// Action to stop
-			ACTION_RECONNECT= LOG_TAG + ".RECONNECT";	// Action to reconnect
+	// A content URI for the content provider's data table
+//	Uri doctorsUri, patientsUri;
 
 
-	// Reference to a Handler, which others can use to send messages to it. This
-	// allows for the implementation of message-based communication across
-	// processes, by creating a Messenger pointing to a Handler in one process,
-	// and handing that Messenger to another process.
-	private Handler mConnHandler;	            // Seperate Handler thread for networking
+	@Override
+	public void onCreate()
+	{
+		/*
+		 * Create the sync adapter as a singleton.
+		 * Set the sync adapter as syncable
+		 * Disallow parallel syncs
+		 */
+		synchronized( sSyncAdapterLock )
+		{
+			if( sSyncAdapter == null )
+			{
+				// Returns SyncAdapterBinder in onBind:
+				sSyncAdapter = new DataSyncAdapter( getApplicationContext(), true );
+			}
+		}
 
-	private AlarmManager mAlarmManager;			// Alarm manager to perform repeating tasks
-	private ConnectivityManager mConnectivityManager; // To check for connectivity changes
-	// For showing notifications:
-	private NotificationManager mNotificationManager;
-	private Notification notification;
-	private final Messenger mMessenger = new Messenger(
-			new IncomingMessageHandler() ); // Target we publish for clients to
-	private Timer mTimer = new Timer();
+		// Create a dummy account for syncing if needed:
+		mAccount = CreateSyncAccount();
 
-	private static SharedPreferences prefs;
 
-	// send messages to IncomingHandler.
-	private static List<Messenger> mClients = new ArrayList<Messenger>();  	// Keeps track of all
-																			// current registered clients.
+		// Get the content resolver object for your app
+		mResolver = getContentResolver();
+		// Construct a URI that points to the content provider data table
+//		doctorsUri = new Uri.Builder()
+//				.scheme( SCHEME )
+//				.authority( AUTHORITY )
+//				.path( DB.TABLE_DOCTORS )
+//				.build();
+//		patientsUri = new Uri.Builder()
+//				.scheme( SCHEME )
+//				.authority( AUTHORITY )
+//				.path( DB.TABLE_PATIENTS )
+//				.build();
+//		userssUri = new Uri.Builder()
+//				.scheme( SCHEME )
+//				.authority( AUTHORITY )
+//				.path( DB.TABLE_PATIENTS )
+//				.build();
 
+		/*
+		 * Create a content observer object.
+		 * Its code does not mutate the provider, so set
+		 * selfChange to "false"
+		 */
+		TableObserver observer = new TableObserver( new Handler() );
+
+		/*
+		 * Register the observer for the data table. The table's path
+		 * and any of its subpaths trigger the observer.
+		 */
+		mResolver.registerContentObserver( MyGlucoseContentProvider.USERS_URI,
+				true, new TableObserver( new Handler() ) );
+		// Note: shouldn't have to sync doctors *from* Android
+//		mResolver.registerContentObserver( MyGlucoseContentProvider.DOCTORS_URI,
+//				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.PATIENTS_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.MEAL_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+
+		// https://stackoverflow.com/questions/5253858/why-does-contentresolver-requestsync-not-trigger-a-sync
+		ContentResolver.setSyncAutomatically( mAccount, MyGlucoseContentProvider.AUTHORITY, true );
+
+	} // onCreate
 
 
 	/**
-	 * Service onStartCommand
-	 * Handles the action passed via the Intent
-	 *
-	 * @return START_REDELIVER_INTENT
+	 * Return an object that allows the system to invoke
+	 * the sync adapter.
 	 */
-	@Override
-	public int onStartCommand( Intent intent, int flags, int startId )
-	{
-		super.onStartCommand( intent, flags, startId );
-
-		String action = null;
-		if( intent != null )
-			action = intent.getAction();
-
-			Log.i(LOG_TAG,"Received action of " + action );
-
-		if( action == null )
-		{
-			Log.w(LOG_TAG,"Starting service with no action\n Probably from a crash, "
-					+ "or service had to restart");
-		}
-		else
-		{
-			switch (action)
-			{
-				case ACTION_START:
-					Log.i(LOG_TAG, "Received ACTION_START");
-					start();
-					break;
-				case ACTION_STOP:
-					Log.i(LOG_TAG, "Received ACTION_STOP");
-					stop();
-					break;
-			}   // switch
-
-		}   // if...else
-
-		//return START_REDELIVER_INTENT;    // Mqtt version
-		return START_STICKY; // Notification version - Run until explicitly stopped.
-
-	} // onStartCommand
-
-
-
-	@Nullable
 	@Override
 	public IBinder onBind( Intent intent )
 	{
-		return mMessenger.getBinder();
+		/*
+		 * Get the object that allows external processes
+		 * to call onPerformSync(). The object is created
+		 * in the base class code when the SyncAdapter
+		 * constructors call super()
+		 */
+		return sSyncAdapter.getSyncAdapterBinder();
 
 	} // onBind
 
 
-	private void sendMessageToUI( int intValueToSend )
+	/**
+	 * TableObserver
+	 */
+	public class TableObserver extends ContentObserver
 	{
-		for (int i=mClients.size()-1; i>=0; i--)
+		private boolean selfChange;
+
+		private TableObserver( Handler handler )
 		{
-			try
-			{
-				// Send data as an Integer
-				mClients.get(i).send( Message.obtain( null, intValueToSend, 0, -1 ) );
+			super( handler );
+			selfChange = false;
 
-				//Send data as a String
-				// This will be useful when we are able to retrieve messages from the server and
-				// display them to the UI.
-				//Bundle b = new Bundle();
-				//b.putString( "str1", "ab" + intValueToSend + "cd" );
-				//b.putInt( intValueToSend );
-				//Message msg = Message.obtain( null, MSG_SET_STRING_VALUE );
-				//msg.setData(b);
-				//mClients.get(i).send(msg);
+		} // constructor
 
-			}
-			catch ( Exception e ) {
-				// The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
-				mClients.remove(i);
-			}
-
-		} // for
-
-	} // sendMessageToUI
-
-
-	private void sendIntMessageToUI( int switchMessage, int intValueToSend )
-	{
-		for ( int i=mClients.size()-1; i>=0; i-- )
+		/*
+		 * Define a method that's called when data in the
+		 * observed content provider changes.
+		 * This method signature is provided for compatibility with
+		 * older platforms.
+		 */
+		@Override
+		public void onChange( boolean selfChange )
 		{
-			try
-			{
-				// Send data as an Integer
-				mClients.get(i).send( Message.obtain( null, switchMessage, intValueToSend, 0 ) );
+			/*
+			 * Invoke the method signature available as of
+			 * Android platform version 4.1, with a null URI.
+			 */
+			onChange( this.selfChange, null );
 
-				//Send data as a String
-				//Bundle b = new Bundle();
-				//b.putString( "str1", "ab" + intValueToSend + "cd" );
-				//b.putInt( intValueToSend );
-				//Message msg = Message.obtain( null, MSG_SET_STRING_VALUE );
-				//msg.setData(b);
-				//mClients.get(i).send(msg);
+		} // onChange
 
-			}
-			catch ( Exception e ) {
-				// The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
-				mClients.remove(i);
-			}
+		/*
+		 * Define a method that's called when data in the
+		 * observed content provider changes.
+		 */
+		@Override
+		public void onChange( boolean selfChange, Uri changeUri )
+		{
+			/*
+			 * Ask the framework to run your sync adapter.
+			 * To maintain backward compatibility, assume that
+			 * changeUri is null.
+			 */
+			// Note: this automatically finds our DataSyncAdapter in the Manifest and runs it:
+			ContentResolver.requestSync( mAccount, MyGlucoseContentProvider.AUTHORITY, new Bundle() );
 
-		} // for
+		} // onChange
 
-	} // sendMessageToUI
+	} // TableObserver class
 
 
 	/**
-	 * Attempts to listen for Connectivity changes
-	 * via ConnectivityManager.CONNECTVITIY_ACTION BroadcastReceiver
+	 * Create a new dummy account for the sync adapter
 	 */
-	private synchronized void start()
+	public Account CreateSyncAccount()
 	{
-		registerReceiver(
-				mConnectivityReceiver,
-				new IntentFilter( ConnectivityManager.CONNECTIVITY_ACTION )
-		);
-
-		try
+		// Create the account type and default account
+		Account newAccount = new Account( ACCOUNT, ACCOUNT_TYPE );
+		// Get an instance of the Android account manager
+		AccountManager accountManager =
+				(AccountManager) getSystemService( ACCOUNT_SERVICE );
+		/*
+		 * Add the account and account type, no password or user data
+		 * If successful, return the Account object, otherwise report an error.
+		 */
+		if( accountManager.addAccountExplicitly( newAccount, null, null ) )
 		{
-			// Show notification in status bar
-			showNotification();
-		} catch ( Exception e ) {
-			e.printStackTrace();
+			/*
+			 * If you don't set android:syncable="true" in
+			 * in your <provider> element in the manifest,
+			 * then call context.setIsSyncable(account, AUTHORITY, 1)
+			 * here.
+			 */
+			Log.i( LOG_TAG, "Account \"" + newAccount.toString()
+					+ "\" created SUCCESSFULLY." );
+		}
+		else
+		{
+			/*
+			 * The account exists or some other error occurred. Log this, report it,
+			 * or handle it internally.
+			 */
+			Log.i( LOG_TAG, "Account \"" + newAccount.toString()
+					+ "\" either already exists, or failed..." );
 		}
 
-	} // syncronized start()
+		return newAccount;
 
-
-	/**
-	 * Display a notification in the notification bar.
-	 */
-	private void showNotification() throws NullPointerException
-	{
-		int status;
-//		status = mqttClient != null ? R.string.connected_to_server
-//				: R.string.cannot_connect_to_server;
-//		PendingIntent contentIntent = PendingIntent.getActivity( this, 0,
-//				new Intent( this, MainActivity.class ), 0 );
-//		notification = new Notification.Builder( this )
-//				.setContentTitle( this.getString( R.string.service_label ) )
-//				.setContentText( getResources().getString( status ) )
-//				.setSmallIcon( Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
-//						? R.mipmap.pristine_zen_icon_silhouette : R.mipmap.pristine_zen_icon )
-//				.setContentIntent( contentIntent )
-//				.setAutoCancel( false )
-//				.setOngoing( true )
-//				.build();
-		mNotificationManager =
-				(NotificationManager) getApplicationContext().getSystemService( NOTIFICATION_SERVICE );
-		//notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		//notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-		mNotificationManager.notify( 123321, notification );
-	}
-
-
-	/**
-	 * Attempts to stop the Mqtt client
-	 * as well as halting all keep alive messages queued
-	 * in the alarm manager
-	 */
-	private synchronized void stop()
-	{
-		try
-		{
-			unregisterReceiver( mConnectivityReceiver );
-		}
-		catch ( IllegalArgumentException e )
-		{
-			e.printStackTrace();
-
-		} // try/catch
-
-	} // stop
-
-
-	/**
-	 * Query's the NetworkInfo via ConnectivityManager
-	 * to return the current connected state
-	 * @return boolean true if we are connected false otherwise
-	 */
-	private boolean isNetworkAvailable()
-	{
-		NetworkInfo info = mConnectivityManager.getActiveNetworkInfo();
-
-		return info != null && info.isConnected();
-	}
-
-
-	/**
-	 * Receiver that listens for connectivity changes
-	 * via ConnectivityManager
-	 */
-	private final BroadcastReceiver mConnectivityReceiver
-			= new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive( Context context, Intent intent )
-		{
-			Log.i( LOG_TAG, "DEBUG: Data: " + mConnectivityReceiver.getResultData()
-					+ "; Received message: " + intent.getExtras().toString() );
-
-		} // onReceive
-	};
-
-
-
-
-	/**
-	 * Handle incoming messages from MainActivity (UI)
-	 */
-	private class IncomingMessageHandler extends Handler
-	{
-		// Handler of
-		// incoming messages
-		// from other activities.
-
-		private final String LOG_TAG = "INCOMINGMSGHANDLER";
-
-		@Override
-		public void handleMessage( Message msg )
-		{
-			Log.d( LOG_TAG, "S:handleMessage: " + msg.what );
-
-			switch( msg.what )
-			{
-				case MSG_LOG_GLUCOSE:
-					break;
-
-				case MSG_LOG_MEAL:
-//					msg.getData().getParcelable(  );
-					break;
-
-				case MSG_LOG_EXERCISE:
-					break;
-
-				default:
-					super.handleMessage( msg );
-
-			}   //switch
-
-		}   // handleMessage
-
-	}   // IncomingMessageHandler
+	} // CreateSyncAccount
 
 } // class

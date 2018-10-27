@@ -8,12 +8,20 @@ import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
+import com.sugarcubes.myglucose.actions.SimulateSyncExerciseDataAction;
+import com.sugarcubes.myglucose.actions.SimulateSyncGlucoseDataAction;
+import com.sugarcubes.myglucose.actions.SimulateSyncMealDataAction;
+import com.sugarcubes.myglucose.actions.SimulateSyncPatientDataAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
+import com.sugarcubes.myglucose.actions.interfaces.ISyncExerciseDataAction;
+import com.sugarcubes.myglucose.actions.interfaces.ISyncGlucoseDataAction;
+import com.sugarcubes.myglucose.actions.interfaces.ISyncMealDataAction;
+import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
 import com.sugarcubes.myglucose.repositories.DbApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.DbDoctorRepository;
 import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
@@ -38,35 +46,27 @@ class ObjectGraph
 
 	ObjectGraph( Context context )    // package-private
 	{
-		// Step 1.  create dependency graph:
+		/*
+			Step 1.  create dependency graph:
+		 */
 
-		/*
-			Log Meal
-		 */
+		// Log Actions:
 		ILogMealEntryAction logMealEntryAction = new DbLogMealEntryAction();
-		/*
-			Log Exercise
-		 */
 		ILogExerciseEntryAction logExerciseEntryAction = new DbLogExerciseEntryAction();
-		/*
-			Log Glucose
-		 */
 		ILogGlucoseEntryAction logGlucoseEntryAction = new DbLogGlucoseEntryAction();
-		/*
-			Login
-		 */
+
+		// Sync Actions:
+		ISyncMealDataAction syncMealDataAction = new SimulateSyncMealDataAction();
+		ISyncExerciseDataAction syncExerciseDataAction = new SimulateSyncExerciseDataAction();
+		ISyncGlucoseDataAction syncGlucoseDataAction = new SimulateSyncGlucoseDataAction();
+		ISyncPatientDataAction syncPatientDataAction = new SimulateSyncPatientDataAction();
+
+		// Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
-		/*
-			Register
-		 */
-		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
-		/*
-			Retrieve Doctors
-		 */
 		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
-		/*
-			Repositories:
-		 */
+		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
+
+		// Repositories:
 		IPatientRepository patientRepository = new DbPatientRepository( context );
 		IApplicationUserRepository userRepository = new DbApplicationUserRepository( context );
 		IDoctorRepository doctorRepository = new DbDoctorRepository( context );
@@ -74,13 +74,28 @@ class ObjectGraph
 		IGlucoseEntryRepository glucoseEntryRepository = new DbGlucoseEntryRepository( context );
 		IMealEntryRepository mealEntryRepository = new DbMealEntryRepository( context );
 
-		// Step 2. add models which you will need later to a dependencies map
+
+		/*
+			Step 2. add models which you will need later to a dependencies map
+		 */
+
+		// Log actions:
 		dependencies.put( ILogMealEntryAction.class, logMealEntryAction );
 		dependencies.put( ILogExerciseEntryAction.class, logExerciseEntryAction );
 		dependencies.put( ILogGlucoseEntryAction.class, logGlucoseEntryAction );
+
+		// Sync actions:
+		dependencies.put( ISyncMealDataAction.class, syncMealDataAction );
+		dependencies.put( ISyncExerciseDataAction.class, syncExerciseDataAction );
+		dependencies.put( ISyncGlucoseDataAction.class, syncGlucoseDataAction );
+		dependencies.put( ISyncPatientDataAction.class, syncPatientDataAction );
+
+		// Remote Actions:
 		dependencies.put( ILoginAction.class, remoteLoginAction );
 		dependencies.put( IRegisterPatientAction.class, registerPatientAction );
 		dependencies.put( IRetrieveDoctorsAction.class, retrieveDoctorsAction );
+
+		// Repositories:
 		dependencies.put( IPatientRepository.class, patientRepository );
 		dependencies.put( IApplicationUserRepository.class, userRepository );
 		dependencies.put( IDoctorRepository.class, doctorRepository );

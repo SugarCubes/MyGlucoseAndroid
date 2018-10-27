@@ -44,8 +44,6 @@ public class LogExerciseActivity extends AppCompatActivity
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_log_exercise );
-		//Toolbar toolbar = findViewById( R.id.toolbar );
-		//setSupportActionBar( toolbar );
 		if( getSupportActionBar() != null )
 			getSupportActionBar().setDisplayHomeAsUpEnabled( true );
 

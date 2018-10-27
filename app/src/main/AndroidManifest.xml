@@ -7,7 +7,12 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- SYNC PERMISSIONS: -->
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
     <!-- Created .dependencies.Dependencies as an application and require it here: -->
     <application
@@ -24,10 +29,30 @@
             android:authorities="com.sugarcubes.myglucose.provider"
             android:exported="false" />
 
+        <!-- Declare the service which *uses* the SyncAdapter -->
         <service
             android:name=".services.SyncService"
+            android:exported="true"
+            android:process=":myglucose_sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <service
+            android:name=".services.AuthenticatorService"
             android:exported="false"
-            android:process=":myglucose_sync_service" />
+            android:process=":myglucose_authenticator"
+            android:permission="android.permission.AUTHENTICATE_ACCOUNTS">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
 
         <activity
             android:name=".activities.MainActivity"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="com.sugarcubes.myglucose.provider"
+    android:accountType="sugarcubes.com"
+    android:userVisible="false"
+    android:allowParallelSyncs="false"
+    android:supportsUploading="true"
+    android:isAlwaysSyncable="true">
+
+</sync-adapter>
