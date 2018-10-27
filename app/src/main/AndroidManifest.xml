@@ -41,11 +41,11 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <!--android:permission="android.permission.AUTHENTICATE_ACCOUNTS"-->
         <service
             android:name=".services.AuthenticatorService"
             android:exported="false"
-            android:process=":myglucose_authenticator"
-            android:permission="android.permission.AUTHENTICATE_ACCOUNTS">
+            android:process=":myglucose_authenticator">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -60,7 +60,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

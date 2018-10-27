@@ -1,22 +1,18 @@
 package com.sugarcubes.myglucose.actions;
 
-import android.content.ContentValues;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.Doctor;
-import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
-import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +52,7 @@ public class RemoteRetrieveDoctorsAction implements IRetrieveDoctorsAction
 				doctor.setState( drObj.getString( DB.KEY_USER_STATE ) );
 				doctor.setZip1( drObj.getInt( DB.KEY_USER_ZIP1 ) );
 				doctor.setZip2( drObj.getInt( DB.KEY_USER_ZIP2 ) );
-				doctor.setDate( new Date( drObj.getString( DB.KEY_DATE ) ) );
+				doctor.setCreatedAt( new Date( drObj.getString( DB.KEY_CREATED_AT ) ) );
 				doctor.setHeight( drObj.getString( DB.KEY_USER_HEIGHT ) );
 				doctor.setWeight( drObj.getString( DB.KEY_USER_WEIGHT ) );
 				doctor.setId( drObj.getString( DB.KEY_REMOTE_ID ) );

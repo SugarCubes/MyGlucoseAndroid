@@ -9,10 +9,7 @@
 
 package com.sugarcubes.myglucose.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -40,7 +37,7 @@ public class MainActivity
 		implements LoaderCallbacks<Cursor>,
 		View.OnTouchListener
 {
-	public static final boolean DEBUG = true;            // Activate/deactivate logging
+	public static final boolean DEBUG = true;						// Activate/deactivate logging
 
 	private final       String           LOG_TAG                    = getClass().getSimpleName();
 	private             PatientSingleton patientUser                =
@@ -50,7 +47,7 @@ public class MainActivity
 	public static final int              REGISTER_REQUEST           = 300;
 	// Return code after register
 	public static final int              RESULT_REGISTER_SUCCESSFUL = 101;
-	private Menu menu;                     // Reference to change Login/logout text
+	private Menu menu;                   // Reference to change Login/logout text
 
 
 	@Override
@@ -106,11 +103,11 @@ public class MainActivity
 			case R.id.action_login:
 				if( patientUser.isLoggedIn() )
 				{
-					DbPatientRepository patientRepository =     // Get reference to repo
+					DbPatientRepository patientRepository = // Get reference to repo
 							new DbPatientRepository( getApplicationContext() );
-					boolean deleted = patientRepository.delete( patientUser );// Delete from db
-					PatientSingleton.eraseData();                // deletes data and sets logged in to false
-					setMenuTexts();                            // Show Log in/out, Register
+					patientRepository.delete( patientUser );// Delete from db
+					PatientSingleton.eraseData();           // deletes data and sets logged in to false
+					setMenuTexts();                         // Show Log in/out, Register
 				}
 				else
 				{
@@ -217,10 +214,10 @@ public class MainActivity
 
 			setMenuTexts();                                        // Show Log in/out, Register
 
-			synchronized( cursor )
-			{
-				cursor.notify();
-			}
+			//			synchronized( cursor )
+			//			{
+			//				cursor.notify();
+			//			}
 
 		} // if cursor valid
 
@@ -264,7 +261,7 @@ public class MainActivity
 	@Override
 	public void onLoaderReset( Loader<Cursor> loader )
 	{
-		loaderReset();
+		//		loaderReset();
 
 	} // onLoaderReset
 
