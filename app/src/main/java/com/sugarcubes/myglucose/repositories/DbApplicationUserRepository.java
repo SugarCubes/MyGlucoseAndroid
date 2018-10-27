@@ -21,6 +21,7 @@ import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
+import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,25 +115,29 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
 			user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
-			user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) )  );
+			user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) ) );
 			user.setCity( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_CITY ) ) );
 			String pattern = "EEE MMM d HH:mm:ss z yyyy";
 			SimpleDateFormat formatter = new SimpleDateFormat( pattern, Locale.US );
-			try {
-				if( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) != null )
+			try
+			{
+				if( cursor.getString( cursor.getColumnIndex( DB.KEY_CREATED_AT ) ) != null )
 				{
-					Date date = formatter.parse( cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
+					Date date = formatter.parse( cursor.getString(
+							cursor.getColumnIndex( DB.KEY_CREATED_AT ) ) );
 					Log.d( LOG_TAG, "Date found: " + date.toString() );
-					user.setDate( date );
+					user.setCreatedAt( date );
 				}
 			}
 			catch( Exception e )
 			{
-				Log.e( LOG_TAG, "DATE TO PARSE: " + cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) );
+				Log.e( LOG_TAG, "DATE TO PARSE: " +
+						cursor.getString( cursor.getColumnIndex( DB.KEY_CREATED_AT ) ) );
 				e.printStackTrace();
 			}
 			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
-			user.setFirstName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
+			user.setFirstName( cursor.getString(
+					cursor.getColumnIndex( DB.KEY_USER_FIRST_NAME ) ) );
 			user.setLastName( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LAST_NAME ) ) );
 			user.setPhoneNumber( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_PHONE ) ) );
 			user.setState( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_STATE ) ) );
@@ -143,10 +148,15 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setWeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_WEIGHT ) ) );
 			user.setHeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_HEIGHT ) ) );
 			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
-			user.setLoginToken( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_LOGIN_TOKEN ) ) );
+			user.setLoginToken( cursor.getString(
+					cursor.getColumnIndex( DB.KEY_USER_LOGIN_TOKEN ) ) );
+			user.setCreatedAt( DateUtilities.convertStringToDate(
+					cursor.getString( cursor.getColumnIndex( DB.KEY_CREATED_AT ) ) ) );
+			user.setUpdatedAt( DateUtilities.convertStringToDate(
+					cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) ) ) );
 			// TODO crashes:
-//			user.setLoginExpirationTimestamp( cursor.getLong(
-//					cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
+			//	user.setLoginExpirationTimestamp( cursor.getLong(
+			//			cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
 
 			cursor.close();
 
@@ -162,43 +172,63 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	public ContentValues putContentValues( ApplicationUser user )
 	{
 		ContentValues values = new ContentValues();
-		values.put( DB.KEY_USER_EMAIL, user.getEmail() );
-		values.put( DB.KEY_USER_FIRST_NAME, user.getFirstName() );
-		values.put( DB.KEY_USER_LAST_NAME, user.getLastName() );
-		values.put( DB.KEY_USER_ADDRESS1, user.getAddress1() );
-		values.put( DB.KEY_USER_ADDRESS2, user.getAddress2() );
-		values.put( DB.KEY_USER_CITY, user.getCity() );
-		values.put( DB.KEY_USER_STATE, user.getState() );
-		values.put( DB.KEY_USER_ZIP1, user.getZip1() );
-		values.put( DB.KEY_USER_ZIP2, user.getZip2() );
-		values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
-		values.put( DB.KEY_USERNAME, user.getUserName() );
-		values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
-		values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
-		values.put( DB.KEY_DATE, user.getDate().toString() );
-		values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
-		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn() ? 1 : 0 );
-		values.put( DB.KEY_USER_LOGIN_TOKEN, user.getLoginToken() );
-		values.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, user.getLoginExpirationTimestamp() );
+		if( !user.getEmail().isEmpty() )
+			values.put( DB.KEY_USER_EMAIL, user.getEmail() );
+		if( !user.getFirstName().isEmpty() )
+			values.put( DB.KEY_USER_FIRST_NAME, user.getFirstName() );
+		if( !user.getLastName().isEmpty() )
+			values.put( DB.KEY_USER_LAST_NAME, user.getLastName() );
+		if( !user.getAddress1().isEmpty() )
+			values.put( DB.KEY_USER_ADDRESS1, user.getAddress1() );
+		if( !user.getAddress2().isEmpty() )
+			values.put( DB.KEY_USER_ADDRESS2, user.getAddress2() );
+		if( !user.getCity().isEmpty() )
+			values.put( DB.KEY_USER_CITY, user.getCity() );
+		if( !user.getState().isEmpty() )
+			values.put( DB.KEY_USER_STATE, user.getState() );
+		if( user.getZip1() > 0 )
+			values.put( DB.KEY_USER_ZIP1, user.getZip1() );
+		if( user.getZip2() > 0 )
+			values.put( DB.KEY_USER_ZIP2, user.getZip2() );
+		if( !user.getPhoneNumber().isEmpty() )
+			values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
+		if( !user.getUserName().isEmpty() )
+			values.put( DB.KEY_USERNAME, user.getUserName() );
+		if( !user.getWeight().isEmpty() )
+			values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
+		if( !user.getHeight().isEmpty() )
+			values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
+			values.put( DB.KEY_CREATED_AT, user.getCreatedAt().toString() );
+			values.put( DB.KEY_UPDATED_AT, user.getUpdatedAt().toString() );
+		if( user.getTimestamp() > 0 )
+			values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
+		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn()
+				? 1
+				: 0 );
+		if( !user.getLoginToken().isEmpty() )
+			values.put( DB.KEY_USER_LOGIN_TOKEN, user.getLoginToken() );
+		if( user.getLoginExpirationTimestamp() > 0 )
+			values.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, user.getLoginExpirationTimestamp() );
 		return values;
 
 	} // putContentValues
 
 
 	@Override
-	public void update( String id, ApplicationUser item )
+	public void update( String id, ApplicationUser user )
 	{
-		ContentValues values = putContentValues( item );
+		user.setUpdatedAt( new Date() );                    // Set updatedAt to now
+		ContentValues values = putContentValues( user );
 		contentResolver.update( uri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
 
 	} // update
 
 
 	@Override
-	public boolean delete( ApplicationUser item )
+	public boolean delete( ApplicationUser user )
 	{
 		int delete = contentResolver.delete( uri,
-				DB.KEY_USERNAME + "=?", new String[]{ item.getEmail() } );
+				DB.KEY_USERNAME + "=?", new String[]{ user.getEmail() } );
 
 		return delete > 0;
 

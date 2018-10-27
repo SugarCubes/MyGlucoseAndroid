@@ -1,25 +1,31 @@
 package com.sugarcubes.myglucose.entities;
 
-import android.database.Cursor;
-
+import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class GlucoseEntry
 {
-	private int id;
-	private String remoteId;
-	private String userName;
+	private int              id;
+	private String           remoteId;
+	private String           userName;
 	private PatientSingleton patient;
-	private float measurement;			// DEFAULT: mmol/L. May need conversion to display correctly
-//	private GlucoseUnits units;			// enum	mmol/L or mg/dL
-	private BeforeAfter beforeAfter;	// enum representing before or after a meal
-	private WhichMeal whichMeal;		// enum representing which meal entry taken before/after
-	private Date date;
-	private long timeStamp;
+	private float            measurement;
+	// DEFAULT: mmol/L. May need conversion to display correctly
+	//	private GlucoseUnits units;		    // enum	mmol/L or mg/dL
+	private BeforeAfter      beforeAfter;   // enum representing before or after a meal
+	private WhichMeal        whichMeal;     // enum representing which meal entry taken before/after
+	private Date             createdAt;
+	private Date             updatedAt;
+	private long             timeStamp;
 
 
 	public GlucoseEntry()
@@ -31,8 +37,9 @@ public class GlucoseEntry
 		measurement = 0f;
 		beforeAfter = BeforeAfter.BEFORE;
 		whichMeal = WhichMeal.OTHER;
-		date = new Date();
-		timeStamp = 0;
+		createdAt = new Date();
+		updatedAt = createdAt;
+		timeStamp = createdAt.getTime();
 
 	} // constructor
 
@@ -107,14 +114,14 @@ public class GlucoseEntry
 		this.whichMeal = whichMeal;
 	}
 
-	public Date getDate()
+	public Date getCreatedAt()
 	{
-		return date;
+		return createdAt;
 	}
 
-	public void setDate( Date date )
+	public void setCreatedAt( Date createdAt )
 	{
-		this.date = date;
+		this.createdAt = createdAt;
 	}
 
 	public long getTimestamp()
@@ -136,4 +143,38 @@ public class GlucoseEntry
 	{
 		this.patient = patient;
 	}
+
+	public Date getUpdatedAt()
+	{
+		return updatedAt;
+	}
+
+	public void setUpdatedAt( Date updatedAt )
+	{
+		this.updatedAt = updatedAt;
+	}
+
+
+	public JSONObject toJSONObject() throws JSONException
+	{
+		JSONObject glucoseEntry = new JSONObject();
+
+		if( !remoteId.isEmpty() )
+			glucoseEntry.put( DB.KEY_REMOTE_ID, remoteId );
+		if( patient != null && patient.getUserName().isEmpty() )
+			glucoseEntry.put( DB.KEY_USERNAME, patient.getId() );
+		if( measurement > 0 )
+			glucoseEntry.put( DB.KEY_GLUCOSE_MEASUREMENT, measurement );
+		glucoseEntry.put( DB.KEY_GLUCOSE_BEFORE_AFTER, beforeAfter.getValue() );
+		glucoseEntry.put( DB.KEY_WHICH_MEAL, whichMeal.getValue() );
+		glucoseEntry.put( DB.KEY_CREATED_AT, createdAt.toString() );
+		if( !updatedAt.toString().isEmpty() )
+			glucoseEntry.put( DB.KEY_UPDATED_AT, updatedAt.toString() );
+		if( timeStamp > 0 )
+			glucoseEntry.put( DB.KEY_TIMESTAMP, timeStamp );
+
+		return glucoseEntry;
+
+	} // toJSONObject
+
 } // class

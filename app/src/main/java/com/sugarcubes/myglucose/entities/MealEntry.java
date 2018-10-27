@@ -1,18 +1,24 @@
 package com.sugarcubes.myglucose.entities;
 
+import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 public class MealEntry
 {
-	private int id;
-	private String remoteId;
-	private String userName;
-	private int totalCarbs;
-	private Date date;
-	private long timestamp;
+	private int       id;
+	private String    remoteId;
+	private String    userName;
+	private int       totalCarbs;
+	private Date      createdAt;
+	private Date	  updatedAt;
+	private long      timestamp;
 	private WhichMeal whichMeal;
 
 	private ArrayList<MealItem> mealItems;
@@ -28,7 +34,8 @@ public class MealEntry
 		timestamp = 0;
 		whichMeal = WhichMeal.OTHER;
 		Date date = new Date();
-		this.date = date;
+		this.createdAt = date;
+		updatedAt = createdAt;
 		timestamp = date.getTime();
 
 	} // constructor
@@ -73,14 +80,24 @@ public class MealEntry
 		this.totalCarbs = totalCarbs;
 	}
 
-	public Date getDate()
+	public Date getCreatedAt()
 	{
-		return date;
+		return createdAt;
 	}
 
-	public void setDate( Date date )
+	public void setCreatedAt( Date createdAt )
 	{
-		this.date = date;
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt()
+	{
+		return updatedAt;
+	}
+
+	public void setUpdatedAt( Date updatedAt )
+	{
+		this.updatedAt = updatedAt;
 	}
 
 	public long getTimestamp()
@@ -112,4 +129,28 @@ public class MealEntry
 	{
 		this.whichMeal = whichMeal;
 	}
+
+
+	public JSONObject toJSONObject() throws JSONException
+	{
+		JSONObject mealEntry = new JSONObject();
+
+		// TODO
+
+		if( mealItems.size() > 0 )
+		{
+			JSONArray mItems = new JSONArray();
+
+			for( MealItem mealItem : mealItems )
+			{
+				mItems.put( mealItem.toJSONObject() );
+			}
+
+			mealEntry.put( DB.KEY_MEAL_ITEMS, mItems );
+		}
+
+		return mealEntry;
+
+	} // toJSONObject
+
 } // class

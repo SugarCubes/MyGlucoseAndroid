@@ -184,7 +184,7 @@ public class LogGlucoseActivity extends AppCompatActivity
 
 				Date date = new Date();
 				glucoseEntry.setTimeStamp( date.getTime() );
-				glucoseEntry.setDate( date );
+				glucoseEntry.setCreatedAt( date );
 				// Save the GlucoseEntry and its GlucoseItems
 				return logGlucoseEntryAction.logGlucoseEntry( getApplicationContext(), glucoseEntry );
 

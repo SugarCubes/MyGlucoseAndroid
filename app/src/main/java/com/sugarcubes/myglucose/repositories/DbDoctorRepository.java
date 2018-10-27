@@ -19,7 +19,6 @@ public class DbDoctorRepository implements IDoctorRepository
 	private ContentResolver contentResolver;
 	private Uri doctorsUri = MyGlucoseContentProvider.DOCTORS_URI;
 	private DbApplicationUserRepository dbApplicationUserRepository;
-	private ApplicationUser user;
 
 
 	public DbDoctorRepository( Context context )
@@ -33,7 +32,7 @@ public class DbDoctorRepository implements IDoctorRepository
 	@Override
 	public boolean create( Doctor item )
 	{
-		boolean createUser = dbApplicationUserRepository.create( item );
+		boolean createUser = dbApplicationUserRepository.create( item );	// Create ApplicationUser
 		Uri createUri = contentResolver.insert( doctorsUri, putContentValues( item ) );
 
 		return createUser && createUri != null;
@@ -44,9 +43,9 @@ public class DbDoctorRepository implements IDoctorRepository
 	@Override
 	public Doctor read( String userName )
 	{
-		Doctor doctor = (Doctor) new Doctor();	// Get an appUser and cast
-		Cursor cursor = getDoctorCursor( userName );
-		readFromCursor( doctor, cursor );
+		Doctor doctor = new Doctor();					// Get an empty object
+		Cursor cursor = getDoctorCursor( userName );	// Get a cursor object
+		readFromCursor( doctor, cursor );				// Pass the doctor to the cursor
 		// Load the info related to ApplicationUser:
 		dbApplicationUserRepository.readFromCursor( doctor, getApplicationUserCursor( userName ) );
 
@@ -59,7 +58,6 @@ public class DbDoctorRepository implements IDoctorRepository
 	public ArrayList<Doctor> readAll()
 	{
 		ArrayList<Doctor> doctors = new ArrayList<>();
-
 
 		Cursor cursor =  contentResolver.query( doctorsUri,
 				null, null, null, null );
@@ -117,6 +115,7 @@ public class DbDoctorRepository implements IDoctorRepository
 	{
 		ContentValues values = putContentValues( doctor );
 		contentResolver.update( doctorsUri, values, DB.KEY_USERNAME + "=?", new String[]{ id } );
+		dbApplicationUserRepository.update( id, doctor );		// Also update in the appUser repo
 
 	} // update
 
@@ -124,6 +123,9 @@ public class DbDoctorRepository implements IDoctorRepository
 	@Override
 	public boolean delete( Doctor doctor )
 	{
+		dbApplicationUserRepository.delete( doctor.getUserName() );	// Delete appUser info
+		contentResolver.delete( doctorsUri,
+				DB.KEY_USERNAME + "=?", new String[]{ doctor.getUserName() } );
 		return true;
 
 	} // delete
@@ -132,7 +134,7 @@ public class DbDoctorRepository implements IDoctorRepository
 	@Override
 	public void delete( String username )
 	{
-		dbApplicationUserRepository.delete( username );
+		dbApplicationUserRepository.delete( username );				// Delete appUser info
 		contentResolver.delete( doctorsUri, DB.KEY_USERNAME + "=?", new String[]{ username } );
 
 	} // delete

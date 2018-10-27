@@ -25,6 +25,7 @@ import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 public class DbMealEntryRepository implements IMealEntryRepository
@@ -161,13 +162,22 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setTotalCarbs( cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) ) );
 		entry.setMealItems( readAllMealItems( entry.getId() ) );    // Access MealItems by meal id
-		// Convert the date string to a Date object:
-		entry.setDate( DateUtilities.convertStringToDate(
-				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) ) );
+
+		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
+		if( !updatedAt.isEmpty() )
+			// Convert the updatedAt string to a Date object:
+			entry.setUpdatedAt( DateUtilities.convertStringToDate( updatedAt ) );
+
+		String createdAt = cursor.getString( cursor.getColumnIndex( DB.KEY_CREATED_AT ) );
+		if( !createdAt.isEmpty() )
+			// Convert the createdAt string to a Date object:
+			entry.setCreatedAt( DateUtilities.convertStringToDate( createdAt ) );
+
 		// Retrieve as a long:
 		entry.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
 		entry.setWhichMeal( WhichMeal.fromInt(
 				cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
+
 		return entry;
 
 	} // readFromCursor
@@ -179,7 +189,8 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		ContentValues values = new ContentValues();
 		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, item.getTotalCarbs() );
-		values.put( DB.KEY_DATE, item.getDate().toString() );
+		values.put( DB.KEY_CREATED_AT, item.getCreatedAt().toString() );
+		values.put( DB.KEY_UPDATED_AT, item.getUpdatedAt().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		int whichMeal = 0;
 		try
@@ -199,6 +210,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 	@Override
 	public void update( int id, MealEntry item )
 	{
+		item.setUpdatedAt( new Date() );
 		contentResolver.update( uriEntries, putContentValues( item ),        // Update the MealEntry
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 

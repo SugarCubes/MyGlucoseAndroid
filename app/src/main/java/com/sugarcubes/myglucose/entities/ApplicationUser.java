@@ -22,7 +22,8 @@ public class ApplicationUser
 	protected String height;
 	protected String weight;
 
-	protected Date date;
+	protected Date createdAt;
+	protected Date updatedAt;
 	protected long timestamp;
 
 	public ApplicationUser()
@@ -42,7 +43,8 @@ public class ApplicationUser
 		phoneNumber = "";
 		height 		= "";
 		weight 		= "";
-		date		= newDate;
+		createdAt 	= newDate;
+		updatedAt 	= createdAt;
 		timestamp	= newDate.getTime();
 		loginToken 	= "";
 		loginExpirationTimestamp = newDate.getTime();
@@ -199,14 +201,14 @@ public class ApplicationUser
 		this.phoneNumber = phoneNumber;
 	}
 
-	public Date getDate()
+	public Date getCreatedAt()
 	{
-		return date;
+		return createdAt;
 	}
 
-	public void setDate( Date date )
+	public void setCreatedAt( Date createdAt )
 	{
-		this.date = date;
+		this.createdAt = createdAt;
 	}
 
 	public long getTimestamp()
@@ -239,6 +241,16 @@ public class ApplicationUser
 		this.loginExpirationTimestamp = loginExpirationTimestamp;
 	}
 
+	public Date getUpdatedAt()
+	{
+		return updatedAt;
+	}
+
+	public void setUpdatedAt( Date updatedAt )
+	{
+		this.updatedAt = updatedAt;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -255,7 +267,7 @@ public class ApplicationUser
 				", zip1=" + zip1 +
 				", zip2=" + zip2 +
 				", phoneNumber='" + phoneNumber + '\'' +
-				", date=" + date +
+				", createdAt=" + createdAt +
 				", timestamp=" + timestamp +
 				", loginToken=" + loginToken +
 				", loginExpiration=" + loginExpirationTimestamp +

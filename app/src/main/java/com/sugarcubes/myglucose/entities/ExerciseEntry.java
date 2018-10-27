@@ -1,16 +1,19 @@
 package com.sugarcubes.myglucose.entities;
 
+import org.json.JSONObject;
+
 import java.util.Date;
 
 public class ExerciseEntry
 {
-	private int id;
+	private int    id;
 	private String remoteId;
 	private String userName;
 	private String exerciseName;
-	private int minutes;
-	private Date date;
-	private long timestamp;
+	private int    minutes;
+	private Date   updatedAt;
+	private Date   createdAt;
+	private long   timestamp;
 
 
 	public ExerciseEntry()
@@ -20,8 +23,9 @@ public class ExerciseEntry
 		userName = "";
 		exerciseName = "";
 		minutes = -1;
-		date = new Date();
-		timestamp = date.getTime();
+		createdAt = new Date();
+		updatedAt = createdAt;
+		timestamp = createdAt.getTime();
 
 	} // constructor
 
@@ -75,14 +79,24 @@ public class ExerciseEntry
 		this.minutes = minutes;
 	}
 
-	public Date getDate()
+	public Date getCreatedAt()
 	{
-		return date;
+		return createdAt;
 	}
 
-	public void setDate( Date date )
+	public void setCreatedAt( Date createdAt )
 	{
-		this.date = date;
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt()
+	{
+		return updatedAt;
+	}
+
+	public void setUpdatedAt( Date updatedAt )
+	{
+		this.updatedAt = updatedAt;
 	}
 
 	public long getTimestamp()
@@ -94,4 +108,13 @@ public class ExerciseEntry
 	{
 		this.timestamp = timestamp;
 	}
-}
+
+	public JSONObject toJSONObject()
+	{
+		// TODO
+
+		return null;
+
+	} // toJSONObject
+
+} // class

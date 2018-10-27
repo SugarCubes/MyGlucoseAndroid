@@ -174,7 +174,7 @@ public class LogExerciseActivity extends AppCompatActivity
 
 				Date date = new Date();
 				exerciseEntry.setTimestamp( date.getTime() );
-				exerciseEntry.setDate( date );
+				exerciseEntry.setCreatedAt( date );
 				// Save the ExerciseEntry and its ExerciseItems
 				return logExerciseEntryAction.logExerciseEntry( getApplicationContext(), exerciseEntry );
 

@@ -1,5 +1,7 @@
 package com.sugarcubes.myglucose.entities;
 
+import org.json.JSONObject;
+
 public class MealItem
 {
 	private int id;
@@ -101,5 +103,13 @@ public class MealItem
 				", servings=" + servings +
 				'}';
 	}
+
+	public JSONObject toJSONObject()
+	{
+		// TODO
+
+		return null;
+
+	} // toJSONObject
 
 } // class

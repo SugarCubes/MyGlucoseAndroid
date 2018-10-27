@@ -31,8 +31,8 @@ import java.util.concurrent.ExecutionException;
 public class DbPatientRepository implements IPatientRepository
 {
 
-	private ContentResolver contentResolver;
-	private Context context;
+	private ContentResolver             contentResolver;
+	private Context                     context;
 	private DbApplicationUserRepository dbApplicationUserRepository;
 
 	private final String LOG_TAG = this.getClass().getName();
@@ -71,9 +71,9 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public void delete( String id )
 	{
-		dbApplicationUserRepository.delete( id );			// delete from application users
+		dbApplicationUserRepository.delete( id );            // delete from application users
 		contentResolver.delete( MyGlucoseContentProvider.PATIENTS_URI, DB.KEY_USERNAME + "=?",
-				new String[]{ id } );					// delete patient entry
+				new String[]{ id } );                    // delete patient entry
 
 	} // delete
 
@@ -88,8 +88,9 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public PatientSingleton getLoggedInUser()
 	{
-		int loggedIn = 1;		// SQLite stores boolean values as 0=false, 1=true
-		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.USERS_URI, null, DB.KEY_USER_LOGGED_IN + "=?",
+		int loggedIn = 1;        // SQLite stores boolean values as 0=false, 1=true
+		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.USERS_URI, null,
+				DB.KEY_USER_LOGGED_IN + "=?",
 				new String[]{ String.valueOf( loggedIn ) }, null );
 
 		if( cursor != null )
@@ -112,7 +113,7 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public boolean create( PatientSingleton patientSingleton )
 	{
-		// There has to be two tables updated: "users" and "patients":
+		// There be two tables to be updated: "users" and "patients":
 		long timestamp = new Date().getTime();
 		ContentValues patientValues = new ContentValues();
 		if( patientSingleton.getDoctor() != null )
@@ -124,10 +125,7 @@ public class DbPatientRepository implements IPatientRepository
 		// Now insert the "users" information:
 		boolean userInserted = dbApplicationUserRepository.create( patientSingleton );
 
-		if( patientUri != null && userInserted )
-			return true;
-
-		return false;
+		return patientUri != null && userInserted;
 
 	} // create
 
@@ -138,10 +136,10 @@ public class DbPatientRepository implements IPatientRepository
 		PatientSingleton patientSingleton = PatientSingleton.getInstance();
 		Cursor userCursor = contentResolver.query( MyGlucoseContentProvider.USERS_URI, null,
 				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
-		dbApplicationUserRepository.readFromCursor( patientSingleton, userCursor );	// Populate appUser
+		dbApplicationUserRepository.readFromCursor( patientSingleton, userCursor );    // Populate appUser
 		Cursor patientCursor = contentResolver.query( MyGlucoseContentProvider.PATIENTS_URI, null,
 				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
-		readFromCursor( patientSingleton, patientCursor );								// Populate patient
+		readFromCursor( patientSingleton, patientCursor );                                // Populate patient
 		return patientSingleton;
 
 	} // read
@@ -150,7 +148,7 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public ArrayList<PatientSingleton> readAll()
 	{
-		ArrayList<PatientSingleton> arrayList = new ArrayList<>(  );
+		ArrayList<PatientSingleton> arrayList = new ArrayList<>();
 		arrayList.add( read( "ArbitraryDefaultUserUsername" ) );
 
 		return arrayList;
@@ -161,22 +159,22 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public PatientSingleton readFromCursor( PatientSingleton patientSingleton, Cursor cursor )
 	{
-//		DbApplicationUserRepository applicationUserRepository
-//				= new DbApplicationUserRepository( context );
+		//		DbApplicationUserRepository applicationUserRepository
+		//				= new DbApplicationUserRepository( context );
 		dbApplicationUserRepository.readFromCursor( patientSingleton, cursor );
-	    try
-        {
-        	// TODO: Get doctor from repository
-//            DbDoctorRepository doctorRepository = new DbDoctorRepository(context);
-//            patientSingleton.setDoctor(doctorRepository.readAll().get(0));
-            return patientSingleton;
-        }
-        catch( Exception e )
-        {
-        	e .printStackTrace();
-            patientSingleton = null;
-            return patientSingleton;
-        }
+		try
+		{
+			// TODO: Get doctor from repository
+			//            DbDoctorRepository doctorRepository = new DbDoctorRepository(context);
+			//            patientSingleton.setDoctor(doctorRepository.readAll().get(0));
+			return patientSingleton;
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+			patientSingleton = null;
+			return patientSingleton;
+		}
 
 
 	} // readFromCursor
@@ -185,7 +183,7 @@ public class DbPatientRepository implements IPatientRepository
 	public ContentValues putContentValues( PatientSingleton item )
 	{
 		ContentValues values = new ContentValues();
-		if( item.getDoctor() != null )
+		if( item.getDoctor() != null && !item.getDoctor().getUserName().isEmpty() )
 			values.put( DB.KEY_DR_ID, item.getDoctor().getUserName() );
 		return values;
 	}
@@ -193,11 +191,17 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public void update( String username, PatientSingleton item )
 	{
-		contentResolver.update( MyGlucoseContentProvider.PATIENTS_URI, putContentValues( item ),
-				DB.KEY_USERNAME + "=?", new String[]{ username } );
-		contentResolver.update( MyGlucoseContentProvider.USERS_URI,
-				dbApplicationUserRepository.putContentValues( item ),
-				DB.KEY_USERNAME + "=?", new String[]{ username } );
+		ContentValues values = putContentValues( item );
+		if( values.size() > 0 )
+			contentResolver.update(
+					MyGlucoseContentProvider.PATIENTS_URI,
+					putContentValues( item ),
+					DB.KEY_USERNAME + "=?",
+					new String[]{ username } );
+		dbApplicationUserRepository.update( username, item );
+		//		contentResolver.update( MyGlucoseContentProvider.USERS_URI,
+		//				dbApplicationUserRepository.putContentValues( item ),
+		//				DB.KEY_USERNAME + "=?", new String[]{ username } );
 
 	} // update
 
@@ -231,7 +235,7 @@ public class DbPatientRepository implements IPatientRepository
 		@Override
 		protected Cursor doInBackground( ContentResolver... contentResolvers )
 		{
-			return contentResolvers[0].query( MyGlucoseContentProvider.PATIENT_USERS_URI,
+			return contentResolvers[ 0 ].query( MyGlucoseContentProvider.PATIENT_USERS_URI,
 					null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
 					new String[]{ String.valueOf( 1 ) }, null );
 

@@ -26,6 +26,7 @@ import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 {
@@ -115,7 +116,8 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		values.put( DB.KEY_GLUCOSE_MEASUREMENT, item.getMeasurement() );
 		values.put( DB.KEY_GLUCOSE_BEFORE_AFTER, item.getBeforeAfter().toString() );
 		values.put( DB.KEY_WHICH_MEAL, item.getWhichMeal().toString() );
-		values.put( DB.KEY_DATE, item.getDate().toString() );
+		values.put( DB.KEY_CREATED_AT, item.getCreatedAt().toString() );
+		values.put( DB.KEY_UPDATED_AT, item.getUpdatedAt().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );
 		return values;
 
@@ -125,6 +127,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void update( int id, GlucoseEntry item )
 	{
+		item.setUpdatedAt( new Date() );
 		contentResolver.update( uri, putContentValues( item ),
 				DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) } );
 
@@ -163,9 +166,15 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		entry.setWhichMeal( WhichMeal.valueOf( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
 
-		// Convert the date string to a Date object:
-		entry.setDate( DateUtilities.convertStringToDate(
-				cursor.getString( cursor.getColumnIndex( DB.KEY_DATE ) ) ) );
+		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
+		if( !updatedAt.isEmpty() )
+			// Convert the updatedAt string to a Date object:
+			entry.setUpdatedAt( DateUtilities.convertStringToDate( updatedAt ) );
+
+		String createdAt = cursor.getString( cursor.getColumnIndex( DB.KEY_CREATED_AT ) );
+		if( !createdAt.isEmpty() )
+			// Convert the createdAt string to a Date object:
+			entry.setCreatedAt( DateUtilities.convertStringToDate( createdAt ) );
 
 		// Retrieve as a long:
 		entry.setTimestamp(
