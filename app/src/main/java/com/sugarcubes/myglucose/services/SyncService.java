@@ -2,44 +2,25 @@ package com.sugarcubes.myglucose.services;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.ContentObserver;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.activities.MainActivity;
 import com.sugarcubes.myglucose.adapters.DataSyncAdapter;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
-import com.sugarcubes.myglucose.db.DB;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
-
-// TODO: This is experimental, and would be useful for displaying a notification
-// TODO: for the app when needed. However, for now there is no need...
-
+/**
+ * Define a Service that returns an <code><a href="/reference/android/os/IBinder.html">IBinder</a></code>
+ * for the sync adapter class, allowing the sync adapter framework to call onPerformSync().
+ */
 public class SyncService extends Service
 {
 	private final static String LOG_TAG      = "SyncService";
@@ -49,20 +30,18 @@ public class SyncService extends Service
 	public static final  String ACCOUNT      = "sugarcubes";
 	// Instance fields
 	Account mAccount;
-
-	/**
-	 * Define a Service that returns an <code><a href="/reference/android/os/IBinder.html">IBinder</a></code> for the
-	 * sync adapter class, allowing the sync adapter framework to call
-	 * onPerformSync().
-	 */
 	// Storage for an instance of the sync adapter
 	private static       DataSyncAdapter sSyncAdapter     = null;
 	// Object to use as a thread-safe lock
 	private static final Object          sSyncAdapterLock = new Object();
 	ContentResolver mResolver; // A content resolver for accessing the provider
 
-	// A content URI for the content provider's data table
-//	Uri doctorsUri, patientsUri;
+	// Sync interval constants
+	public static final long SECONDS_PER_MINUTE       = 60L;
+	public static final long POLL_INTERVAL_IN_MINUTES = 2L;
+	public static final long POLL_INTERVAL_SECONDS    =
+			POLL_INTERVAL_IN_MINUTES *
+					SECONDS_PER_MINUTE;
 
 
 	@Override
@@ -88,50 +67,27 @@ public class SyncService extends Service
 
 		// Get the content resolver object for your app
 		mResolver = getContentResolver();
-		// Construct a URI that points to the content provider data table
-//		doctorsUri = new Uri.Builder()
-//				.scheme( SCHEME )
-//				.authority( AUTHORITY )
-//				.path( DB.TABLE_DOCTORS )
-//				.build();
-//		patientsUri = new Uri.Builder()
-//				.scheme( SCHEME )
-//				.authority( AUTHORITY )
-//				.path( DB.TABLE_PATIENTS )
-//				.build();
-//		userssUri = new Uri.Builder()
-//				.scheme( SCHEME )
-//				.authority( AUTHORITY )
-//				.path( DB.TABLE_PATIENTS )
-//				.build();
 
-		/*
-		 * Create a content observer object.
-		 * Its code does not mutate the provider, so set
-		 * selfChange to "false"
-		 */
-		TableObserver observer = new TableObserver( new Handler() );
+		// UNCOMMENT TO SYNC WHEN DATA CHANGES IN ANY OF THE TABLES:
+		//setToSyncWhenTablesChange();
 
-		/*
-		 * Register the observer for the data table. The table's path
-		 * and any of its subpaths trigger the observer.
-		 */
-		mResolver.registerContentObserver( MyGlucoseContentProvider.USERS_URI,
-				true, new TableObserver( new Handler() ) );
-		// Note: shouldn't have to sync doctors *from* Android
-//		mResolver.registerContentObserver( MyGlucoseContentProvider.DOCTORS_URI,
-//				true, new TableObserver( new Handler() ) );
-		mResolver.registerContentObserver( MyGlucoseContentProvider.PATIENTS_URI,
-				true, new TableObserver( new Handler() ) );
-		mResolver.registerContentObserver( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
-				true, new TableObserver( new Handler() ) );
-		mResolver.registerContentObserver( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
-				true, new TableObserver( new Handler() ) );
-		mResolver.registerContentObserver( MyGlucoseContentProvider.MEAL_ENTRIES_URI,
-				true, new TableObserver( new Handler() ) );
-
+		// Allow account to sync:
+		ContentResolver.setIsSyncable( mAccount, MyGlucoseContentProvider.AUTHORITY, 1 );
 		// https://stackoverflow.com/questions/5253858/why-does-contentresolver-requestsync-not-trigger-a-sync
+		// This flags the system to initiate automatic sync. Without this, the user would have to
+		//	go into Android settings and tick a checkbox to allow syncing:
 		ContentResolver.setSyncAutomatically( mAccount, MyGlucoseContentProvider.AUTHORITY, true );
+		// Turn on periodic syncing:
+		ContentResolver.addPeriodicSync(
+				mAccount,
+				MyGlucoseContentProvider.AUTHORITY,
+				Bundle.EMPTY,
+				POLL_INTERVAL_SECONDS );
+
+		// NOTE ON PERIODIC SYNCING: Observations indicate periodic syncing is probably set to a
+		// 		minimum number of minutes  (in my case, five). When set to 1 minute, the app was
+		// 		not triggered when the app was run, but was then triggered once every five
+		//		minutes.
 
 	} // onCreate
 
@@ -155,7 +111,34 @@ public class SyncService extends Service
 
 
 	/**
+	 * setToSyncWhenTablesChange
+	 * Use this when setting up sync to sync when data in any of our observed tables change:
+	 */
+	private void setToSyncWhenTablesChange()
+	{
+		/*
+		 * Register the observer for the data table. The table's path
+		 * and any of its subpaths trigger the observer.
+		 */
+		mResolver.registerContentObserver( MyGlucoseContentProvider.USERS_URI,
+				true, new TableObserver( new Handler() ) );
+		// Note: shouldn't have to sync doctors *from* Android
+		//mResolver.registerContentObserver( MyGlucoseContentProvider.DOCTORS_URI,
+		//		true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.PATIENTS_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+		mResolver.registerContentObserver( MyGlucoseContentProvider.MEAL_ENTRIES_URI,
+				true, new TableObserver( new Handler() ) );
+	}
+
+
+	/**
 	 * TableObserver
+	 * Only used when setToSyncWhenTablesChange() is used to observe tables
 	 */
 	public class TableObserver extends ContentObserver
 	{
@@ -197,8 +180,14 @@ public class SyncService extends Service
 			 * To maintain backward compatibility, assume that
 			 * changeUri is null.
 			 */
+			if( DEBUG ) Log.i( LOG_TAG, "TableObserver onChange called!" );
+
+			// Pass the settings flags by inserting them in a bundle
+			Bundle settingsBundle = new Bundle();
+			settingsBundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+			// settingsBundle.putBoolean( ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 			// Note: this automatically finds our DataSyncAdapter in the Manifest and runs it:
-			ContentResolver.requestSync( mAccount, MyGlucoseContentProvider.AUTHORITY, new Bundle() );
+			ContentResolver.requestSync( mAccount, MyGlucoseContentProvider.AUTHORITY, settingsBundle );
 
 		} // onChange
 
@@ -227,7 +216,7 @@ public class SyncService extends Service
 			 * then call context.setIsSyncable(account, AUTHORITY, 1)
 			 * here.
 			 */
-			Log.i( LOG_TAG, "Account \"" + newAccount.toString()
+			if( DEBUG ) Log.i( LOG_TAG, "Account \"" + newAccount.toString()
 					+ "\" created SUCCESSFULLY." );
 		}
 		else
@@ -236,7 +225,7 @@ public class SyncService extends Service
 			 * The account exists or some other error occurred. Log this, report it,
 			 * or handle it internally.
 			 */
-			Log.i( LOG_TAG, "Account \"" + newAccount.toString()
+			if( DEBUG ) Log.i( LOG_TAG, "Account \"" + newAccount.toString()
 					+ "\" either already exists, or failed..." );
 		}
 

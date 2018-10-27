@@ -3,7 +3,6 @@ package com.sugarcubes.myglucose.actions;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
@@ -31,7 +30,7 @@ public class SimulateLoginAction implements ILoginAction
 			patientSingleton.setZip2( 1234 );
 			patientSingleton.setPhoneNumber( "(555) 999-1234" );
 			Date date = new Date();
-			patientSingleton.setDate( date );
+			patientSingleton.setCreatedAt( date );
 			patientSingleton.setTimestamp( date.getTime() );
 
 			Doctor dr = new Doctor();
