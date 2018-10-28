@@ -13,58 +13,62 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.db.DB;
 
 import java.util.HashMap;
 
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
+
 public class MyGlucoseContentProvider extends ContentProvider
 {
 	// fields for content provider
 	public static final String
-			AUTHORITY				= "com.sugarcubes.myglucose.provider",
+			AUTHORITY = "com.sugarcubes.myglucose.provider",
 
-			USERS_URL				= "content://" + AUTHORITY + "/" + DB.TABLE_USERS,
-			PATIENTS_URL			= "content://" + AUTHORITY + "/" + DB.TABLE_PATIENTS,
-			PATIENT_USERS_URL		= "content://" + AUTHORITY + "/" + DB.PATIENT_USERS,
-			DOCTORS_URL				= "content://" + AUTHORITY + "/" + DB.TABLE_DOCTORS,
-			GLUCOSE_ENTRIES_URL		= "content://" + AUTHORITY + "/" + DB.TABLE_GLUCOSE_ENTRIES,
-			MEAL_ENTRIES_URL		= "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ENTRIES,
-			MEAL_ITEMS_URL			= "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ITEMS,
-			EXERCISE_ENTRIES_URL	= "content://" + AUTHORITY + "/" + DB.TABLE_EXERCISE_ENTRIES;
+	USERS_URL                    = "content://" + AUTHORITY + "/" + DB.TABLE_USERS,
+			PATIENTS_URL         = "content://" + AUTHORITY + "/" + DB.TABLE_PATIENTS,
+			PATIENT_USERS_URL    = "content://" + AUTHORITY + "/" + DB.PATIENT_USERS,
+			DOCTORS_URL          = "content://" + AUTHORITY + "/" + DB.TABLE_DOCTORS,
+			GLUCOSE_ENTRIES_URL  = "content://" + AUTHORITY + "/" + DB.TABLE_GLUCOSE_ENTRIES,
+			MEAL_ENTRIES_URL     = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ENTRIES,
+			MEAL_ITEMS_URL       = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ITEMS,
+			EXERCISE_ENTRIES_URL = "content://" + AUTHORITY + "/" + DB.TABLE_EXERCISE_ENTRIES;
 
 	// Uris to be used by the ContentProvider:
 	public static final Uri
-			USERS_URI				= Uri.parse( USERS_URL ),
-			PATIENT_USERS_URI		= Uri.parse( PATIENT_USERS_URL ),
-			PATIENTS_URI			= Uri.parse( PATIENTS_URL ),
-			DOCTORS_URI				= Uri.parse( DOCTORS_URL ),
-			GLUCOSE_ENTRIES_URI		= Uri.parse( GLUCOSE_ENTRIES_URL ),
-			MEAL_ENTRIES_URI		= Uri.parse( MEAL_ENTRIES_URL ),
-			MEAL_ITEMS_URI			= Uri.parse( MEAL_ITEMS_URL ),
-			EXERCISE_ENTRIES_URI	= Uri.parse( EXERCISE_ENTRIES_URL );
+			USERS_URI            = Uri.parse( USERS_URL ),
+			PATIENT_USERS_URI    = Uri.parse( PATIENT_USERS_URL ),
+			PATIENTS_URI         = Uri.parse( PATIENTS_URL ),
+			DOCTORS_URI          = Uri.parse( DOCTORS_URL ),
+			GLUCOSE_ENTRIES_URI  = Uri.parse( GLUCOSE_ENTRIES_URL ),
+			MEAL_ENTRIES_URI     = Uri.parse( MEAL_ENTRIES_URL ),
+			MEAL_ITEMS_URI       = Uri.parse( MEAL_ITEMS_URL ),
+			EXERCISE_ENTRIES_URI = Uri.parse( EXERCISE_ENTRIES_URL );
 
 	// Fields for content URI
 	public static final int
-			USERS					= 1,
-			USERS_ID				= 2,
-			PATIENTS				= 3,
-			PATIENTS_ID				= 4,
-			PATIENT_USERS			= 5,
-			DOCTORS					= 6,
-			DOCTORS_ID				= 7,
-			GLUCOSE_ENTRIES			= 8,
-			GLUCOSE_ENTRIES_ID		= 9,
-			MEAL_ENTRIES			= 10,
-			MEAL_ENTRIES_ID			= 11,
-			MEAL_ENTRY_ITEMS 		= 12,
-			MEAL_ITEMS				= 13,
-			MEAL_ITEMS_ID			= 14,
-			EXERCISE_ENTRIES		= 15,
-			EXERCISE_ENTRIES_ID		= 16;
+			USERS               = 1,
+			USERS_ID            = 2,
+			PATIENTS            = 3,
+			PATIENTS_ID         = 4,
+			PATIENT_USERS       = 5,
+			DOCTORS             = 6,
+			DOCTORS_ID          = 7,
+			GLUCOSE_ENTRIES     = 8,
+			GLUCOSE_ENTRIES_ID  = 9,
+			MEAL_ENTRIES        = 10,
+			MEAL_ENTRIES_ID     = 11,
+			MEAL_ENTRY_ITEMS    = 12,
+			MEAL_ITEMS          = 13,
+			MEAL_ITEMS_ID       = 14,
+			EXERCISE_ENTRIES    = 15,
+			EXERCISE_ENTRIES_ID = 16;
 
 	// Creates a UriMatcher object.
 	private static final UriMatcher uriMatcher;
+
 	static
 	{
 		uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
@@ -89,9 +93,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 	} // uriMatcher
 
 
-	private static HashMap<String, String> queryMap;	// For queryBuilder
-	private static DB db;					// SQLiteOpenHelper
-	private static SQLiteDatabase database;				// Get a connection using our custom handler
+	private static HashMap<String, String> queryMap;    // For queryBuilder
+	private static DB                      db;                    // SQLiteOpenHelper
+	private static SQLiteDatabase          database;
+			// Get a connection using our custom handler
+	private String LOG_TAG = getClass().getSimpleName();
 
 	@Override
 	public boolean onCreate()
@@ -119,13 +125,13 @@ public class MyGlucoseContentProvider extends ContentProvider
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		Cursor cursor;
 
-//		sortOrder =	sortOrder == null
-//				? DB.KEY_ID + " ASC"
-//				: null;
+		//		sortOrder =	sortOrder == null
+		//				? DB.KEY_ID + " ASC"
+		//				: null;
 		queryBuilder.setProjectionMap( queryMap );
 
 		// In case the db needs to be instantiated:
-		if( db == null  )
+		if( db == null )
 			db = new DB( getContext() );
 		if( database == null )
 			database = db.getReadableDatabase();
@@ -153,9 +159,12 @@ public class MyGlucoseContentProvider extends ContentProvider
 				break;
 
 			case PATIENT_USERS:
-				queryBuilder.setTables( DB.TABLE_PATIENTS + " INNER JOIN " + DB.TABLE_USERS + " ON "
-					+ DB.TABLE_PATIENTS + "." + DB.KEY_USERNAME + "=" + DB.TABLE_USERS + "."
-					+ DB.KEY_USERNAME );
+				queryBuilder.setTables( DB.TABLE_PATIENTS + ", " + DB.TABLE_USERS );//+ " ON "
+//						+ DB.TABLE_PATIENTS + "." + DB.KEY_USERNAME + "=" + DB.TABLE_USERS + "."
+//						+ DB.KEY_USERNAME );
+
+				if( DEBUG && selectionArgs != null ) Log.e( LOG_TAG, "Selection: " + selection
+						+ "; args: " + selectionArgs[0] );
 				break;
 
 			case DOCTORS:
@@ -213,7 +222,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 				throw new IllegalArgumentException( "Unknown URI " + uri );
 		}
 
-		return queryBuilder.query(					// Return a cursor
+		return queryBuilder.query(                    // Return a cursor
 				database, projection, selection, selectionArgs,
 				null, null, sortOrder );
 
@@ -225,10 +234,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 	public Uri insert( @NonNull Uri uri,
 					   @Nullable ContentValues values )
 	{
-		long count	= -1;
+		long count = -1;
 
 		// In case the db needs to be instantiated:
-		if( db == null  )
+		if( db == null )
 			db = new DB( getContext() );
 		if( database == null )
 			database = db.getReadableDatabase();
@@ -284,7 +293,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			if( context != null && context.getContentResolver() != null )
 				context.getContentResolver().notifyChange( uri, null );
 
-			return ContentUris.withAppendedId( uri, count );			// RETURN STATEMENT
+			return ContentUris.withAppendedId( uri, count );            // RETURN STATEMENT
 
 		} // if
 
@@ -295,8 +304,9 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 	/**
 	 * delete()
-	 * @param uri - Uri to match
-	 * @param selection - Selection
+	 *
+	 * @param uri           - Uri to match
+	 * @param selection     - Selection
 	 * @param selectionArgs - Selection arguments
 	 * @return row count
 	 */
@@ -305,10 +315,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 					   @Nullable String selection,
 					   @Nullable String[] selectionArgs )
 	{
-		int count	= 0;
+		int count = 0;
 
 		// In case the db needs to be instantiated:
-		if( db == null  )
+		if( db == null )
 			db = new DB( getContext() );
 		if( database == null )
 			database = db.getReadableDatabase();
@@ -316,24 +326,28 @@ public class MyGlucoseContentProvider extends ContentProvider
 		switch( uriMatcher.match( uri ) )
 		{
 			case USERS:
-				count	=	database.delete( DB.TABLE_USERS, selection, selectionArgs );
+				count = database.delete( DB.TABLE_USERS, selection, selectionArgs );
 				break;
 
 			case USERS_ID:
 				count = database.delete(
-						DB.TABLE_USERS, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_USERS, DB.KEY_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			case PATIENTS:
-				count	=	database.delete( DB.TABLE_PATIENTS, selection, selectionArgs );
+				count = database.delete( DB.TABLE_PATIENTS, selection, selectionArgs );
 				break;
 
 			case PATIENTS_ID:
 				count = database.delete(
-						DB.TABLE_PATIENTS, DB.KEY_USER_EMAIL +  " = " + uri.getLastPathSegment() +
-								( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+						DB.TABLE_PATIENTS, DB.KEY_USER_EMAIL + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
 						selectionArgs );
 				break;
 
@@ -343,69 +357,81 @@ public class MyGlucoseContentProvider extends ContentProvider
 				break;
 
 			case DOCTORS:
-				count	=	database.delete( DB.TABLE_DOCTORS, selection, selectionArgs );
+				count = database.delete( DB.TABLE_DOCTORS, selection, selectionArgs );
 				break;
 
 			case DOCTORS_ID:
 				count = database.delete(
-						DB.TABLE_DOCTORS, DB.KEY_USER_EMAIL +  " = " + uri.getLastPathSegment() +
-								( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
+						DB.TABLE_DOCTORS, DB.KEY_USER_EMAIL + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
 						selectionArgs );
 				break;
 
 			case GLUCOSE_ENTRIES:
-				count	=	database.delete( DB.TABLE_GLUCOSE_ENTRIES, selection, selectionArgs );
+				count = database.delete( DB.TABLE_GLUCOSE_ENTRIES, selection, selectionArgs );
 				break;
 
 			case GLUCOSE_ENTRIES_ID:
 				count = database.delete(
-						DB.TABLE_GLUCOSE_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_GLUCOSE_ENTRIES, DB.KEY_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			case MEAL_ENTRIES:
-				count	=	database.delete( DB.TABLE_MEAL_ENTRIES, selection, selectionArgs );
+				count = database.delete( DB.TABLE_MEAL_ENTRIES, selection, selectionArgs );
 				break;
 
 			case MEAL_ENTRIES_ID:
 				count = database.delete(
-						DB.TABLE_MEAL_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_MEAL_ENTRIES, DB.KEY_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			case MEAL_ENTRY_ITEMS:
 				count = database.delete(
-						DB.TABLE_MEAL_ITEMS, DB.KEY_MEAL_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_MEAL_ITEMS, DB.KEY_MEAL_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			case MEAL_ITEMS:
-				count	=	database.delete( DB.TABLE_MEAL_ITEMS, selection, selectionArgs );
+				count = database.delete( DB.TABLE_MEAL_ITEMS, selection, selectionArgs );
 				break;
 
 			case MEAL_ITEMS_ID:
 				count = database.delete(
-						DB.TABLE_MEAL_ITEMS, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_MEAL_ITEMS, DB.KEY_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			case EXERCISE_ENTRIES:
-				count	=	database.delete( DB.TABLE_EXERCISE_ENTRIES, selection, selectionArgs );
+				count = database.delete( DB.TABLE_EXERCISE_ENTRIES, selection, selectionArgs );
 				break;
 
 			case EXERCISE_ENTRIES_ID:
 				count = database.delete(
-						DB.TABLE_EXERCISE_ENTRIES, DB.KEY_ID +  " = " + uri.getLastPathSegment() +
-							( !TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "" ),
-							selectionArgs );
+						DB.TABLE_EXERCISE_ENTRIES, DB.KEY_ID + " = " + uri.getLastPathSegment() +
+								( !TextUtils.isEmpty( selection )
+										? " AND (" + selection + ')'
+										: "" ),
+						selectionArgs );
 				break;
 
 			default:
-				throw new IllegalArgumentException("Unknown URI " + uri);
+				throw new IllegalArgumentException( "Unknown URI " + uri );
 
 		} // switch
 
@@ -425,10 +451,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 					   @Nullable String selection,
 					   @Nullable String[] selectionArgs )
 	{
-		int count	= 0;
+		int count = 0;
 
 		// In case the db needs to be instantiated:
-		if( db == null  )
+		if( db == null )
 			db = new DB( getContext() );
 		if( database == null )
 			database = db.getReadableDatabase();
@@ -439,21 +465,22 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			// If the incoming URI was for all of the sent capsules table
 			case USERS:
-				count	=	database.update( DB.TABLE_USERS, values, selection, selectionArgs );
+				count = database.update( DB.TABLE_USERS, values, selection, selectionArgs );
 				break;
 
 			// If the incoming URI was for a single row
 			case USERS_ID:
-				count	= 	database.update( DB.TABLE_USERS,
-							values,
-							DB.KEY_ID +  "=?"
-									+ ( !TextUtils.isEmpty(selection)
-									? " AND (" + selection + ')' : "" ),
-							new String[]{ uri.getLastPathSegment() } );
+				count = database.update( DB.TABLE_USERS,
+						values,
+						DB.KEY_ID + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
+						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case PATIENTS:
-				count	=	database.update( DB.TABLE_PATIENTS, values, selection, selectionArgs );
+				count = database.update( DB.TABLE_PATIENTS, values, selection, selectionArgs );
 				break;
 
 			case PATIENT_USERS:
@@ -462,85 +489,93 @@ public class MyGlucoseContentProvider extends ContentProvider
 				break;
 
 			case PATIENTS_ID:
-				count	= 	database.update( DB.TABLE_PATIENTS,
+				count = database.update( DB.TABLE_PATIENTS,
 						values,
-						DB.KEY_USER_EMAIL +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_USER_EMAIL + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case DOCTORS:
-				count	=	database.update( DB.TABLE_DOCTORS, values, selection, selectionArgs );
+				count = database.update( DB.TABLE_DOCTORS, values, selection, selectionArgs );
 				break;
 
 			case DOCTORS_ID:
-				count	= 	database.update( DB.TABLE_DOCTORS,
+				count = database.update( DB.TABLE_DOCTORS,
 						values,
-						DB.KEY_USER_EMAIL +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_USER_EMAIL + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case GLUCOSE_ENTRIES:
-				count	=	database.update( DB.TABLE_GLUCOSE_ENTRIES, values, selection, selectionArgs );
+				count =
+						database.update( DB.TABLE_GLUCOSE_ENTRIES, values, selection, selectionArgs );
 				break;
 
 			// If the incoming URI was for a single row
 			case GLUCOSE_ENTRIES_ID:
-				count	= 	database.update( DB.TABLE_GLUCOSE_ENTRIES,
+				count = database.update( DB.TABLE_GLUCOSE_ENTRIES,
 						values,
-						DB.KEY_ID +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_ID + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case MEAL_ENTRIES:
-				count	=	database.update( DB.TABLE_MEAL_ENTRIES, values, selection, selectionArgs );
+				count = database.update( DB.TABLE_MEAL_ENTRIES, values, selection, selectionArgs );
 				break;
 
 			// If the incoming URI was for a single row
 			case MEAL_ENTRIES_ID:
-				count	= 	database.update( DB.TABLE_MEAL_ENTRIES,
+				count = database.update( DB.TABLE_MEAL_ENTRIES,
 						values,
-						DB.KEY_ID +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_ID + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case MEAL_ITEMS:
-				count	=	database.update( DB.TABLE_MEAL_ITEMS, values, selection, selectionArgs );
+				count = database.update( DB.TABLE_MEAL_ITEMS, values, selection, selectionArgs );
 				break;
 
 			// If the incoming URI was for a single row
 			case MEAL_ITEMS_ID:
-				count	= 	database.update( DB.TABLE_MEAL_ITEMS,
+				count = database.update( DB.TABLE_MEAL_ITEMS,
 						values,
-						DB.KEY_ID +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_ID + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			case EXERCISE_ENTRIES:
-				count	=	database.update( DB.TABLE_EXERCISE_ENTRIES, values, selection, selectionArgs );
+				count =
+						database.update( DB.TABLE_EXERCISE_ENTRIES, values, selection, selectionArgs );
 				break;
 
 			// If the incoming URI was for a single row
 			case EXERCISE_ENTRIES_ID:
-				count	= 	database.update( DB.TABLE_EXERCISE_ENTRIES,
+				count = database.update( DB.TABLE_EXERCISE_ENTRIES,
 						values,
-						DB.KEY_ID +  "=?"
-								+ ( !TextUtils.isEmpty(selection)
-								? " AND (" + selection + ')' : "" ),
+						DB.KEY_ID + "=?"
+								+ ( !TextUtils.isEmpty( selection )
+								? " AND (" + selection + ')'
+								: "" ),
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
 			default:
-				throw new IllegalArgumentException("Unknown URI " + uri);
+				throw new IllegalArgumentException( "Unknown URI " + uri );
 
 		} // switch
 
@@ -558,7 +593,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 	@Override
 	public String getType( @NonNull Uri uri )
 	{
-		switch ( uriMatcher.match(uri) )
+		switch( uriMatcher.match( uri ) )
 		{
 			case USERS:
 				//return "vnd.android.cursor.dir/vnd.example.friends";

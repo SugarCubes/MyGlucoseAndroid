@@ -111,7 +111,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	{
 		if( cursor != null )
 		{
-			cursor.moveToFirst();
+			// NOTE: don't moveToFirst()/close() due to it being passed from another repo
 
 			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
 			user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
@@ -158,8 +158,6 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			//	user.setLoginExpirationTimestamp( cursor.getLong(
 			//			cursor.getColumnIndex( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) ) );
 
-			cursor.close();
-
 		} // if
 
 		return user;
@@ -194,12 +192,10 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
 		if( !user.getUserName().isEmpty() )
 			values.put( DB.KEY_USERNAME, user.getUserName() );
-		if( !user.getWeight().isEmpty() )
-			values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
-		if( !user.getHeight().isEmpty() )
-			values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
-			values.put( DB.KEY_CREATED_AT, user.getCreatedAt().toString() );
-			values.put( DB.KEY_UPDATED_AT, user.getUpdatedAt().toString() );
+		values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
+		values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
+		values.put( DB.KEY_CREATED_AT, user.getCreatedAt().toString() );
+		values.put( DB.KEY_UPDATED_AT, user.getUpdatedAt().toString() );
 		if( user.getTimestamp() > 0 )
 			values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn()

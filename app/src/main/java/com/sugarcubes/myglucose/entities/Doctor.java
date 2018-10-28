@@ -76,14 +76,19 @@ public class Doctor extends ApplicationUser
 
 	}
 
-
 	@Override
 	public String toString()
 	{
-		return super.toString()
-				+ " DoctorInfo{" +
-				"degreeAbbreviation='" + degreeAbbreviation + '\'' +
-				'}';
+		try
+		{
+			return toJSONObject().toString();
+		}
+		catch( JSONException e )
+		{
+			e.printStackTrace();
+			return "";
+		}
+
 	} // toString
 
 } // class

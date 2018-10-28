@@ -26,6 +26,7 @@ import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.util.Date;
 
@@ -185,6 +186,8 @@ public class LogGlucoseActivity extends AppCompatActivity
 				Date date = new Date();
 				glucoseEntry.setTimeStamp( date.getTime() );
 				glucoseEntry.setCreatedAt( date );
+				PatientSingleton patient = PatientSingleton.getInstance();
+				glucoseEntry.setUserName( patient.getUserName() );
 				// Save the GlucoseEntry and its GlucoseItems
 				return logGlucoseEntryAction.logGlucoseEntry( getApplicationContext(), glucoseEntry );
 

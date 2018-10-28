@@ -21,11 +21,11 @@ import java.util.ArrayList;
 public interface IMealEntryRepository extends IRepository<MealEntry>
 {
 	void createMealItem( MealItem mealItem );
-	ArrayList<MealItem> readAllMealItems( int mealId );
+	ArrayList<MealItem> readAllMealItems( String mealId );
 	MealItem readMealItemFromCursor( Cursor cursor );
 	ContentValues putMealItemContentValues( MealItem mealItem );
-	void updateMealItem( int mealItemId, MealItem mealItem );
-	void deleteMealEntryMealItems( int mealEntryId );
-	void deleteMealItem( int mealItemId );
+	void updateMealItem( String mealItemId, MealItem mealItem );
+	void deleteMealEntryMealItems( String mealEntryId );
+	void deleteMealItem( String mealItemId );
 
 } // interface

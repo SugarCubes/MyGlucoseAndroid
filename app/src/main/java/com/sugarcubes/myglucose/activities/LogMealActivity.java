@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -38,6 +36,7 @@ import com.sugarcubes.myglucose.entities.MealEntry;
 import com.sugarcubes.myglucose.entities.MealItem;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -129,7 +128,7 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 				case R.id.button_save:
 					// Create the MealEntry using the MealItems:
 					MealEntry mealEntry =
-							createMealEntryFromInputData();     // Get the data from EditTexts
+							getMealEntryFromInputData();        // Get the data from EditTexts
 					if( mealEntry != null )                     // Null if all fields not valid
 					{
 						mAuthTask = new LogMealTask( mealEntry );   // Save it to the database
@@ -217,7 +216,8 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 	@NonNull
 	private EditText createEditText( int meal_item_name, int inputType )
 	{
-		EditText editText = new EditText( new ContextThemeWrapper(this, R.style.EditTextCustomHolo), null, 0 );
+		EditText editText =
+				new EditText( new ContextThemeWrapper( this, R.style.EditTextCustomHolo ), null, 0 );
 		int margin = (int) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP,
 				8, getResources().getDisplayMetrics() );
 		TableRow.LayoutParams lp = new TableRow.LayoutParams(
@@ -237,7 +237,7 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 	/**
 	 * Gathers meal data from the inputs on the screen and creates a MealEntry object
 	 */
-	private MealEntry createMealEntryFromInputData()
+	private MealEntry getMealEntryFromInputData()
 	{
 		// Create the MealEntry to be returned
 		MealEntry mealEntry = new MealEntry();
@@ -306,9 +306,12 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		mealEntry.setMealItems( mealItems );                // Set the new object to our MealEntry
 		mealEntry.setTotalCarbs( totalCarbs );              // The calculated number of carbs
 
+		PatientSingleton patient = PatientSingleton.getInstance();
+		mealEntry.setUserName( patient.getUserName() );
+
 		return mealEntry;
 
-	} // createMealEntry
+	} // getMealEntryFromInputData
 
 
 	/**

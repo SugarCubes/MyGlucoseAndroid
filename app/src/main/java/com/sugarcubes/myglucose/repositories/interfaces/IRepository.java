@@ -27,6 +27,8 @@ public interface IRepository<T>
 
 	ArrayList<T> readAll();
 
+	ArrayList<T> readAll( String userName );
+
 	/**
 	 * Reads an item from the database and converts it to an entity object.
 	 * @param cursor - The cursor to read the item from

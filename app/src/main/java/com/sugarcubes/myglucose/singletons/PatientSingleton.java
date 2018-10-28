@@ -22,7 +22,7 @@ public class PatientSingleton extends ApplicationUser
 	private static PatientSingleton singleton;
 	private static String LOG_TAG = "PatientSingleton";
 
-	private   String doctorEmail;
+	private   String doctorUserName;
 	protected Doctor doctor;
 
 	public ArrayList<GlucoseEntry>  glucoseEntries;
@@ -44,7 +44,7 @@ public class PatientSingleton extends ApplicationUser
 		state = "";
 		address1 = "";
 		address2 = "";
-		doctorEmail = "";
+		doctorUserName = "";
 		weight = "";
 		height = "";
 		// Instantiate the doctor:
@@ -193,6 +193,15 @@ public class PatientSingleton extends ApplicationUser
 		this.exerciseEntries = exerciseEntries;
 	}
 
+	public String getDoctorUserName()
+	{
+		return doctorUserName;
+	}
+
+	public void setDoctorUserName( String doctorUserName )
+	{
+		this.doctorUserName = doctorUserName;
+	}
 
 	public JSONObject toJSONObject() throws JSONException
 	{
@@ -218,10 +227,8 @@ public class PatientSingleton extends ApplicationUser
 			patient.put( DB.KEY_USER_STATE, state );
 		if( !phoneNumber.isEmpty() )
 			patient.put( DB.KEY_USER_PHONE, phoneNumber );
-		if( !height.isEmpty() )
-			patient.put( DB.KEY_USER_HEIGHT, height );
-		if( !weight.isEmpty() )
-			patient.put( DB.KEY_USER_WEIGHT, weight );
+		patient.put( DB.KEY_USER_HEIGHT, height );
+		patient.put( DB.KEY_USER_WEIGHT, weight );
 		if( !loginToken.isEmpty() )
 			patient.put( DB.KEY_USER_LOGIN_TOKEN, loginToken );
 		if( zip1 > 0 )
@@ -237,9 +244,8 @@ public class PatientSingleton extends ApplicationUser
 		if( updatedAt != null )
 			patient.put( DB.KEY_UPDATED_AT, updatedAt.toString() );
 		// PATIENT ATTRIBUTES:
-		if( doctor != null && doctor.getUserName() != null )
-			patient.put( DB.KEY_DR_ID, doctor.getUserName() );
-		if( glucoseEntries.size() > 0 )
+		patient.put( DB.KEY_DR_ID, doctorUserName );
+		if( glucoseEntries != null && glucoseEntries.size() > 0 )
 		{
 			JSONArray gEntries = new JSONArray();
 			for( GlucoseEntry glucoseEntry : glucoseEntries )
@@ -247,11 +253,11 @@ public class PatientSingleton extends ApplicationUser
 				gEntries.put( glucoseEntry.toJSONObject() );
 			}
 
-			patient.put( DB.KEY_GLUCOSE_ENTRIES, gEntries );	// Add the array as JSON
+			patient.put( DB.KEY_GLUCOSE_ENTRIES, gEntries );    // Add the array as JSON
 
 		} // if
 
-		if( mealEntries.size() > 0 )
+		if( mealEntries != null && mealEntries.size() > 0 )
 		{
 			JSONArray mEntries = new JSONArray();
 			for( MealEntry mealEntry : mealEntries )
@@ -259,11 +265,11 @@ public class PatientSingleton extends ApplicationUser
 				mEntries.put( mealEntry.toJSONObject() );
 			}
 
-			patient.put( DB.KEY_MEAL_ENTRIES, mEntries );	// Add the array as JSON
+			patient.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
 
 		} // if
 
-		if( exerciseEntries.size() > 0 )
+		if( exerciseEntries != null && exerciseEntries.size() > 0 )
 		{
 			JSONArray eEntries = new JSONArray();
 			for( ExerciseEntry exerciseEntry : exerciseEntries )
@@ -279,19 +285,21 @@ public class PatientSingleton extends ApplicationUser
 	} // toJSONObject
 
 
+
 	@Override
 	public String toString()
 	{
-		String doctorString = doctor != null
-				? doctor.toString()
-				: "";
-		return super.toString() +
-				"\nPatientSingleton{" +
-				"doctor=" + doctorString +
-				", glucoseEntries=" + glucoseEntries +
-				", mealEntries=" + mealEntries +
-				", exerciseEntries=" + exerciseEntries +
-				'}';
-	}
+		try
+		{
+			return toJSONObject().toString();
+		}
+		catch( JSONException e )
+		{
+			e.printStackTrace();
+		}
+
+		return "";
+
+	} // toString
 
 } // class

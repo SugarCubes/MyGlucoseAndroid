@@ -1,35 +1,29 @@
 package com.sugarcubes.myglucose.entities;
 
+import com.sugarcubes.myglucose.db.DB;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MealItem
 {
-	private int id;
+	private int    id;
 	private String remoteId;
 	private String mealId;
 	private String name;
-	private int carbs;
-	private int servings;
+	private int    carbs;
+	private int    servings;
 
 	public MealItem()
 	{
-		id			= -1;
-		remoteId	= "";
-		mealId		= "";
-		name		= "";
-		carbs		= 0;
-		servings	= 0;
+		id = -1;
+		remoteId = "";
+		mealId = "";
+		name = "";
+		carbs = 0;
+		servings = 0;
 
 	} // default constructor
-
-	public MealItem( int id, String remoteId, String mealId, String name, int carbs, int servings )
-	{
-		this.id = id;
-		this.name = name;
-		this.carbs = carbs;
-		this.servings = servings;
-
-	} // constructor
 
 	public String getRemoteId()
 	{
@@ -91,24 +85,34 @@ public class MealItem
 		this.mealId = mealId;
 	}
 
+
 	@Override
 	public String toString()
 	{
-		return "MealItem{" +
-				"id=" + id +
-				", remoteId='" + remoteId + '\'' +
-				", mealId='" + mealId + '\'' +
-				", name='" + name + '\'' +
-				", carbs=" + carbs +
-				", servings=" + servings +
-				'}';
-	}
+		try
+		{
+			return toJSONObject().toString();
+		}
+		catch( JSONException e )
+		{
+			e.printStackTrace();
+			return "";
+		}
 
-	public JSONObject toJSONObject()
+	} // toString
+
+
+	public JSONObject toJSONObject() throws JSONException
 	{
-		// TODO
+		JSONObject mealItem = new JSONObject();
 
-		return null;
+		mealItem.put( DB.KEY_REMOTE_ID, remoteId );
+		mealItem.put( DB.KEY_MEAL_ID, mealId );
+		mealItem.put( DB.KEY_MEAL_ITEM_NAME, name );
+		mealItem.put( DB.KEY_MEAL_ITEM_CARBS, carbs );
+		mealItem.put( DB.KEY_MEAL_ITEM_SERVINGS, servings );
+
+		return mealItem;
 
 	} // toJSONObject
 

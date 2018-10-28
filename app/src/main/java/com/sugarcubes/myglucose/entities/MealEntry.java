@@ -17,7 +17,7 @@ public class MealEntry
 	private String    userName;
 	private int       totalCarbs;
 	private Date      createdAt;
-	private Date	  updatedAt;
+	private Date      updatedAt;
 	private long      timestamp;
 	private WhichMeal whichMeal;
 
@@ -31,7 +31,6 @@ public class MealEntry
 		remoteId = "";
 		userName = "";
 		totalCarbs = 0;
-		timestamp = 0;
 		whichMeal = WhichMeal.OTHER;
 		Date date = new Date();
 		this.createdAt = date;
@@ -131,11 +130,35 @@ public class MealEntry
 	}
 
 
+	@Override
+	public String toString()
+	{
+		try
+		{
+			return toJSONObject().toString();
+		}
+		catch( JSONException e )
+		{
+			e.printStackTrace();
+			return "";
+		}
+
+	} // toString
+
+
 	public JSONObject toJSONObject() throws JSONException
 	{
 		JSONObject mealEntry = new JSONObject();
 
-		// TODO
+		if( !remoteId.isEmpty() )
+			mealEntry.put( DB.KEY_REMOTE_ID, remoteId );
+		if( timestamp > 0 )
+			mealEntry.put( DB.KEY_TIMESTAMP, timestamp );
+		mealEntry.put( DB.KEY_USERNAME, userName );
+		mealEntry.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, totalCarbs );
+		mealEntry.put( DB.KEY_WHICH_MEAL, whichMeal );
+		mealEntry.put( DB.KEY_CREATED_AT, createdAt );
+		mealEntry.put( DB.KEY_UPDATED_AT, updatedAt );
 
 		if( mealItems.size() > 0 )
 		{

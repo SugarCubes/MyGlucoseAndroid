@@ -79,14 +79,24 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public ArrayList<GlucoseEntry> readAll()
 	{
+		return readAll( null );
+
+	} // readAll
+
+
+	@Override
+	public ArrayList<GlucoseEntry> readAll( String userName )
+	{
 		ArrayList<GlucoseEntry> entryArrayList = new ArrayList<>();
 
-		Cursor cursor = contentResolver.query( uri,
-				//null, DB.KEY_USER_ID + "=?", new String[]{ userId },	// Just return ALL entries
-				null, null, null,
-				DB.KEY_ID + " DESC" );
+		String selection = userName != null ? DB.KEY_USERNAME + "=?" : null;
+		String[] selectionArgs = userName != null ? new String[]{ userName } : null;
 
-		if( cursor != null )
+		Cursor cursor = contentResolver.query( uri,
+				null, selection, selectionArgs,
+				DB.KEY_TIMESTAMP + " DESC" );
+
+		if( cursor != null && cursor.getCount() > 0 )
 		{
 			cursor.moveToFirst();
 
@@ -156,7 +166,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	{
 		GlucoseEntry entry = new GlucoseEntry();
 
-		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
+//		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
 		entry.setRemoteId( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setMeasurement( cursor.getFloat(

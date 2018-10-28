@@ -22,6 +22,7 @@ import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 
 import java.util.Date;
@@ -175,6 +176,9 @@ public class LogExerciseActivity extends AppCompatActivity
 				Date date = new Date();
 				exerciseEntry.setTimestamp( date.getTime() );
 				exerciseEntry.setCreatedAt( date );
+
+				PatientSingleton patient = PatientSingleton.getInstance();
+				exerciseEntry.setUserName( patient.getUserName() );
 				// Save the ExerciseEntry and its ExerciseItems
 				return logExerciseEntryAction.logExerciseEntry( getApplicationContext(), exerciseEntry );
 

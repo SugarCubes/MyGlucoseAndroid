@@ -73,12 +73,24 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public ArrayList<ExerciseEntry> readAll()
 	{
+		return readAll( null );
+
+	} // readAll
+
+
+	@Override
+	public ArrayList<ExerciseEntry> readAll( String userName )
+	{
 		ArrayList<ExerciseEntry> entryArrayList = new ArrayList<>();
 
-		Cursor cursor = contentResolver.query( uri, null, null,
-				null, DB.KEY_TIMESTAMP + " DESC" );
+		String selection = userName != null ? DB.KEY_USERNAME + "=?" : null;
+		String[] selectionArgs = userName != null ? new String[]{ userName } : null;
 
-		if( cursor != null )
+		Cursor cursor = contentResolver.query( uri,
+				null, selection, selectionArgs,
+				DB.KEY_TIMESTAMP + " DESC" );
+
+		if( cursor != null && cursor.getCount() > 0 )
 		{
 			cursor.moveToFirst();
 

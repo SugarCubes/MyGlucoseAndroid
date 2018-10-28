@@ -1,5 +1,8 @@
 package com.sugarcubes.myglucose.entities;
 
+import com.sugarcubes.myglucose.db.DB;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -109,11 +112,36 @@ public class ExerciseEntry
 		this.timestamp = timestamp;
 	}
 
-	public JSONObject toJSONObject()
+	@Override
+	public String toString()
 	{
-		// TODO
+		try
+		{
+			return toJSONObject().toString();
+		}
+		catch( JSONException e )
+		{
+			e.printStackTrace();
+			return "";
+		}
 
-		return null;
+	} // toString
+
+
+	public JSONObject toJSONObject() throws JSONException
+	{
+		JSONObject exerciseEntry = new JSONObject();
+
+		if( !remoteId.isEmpty() )
+			exerciseEntry.put( DB.KEY_REMOTE_ID, remoteId );
+		if( timestamp > 0 )
+			exerciseEntry.put( DB.KEY_TIMESTAMP, timestamp );
+		exerciseEntry.put( DB.KEY_USERNAME, userName );
+		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES_SPENT, minutes );
+		exerciseEntry.put( DB.KEY_CREATED_AT, createdAt );
+		exerciseEntry.put( DB.KEY_UPDATED_AT, updatedAt );
+
+		return exerciseEntry;
 
 	} // toJSONObject
 

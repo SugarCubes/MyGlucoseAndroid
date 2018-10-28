@@ -39,6 +39,8 @@ public interface IApplicationUserRepository<T>
 	 */
 	T readFromCursor( T patient, Cursor cursor );
 
+	Cursor getApplicationUserCursor( String username );
+
 	void update( String id, T item );
 
 	boolean delete( T item );

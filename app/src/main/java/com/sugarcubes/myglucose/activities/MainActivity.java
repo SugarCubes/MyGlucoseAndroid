@@ -27,7 +27,9 @@ import android.widget.Button;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
+import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.services.AuthenticatorService;
 import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -37,7 +39,7 @@ public class MainActivity
 		implements LoaderCallbacks<Cursor>,
 		View.OnTouchListener
 {
-	public static final boolean DEBUG = true;						// Activate/deactivate logging
+	public static final boolean DEBUG = true;                        // Activate/deactivate logging
 
 	private final       String           LOG_TAG                    = getClass().getSimpleName();
 	private             PatientSingleton patientUser                =
@@ -177,7 +179,7 @@ public class MainActivity
 		//	logged in. To do this, we join the "patients" and "users" table, and check the
 		//	"logged_in" column
 		return new CursorLoader( getApplicationContext(), MyGlucoseContentProvider.PATIENT_USERS_URI,
-				null, DB.TABLE_USERS + "." + DB.KEY_USER_LOGGED_IN + "=?",
+				null, DB.KEY_USER_LOGGED_IN + "=?",
 				new String[]{ String.valueOf( 1 ) }, null );
 
 	} // onCreateLoader
@@ -189,28 +191,22 @@ public class MainActivity
 		//		this.cursor = cursor;
 		//		if( mAdapter != null )
 		//			mAdapter.swapCursor( cursor );
-		if( cursor != null && !cursor.isClosed() )            // This should return Users from db
+		if( cursor != null && !cursor.isClosed() && cursor.getCount() > 0 ) // This should return Users from db
 		{
 
-			Log.d( LOG_TAG, patientUser.toString() );
+			if( DEBUG ) Log.d( LOG_TAG, patientUser.toString() );
 
 			if( cursor.getCount() > 0 )                        // If there are no users logged in...
 			{
 				// Patient is already initialized. Now we need to log him/her in:
-				DbPatientRepository patientRepository
-						= new DbPatientRepository( getApplicationContext() );
-				patientRepository.readFromCursor( patientUser, cursor );
+				IPatientRepository patientRepository = Dependencies.get( IPatientRepository.class );
+				patientRepository.readFromCursor( PatientSingleton.getInstance(), cursor );
 
 			} // if
 			else if( DEBUG )
 				Log.e( LOG_TAG, "No user is returned from the database" );
 
-			Log.d( LOG_TAG, patientUser.toString() );
-
-			if( !patientUser.isLoggedIn() )
-			{
-				startLoginActivity();
-			}
+			if( DEBUG ) Log.d( LOG_TAG, patientUser.toString() );
 
 			setMenuTexts();                                        // Show Log in/out, Register
 
@@ -220,6 +216,11 @@ public class MainActivity
 			//			}
 
 		} // if cursor valid
+
+		else
+		{
+			startLoginActivity();
+		}
 
 	} // onLoadFinished
 
