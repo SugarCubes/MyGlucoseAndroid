@@ -6,10 +6,54 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class JsonUtilities
 {
+
+
+	public static HashMap<String, String> toMap( JSONObject object ) throws JSONException
+	{
+		HashMap<String, String> map = new HashMap<>();
+		try
+		{
+			Iterator<String> keysItr = object.keys();
+			while( keysItr.hasNext() )
+			{
+				String key = keysItr.next();
+				Object value = object.get( key );
+
+				if( value instanceof JSONObject )
+				{
+					value = toMap( (JSONObject) value );
+				}
+				else if( value instanceof JSONArray )
+				{
+					JSONArray jsonArray = (JSONArray) value;
+					//				for( int i = 0; i < ((HashMap<String, String>) value).size(); i++ )
+					//					value = toMap( ((HashMap<String, String>) value).get( i ) );
+					for( int i = 0; i < jsonArray.length(); i++ )    // Iterate
+						value = toMap( jsonArray.getJSONObject( i ) );
+
+				} // if
+
+				map.put( key, value.toString() );
+
+			} // while
+
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
+		return map;
+
+	} // toMap
+
+
 	public static JSONObject mapToJson(Map<?, ?> data)
 	{
 		JSONObject object = new JSONObject();
@@ -38,6 +82,7 @@ public class JsonUtilities
 		return object;
 	}
 
+
 	public static JSONArray collectionToJson(Collection data)
 	{
 		JSONArray jsonArray = new JSONArray();
@@ -50,6 +95,7 @@ public class JsonUtilities
 		}
 		return jsonArray;
 	}
+
 
 	public static JSONArray arrayToJson(Object data) throws JSONException
 	{
@@ -66,6 +112,7 @@ public class JsonUtilities
 
 		return jsonArray;
 	}
+
 
 	private static Object wrap(Object o)
 	{
@@ -113,4 +160,5 @@ public class JsonUtilities
 		}
 		return null;
 	}
-}
+
+} // class

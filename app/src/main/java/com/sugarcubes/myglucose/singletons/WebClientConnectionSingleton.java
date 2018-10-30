@@ -12,13 +12,17 @@ package com.sugarcubes.myglucose.singletons;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.activities.SettingsActivity;
+import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.urlconnections.UrlConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 /**
  * WebClientConnectionSingleton
@@ -50,6 +54,7 @@ public class WebClientConnectionSingleton
 	private UrlConnection syncExerciseConnection;
 	private UrlConnection retrieveDoctorsConnection;
 	private UrlConnection syncPatientDataConnection;
+	private String LOG_TAG = getClass().getSimpleName();
 
 	private WebClientConnectionSingleton( Context context ) throws MalformedURLException
 	{
@@ -159,6 +164,8 @@ public class WebClientConnectionSingleton
 
 	public String sendSyncPatientDataRequest( HashMap<String, String> values )
 	{
+
+//		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
 		return syncPatientDataConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest

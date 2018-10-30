@@ -69,7 +69,7 @@ public class SyncService extends Service
 		mResolver = getContentResolver();
 
 		// UNCOMMENT TO SYNC WHEN DATA CHANGES IN ANY OF THE TABLES:
-		//setToSyncWhenTablesChange();
+		setToSyncWhenTablesChange();
 
 		// Allow account to sync:
 		ContentResolver.setIsSyncable( mAccount, MyGlucoseContentProvider.AUTHORITY, 1 );
@@ -125,8 +125,8 @@ public class SyncService extends Service
 		// Note: shouldn't have to sync doctors *from* Android
 		//mResolver.registerContentObserver( MyGlucoseContentProvider.DOCTORS_URI,
 		//		true, new TableObserver( new Handler() ) );
-		mResolver.registerContentObserver( MyGlucoseContentProvider.PATIENTS_URI,
-				true, new TableObserver( new Handler() ) );
+//		mResolver.registerContentObserver( MyGlucoseContentProvider.PATIENTS_URI,
+//				true, new TableObserver( new Handler() ) );
 		mResolver.registerContentObserver( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
 				true, new TableObserver( new Handler() ) );
 		mResolver.registerContentObserver( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,

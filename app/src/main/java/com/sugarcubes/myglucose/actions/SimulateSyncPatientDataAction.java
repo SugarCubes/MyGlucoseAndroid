@@ -1,5 +1,6 @@
 package com.sugarcubes.myglucose.actions;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
@@ -12,7 +13,7 @@ public class SimulateSyncPatientDataAction implements ISyncPatientDataAction
 	private String LOG_TAG = getClass().getSimpleName();
 
 	@Override
-	public String syncPatientData()
+	public String syncPatientData( Context context )
 	{
 		Log.e( LOG_TAG, "Simulating syncing patient data..." );
 		JSONObject patientObject = new JSONObject();

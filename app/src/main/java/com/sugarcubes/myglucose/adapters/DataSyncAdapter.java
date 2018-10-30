@@ -42,6 +42,8 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 	private ISyncMealDataAction     syncMealDataAction     =
 			Dependencies.get( ISyncMealDataAction.class );
 
+	private Context context;
+
 	/**
 	 * Use the constructors to run setup tasks each time your sync adapter component is
 	 * created from scratch, just as you use Activity.onCreate() to set up an activity.
@@ -49,6 +51,7 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 	public DataSyncAdapter( Context context, boolean autoInitialize )
 	{
 		super( context, autoInitialize );
+		this.context = context;
 
 	} // override constructor
 
@@ -64,6 +67,7 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 			boolean allowParallelSyncs )
 	{
 		super( context, autoInitialize, allowParallelSyncs );
+		this.context = context;
 
 	} // override constructor
 
@@ -87,10 +91,10 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 		 * Data transfer code goes here
 		 */
 		Log.w( LOG_TAG, "***onPerformSync called***" );
-		syncPatientDataAction.syncPatientData();
-		syncGlucoseDataAction.syncGlucoseData();
-		syncExerciseDataAction.syncExerciseData();
-		syncMealDataAction.syncMealData();
+		syncPatientDataAction.syncPatientData( context );
+//		syncGlucoseDataAction.syncGlucoseData();
+//		syncExerciseDataAction.syncExerciseData();
+//		syncMealDataAction.syncMealData();
 
 	} // onPerformSync
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.sugarcubes.myglucose.actions.DbLogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
+import com.sugarcubes.myglucose.actions.RemoteSyncPatientDataAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
@@ -59,7 +60,7 @@ class ObjectGraph
 		ISyncMealDataAction syncMealDataAction = new SimulateSyncMealDataAction();
 		ISyncExerciseDataAction syncExerciseDataAction = new SimulateSyncExerciseDataAction();
 		ISyncGlucoseDataAction syncGlucoseDataAction = new SimulateSyncGlucoseDataAction();
-		ISyncPatientDataAction syncPatientDataAction = new SimulateSyncPatientDataAction();
+		ISyncPatientDataAction syncPatientDataAction = new RemoteSyncPatientDataAction();
 
 		// Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
