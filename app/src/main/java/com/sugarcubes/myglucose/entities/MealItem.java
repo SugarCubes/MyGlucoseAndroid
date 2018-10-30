@@ -5,6 +5,11 @@ import com.sugarcubes.myglucose.db.DB;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MealItem
 {
 	private int    id;
@@ -13,6 +18,7 @@ public class MealItem
 	private String name;
 	private int    carbs;
 	private int    servings;
+	private Date   updatedAt;
 
 	public MealItem()
 	{
@@ -22,6 +28,7 @@ public class MealItem
 		name = "";
 		carbs = 0;
 		servings = 0;
+		updatedAt = new Date();
 
 	} // default constructor
 
@@ -85,6 +92,15 @@ public class MealItem
 		this.mealId = mealId;
 	}
 
+	public Date getUpdatedAt()
+	{
+		return updatedAt;
+	}
+
+	public void setUpdatedAt( Date updatedAt )
+	{
+		this.updatedAt = updatedAt;
+	}
 
 	@Override
 	public String toString()
@@ -106,11 +122,28 @@ public class MealItem
 	{
 		JSONObject mealItem = new JSONObject();
 
-		mealItem.put( DB.KEY_REMOTE_ID, remoteId );
+		if( !remoteId.isEmpty() )
+			mealItem.put( DB.KEY_REMOTE_ID, remoteId );
 		mealItem.put( DB.KEY_MEAL_ID, mealId );
 		mealItem.put( DB.KEY_MEAL_ITEM_NAME, name );
 		mealItem.put( DB.KEY_MEAL_ITEM_CARBS, carbs );
 		mealItem.put( DB.KEY_MEAL_ITEM_SERVINGS, servings );
+
+		try
+		{
+			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+			if( updatedAt != null )
+				mealItem.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+			else
+			{
+				updatedAt = new Date();
+				mealItem.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+			}
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 
 		return mealItem;
 

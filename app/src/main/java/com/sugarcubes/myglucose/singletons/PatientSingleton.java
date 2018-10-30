@@ -13,7 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
@@ -207,8 +210,9 @@ public class PatientSingleton extends ApplicationUser
 	{
 		JSONObject patient = new JSONObject();
 		// APPLICATION USER ATTRIBUTES:
-		if( !id.isEmpty() )
-			patient.put( DB.KEY_REMOTE_ID, id );
+		// NOTE: Do NOT send the Id or it may fail to bind:
+		//		if( !id.isEmpty() )
+		//			patient.put( DB.KEY_REMOTE_ID, id );
 		if( !email.isEmpty() )
 			patient.put( DB.KEY_USER_EMAIL, email );
 		if( !firstName.isEmpty() )
@@ -227,23 +231,29 @@ public class PatientSingleton extends ApplicationUser
 			patient.put( DB.KEY_USER_STATE, state );
 		if( !phoneNumber.isEmpty() )
 			patient.put( DB.KEY_USER_PHONE, phoneNumber );
-		patient.put( DB.KEY_USER_HEIGHT, height );
-		patient.put( DB.KEY_USER_WEIGHT, weight );
+		//		patient.put( DB.KEY_USER_HEIGHT, height );
+		//		patient.put( DB.KEY_USER_WEIGHT, weight );
 		if( !loginToken.isEmpty() )
 			patient.put( DB.KEY_USER_LOGIN_TOKEN, loginToken );
 		if( zip1 > 0 )
 			patient.put( DB.KEY_USER_ZIP1, zip1 );
 		if( zip2 > 0 )
 			patient.put( DB.KEY_USER_ZIP1, zip2 );
-		if( timestamp > 0 )
-			patient.put( DB.KEY_TIMESTAMP, timestamp );
+		//		if( timestamp > 0 )
+		//			patient.put( DB.KEY_TIMESTAMP, timestamp );
 		if( loginExpirationTimestamp > 0 )
 			patient.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, loginExpirationTimestamp );
-		if( createdAt != null )
-			patient.put( DB.KEY_CREATED_AT, createdAt.toString() );
-		if( updatedAt != null )
-			patient.put( DB.KEY_UPDATED_AT, updatedAt.toString() );
-		// PATIENT ATTRIBUTES:
+		try
+		{
+			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+			patient.put( DB.KEY_CREATED_AT, df.format( createdAt ) );
+			patient.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		//		// PATIENT ATTRIBUTES:
 		patient.put( DB.KEY_DR_ID, doctorUserName );
 		if( glucoseEntries != null && glucoseEntries.size() > 0 )
 		{
@@ -268,22 +278,21 @@ public class PatientSingleton extends ApplicationUser
 			patient.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
 
 		} // if
-
-		if( exerciseEntries != null && exerciseEntries.size() > 0 )
-		{
-			JSONArray eEntries = new JSONArray();
-			for( ExerciseEntry exerciseEntry : exerciseEntries )
-			{
-				eEntries.put( exerciseEntry.toJSONObject() );
-			}
-
-			patient.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
-		}
+		//
+		//		if( exerciseEntries != null && exerciseEntries.size() > 0 )
+		//		{
+		//			JSONArray eEntries = new JSONArray();
+		//			for( ExerciseEntry exerciseEntry : exerciseEntries )
+		//			{
+		//				eEntries.put( exerciseEntry.toJSONObject() );
+		//			}
+		//
+		//			patient.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
+		//		}
 
 		return patient;
 
 	} // toJSONObject
-
 
 
 	@Override

@@ -18,6 +18,8 @@ import com.sugarcubes.myglucose.activities.SettingsActivity;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.urlconnections.UrlConnection;
 
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -166,6 +168,15 @@ public class WebClientConnectionSingleton
 	{
 
 //		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
+		return syncPatientDataConnection.performRequest( values );
+
+	} // sendSyncExerciseRequest
+
+
+	public String sendSyncPatientDataRequest( JSONObject values )
+	{
+
+		//		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
 		return syncPatientDataConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest

@@ -7,8 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class MealEntry
 {
@@ -156,9 +159,18 @@ public class MealEntry
 			mealEntry.put( DB.KEY_TIMESTAMP, timestamp );
 		mealEntry.put( DB.KEY_USERNAME, userName );
 		mealEntry.put( DB.KEY_MEAL_ENTRY_TOTAL_CARBS, totalCarbs );
-		mealEntry.put( DB.KEY_WHICH_MEAL, whichMeal );
-		mealEntry.put( DB.KEY_CREATED_AT, createdAt );
-		mealEntry.put( DB.KEY_UPDATED_AT, updatedAt );
+		mealEntry.put( DB.KEY_WHICH_MEAL, whichMeal.getValue() );
+
+		try
+		{
+			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+			mealEntry.put( DB.KEY_CREATED_AT, df.format( createdAt ) );
+			mealEntry.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 
 		if( mealItems.size() > 0 )
 		{

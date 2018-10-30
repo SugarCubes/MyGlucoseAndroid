@@ -5,7 +5,10 @@ import com.sugarcubes.myglucose.db.DB;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class ExerciseEntry
 {
@@ -138,8 +141,17 @@ public class ExerciseEntry
 			exerciseEntry.put( DB.KEY_TIMESTAMP, timestamp );
 		exerciseEntry.put( DB.KEY_USERNAME, userName );
 		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES_SPENT, minutes );
-		exerciseEntry.put( DB.KEY_CREATED_AT, createdAt );
-		exerciseEntry.put( DB.KEY_UPDATED_AT, updatedAt );
+
+		try
+		{
+			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+			exerciseEntry.put( DB.KEY_CREATED_AT, df.format( createdAt ) );
+			exerciseEntry.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 
 		return exerciseEntry;
 

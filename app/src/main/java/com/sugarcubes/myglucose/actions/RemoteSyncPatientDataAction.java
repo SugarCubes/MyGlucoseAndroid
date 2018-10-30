@@ -45,14 +45,15 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 						new String[]{ String.valueOf( 1 ) }, null
 				);
 				patientRepository.readFromCursor( patient, cursor );
-			}
+
+			} // if
 
 			JSONObject jsonPatient = patient.toJSONObject();
 			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );
 			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "Patient: " + patient.toString() );
-			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "Instance: " + jsonPatient.toString() );
-			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
-			returnString = conn.sendSyncPatientDataRequest( hashMap );
+//						if( DEBUG ) Log.e( "RemoteSyncPatientData", "Json: " + jsonPatient.toString() );
+//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
+			returnString = conn.sendSyncPatientDataRequest( jsonPatient );
 
 		}
 		catch( JSONException e )

@@ -9,8 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class GlucoseEntry
 {
@@ -167,9 +170,18 @@ public class GlucoseEntry
 			glucoseEntry.put( DB.KEY_GLUCOSE_MEASUREMENT, measurement );
 		glucoseEntry.put( DB.KEY_GLUCOSE_BEFORE_AFTER, beforeAfter.getValue() );
 		glucoseEntry.put( DB.KEY_WHICH_MEAL, whichMeal.getValue() );
-		glucoseEntry.put( DB.KEY_CREATED_AT, createdAt.toString() );
-		if( !updatedAt.toString().isEmpty() )
-			glucoseEntry.put( DB.KEY_UPDATED_AT, updatedAt.toString() );
+
+		try
+		{
+			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+			glucoseEntry.put( DB.KEY_CREATED_AT, df.format( createdAt ) );
+			glucoseEntry.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
 		if( timeStamp > 0 )
 			glucoseEntry.put( DB.KEY_TIMESTAMP, timeStamp );
 
