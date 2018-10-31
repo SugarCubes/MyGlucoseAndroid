@@ -85,7 +85,8 @@ public class UrlConnection
 	 */
 	public String performRequest( HashMap<String, String> postDataParams )
 	{
-		if( DEBUG ) Log.e( LOG_TAG, "performRequest parameters: " + postDataParams.toString() );
+		if( DEBUG && postDataParams != null )
+			Log.e( LOG_TAG, "performRequest parameters: " + postDataParams.toString() );
 
 		StringBuilder responseStringBuilder = new StringBuilder();
 		try
@@ -167,7 +168,6 @@ public class UrlConnection
 			//			writer.close();
 			//			outputStream.close();
 
-			// TODO: Works with form data only (Not Json):
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter( outputStream, "UTF-8" ) );
 			bufferedWriter.write( postDataParams.toString() ); // send the data (buffered)
@@ -198,6 +198,8 @@ public class UrlConnection
 				responseStringBuilder = new StringBuilder();// At least instantiate the object
 			}
 
+			connection.disconnect();
+
 		}
 		catch( Exception e )
 		{
@@ -221,21 +223,23 @@ public class UrlConnection
 	{
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
-		for( Map.Entry<String, String> entry : params.entrySet() )
-		{
-			if( first )
-			{
-				first = false;
-			}
-			else
-			{
-				result.append( "&" );
-			}
 
-			result.append( URLEncoder.encode( entry.getKey(), "UTF-8" ) );
-			result.append( "=" );
-			result.append( URLEncoder.encode( entry.getValue(), "UTF-8" ) );
-		}
+		if( params != null )
+			for( Map.Entry<String, String> entry : params.entrySet() )
+			{
+				if( first )
+				{
+					first = false;
+				}
+				else
+				{
+					result.append( "&" );
+				}
+
+				result.append( URLEncoder.encode( entry.getKey(), "UTF-8" ) );
+				result.append( "=" );
+				result.append( URLEncoder.encode( entry.getValue(), "UTF-8" ) );
+			}
 
 		return result.toString();
 

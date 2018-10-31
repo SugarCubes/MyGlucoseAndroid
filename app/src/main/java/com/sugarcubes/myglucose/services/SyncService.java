@@ -82,7 +82,7 @@ public class SyncService extends Service
 				mAccount,
 				MyGlucoseContentProvider.AUTHORITY,
 				Bundle.EMPTY,
-				POLL_INTERVAL_SECONDS );
+				POLL_INTERVAL_SECONDS );		// TODO: Currently set to 2 minutes for testing
 
 		// NOTE ON PERIODIC SYNCING: Observations indicate periodic syncing is probably set to a
 		// 		minimum number of minutes  (in my case, five). When set to 1 minute, the app was

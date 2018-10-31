@@ -5,13 +5,33 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 public class JsonUtilities
 {
+
+	public static Date dateFromJsonString( String jsonDate )
+	{
+		SimpleDateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+		Date javaDate = new Date();
+		formatter.format( javaDate );
+		return javaDate;
+
+	} // dateFromJsonString
+
+
+	public static String dateToJson( Date date )
+	{
+		SimpleDateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+		return formatter.format( date );
+
+	} // dateToJson
 
 
 	public static HashMap<String, String> toMap( JSONObject object ) throws JSONException

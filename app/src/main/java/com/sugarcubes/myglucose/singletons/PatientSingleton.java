@@ -8,6 +8,7 @@ import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 import com.sugarcubes.myglucose.entities.MealEntry;
+import com.sugarcubes.myglucose.utils.JsonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -245,9 +246,8 @@ public class PatientSingleton extends ApplicationUser
 			patient.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, loginExpirationTimestamp );
 		try
 		{
-			DateFormat df = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
-			patient.put( DB.KEY_CREATED_AT, df.format( createdAt ) );
-			patient.put( DB.KEY_UPDATED_AT, df.format( updatedAt ) );
+			patient.put( DB.KEY_CREATED_AT, JsonUtilities.dateToJson( createdAt ) );
+			patient.put( DB.KEY_UPDATED_AT, JsonUtilities.dateToJson( updatedAt ) );
 		}
 		catch( Exception e )
 		{
@@ -278,17 +278,17 @@ public class PatientSingleton extends ApplicationUser
 			patient.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
 
 		} // if
-		//
-		//		if( exerciseEntries != null && exerciseEntries.size() > 0 )
-		//		{
-		//			JSONArray eEntries = new JSONArray();
-		//			for( ExerciseEntry exerciseEntry : exerciseEntries )
-		//			{
-		//				eEntries.put( exerciseEntry.toJSONObject() );
-		//			}
-		//
-		//			patient.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
-		//		}
+
+		if( exerciseEntries != null && exerciseEntries.size() > 0 )
+		{
+			JSONArray eEntries = new JSONArray();
+			for( ExerciseEntry exerciseEntry : exerciseEntries )
+			{
+				eEntries.put( exerciseEntry.toJSONObject() );
+			}
+
+			patient.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
+		}
 
 		return patient;
 

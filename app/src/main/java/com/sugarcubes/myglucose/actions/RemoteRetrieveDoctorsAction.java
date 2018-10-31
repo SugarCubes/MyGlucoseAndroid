@@ -1,6 +1,8 @@
 package com.sugarcubes.myglucose.actions;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.db.DB;
@@ -15,10 +17,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class RemoteRetrieveDoctorsAction implements IRetrieveDoctorsAction
 {
+	private final String LOG_TAG = getClass().getSimpleName();
+
 	@Override
 	public List<Doctor> retrieveDoctors( Context context ) throws JSONException
 	{
@@ -29,40 +36,31 @@ public class RemoteRetrieveDoctorsAction implements IRetrieveDoctorsAction
 				Dependencies.get( IDoctorRepository.class );
 
 		String jsonString = webConnection.sendRetrieveDoctorsRequest( null );
-		JSONObject jsonObject = new JSONObject( jsonString );
-		JSONArray jsonArray = jsonObject.getJSONArray( "doctors" );
-		int arrayLength = jsonArray.length();
 
-		if( arrayLength > 0 )
+		if( DEBUG ) Log.e( LOG_TAG, "Response: " + jsonString );
+
+		if( !jsonString.isEmpty() )
 		{
-			for( int i = 0; i < arrayLength; i++ )
+			JSONObject jsonObject = new JSONObject( jsonString );
+			JSONArray jsonArray = jsonObject.getJSONArray( "doctors" );
+			int arrayLength = jsonArray.length();
+
+			if( arrayLength > 0 )
 			{
-				Doctor doctor = new Doctor();                       // Create a new doctor object
-				JSONObject drObj = (JSONObject) jsonArray.get( i ); // Get the Json object
+				for( int i = 0; i < arrayLength; i++ )
+				{
+					JSONObject drObj = (JSONObject) jsonArray.get( i ); // Get the Json object
 
-				// Set all of the doctors' attributes from the json objects returned:
-				doctor.setDegreeAbbreviation( drObj.getString( DB.KEY_DR_DEGREE_ABBREVIATION ) );
-				doctor.setUserName( drObj.getString( DB.KEY_USERNAME ) );
-				doctor.setFirstName( drObj.getString( DB.KEY_USER_FIRST_NAME ) );
-				doctor.setLastName( drObj.getString( DB.KEY_USER_LAST_NAME ) );
-				doctor.setEmail( drObj.getString( DB.KEY_USER_EMAIL ) );
-				doctor.setAddress1( drObj.getString( DB.KEY_USER_ADDRESS1 ) );
-				doctor.setAddress2( drObj.getString( DB.KEY_USER_ADDRESS2 ) );
-				doctor.setCity( drObj.getString( DB.KEY_USER_CITY ) );
-				doctor.setState( drObj.getString( DB.KEY_USER_STATE ) );
-				doctor.setZip1( drObj.getInt( DB.KEY_USER_ZIP1 ) );
-				doctor.setZip2( drObj.getInt( DB.KEY_USER_ZIP2 ) );
-				doctor.setCreatedAt( new Date( drObj.getString( DB.KEY_CREATED_AT ) ) );
-				doctor.setHeight( drObj.getString( DB.KEY_USER_HEIGHT ) );
-				doctor.setWeight( drObj.getString( DB.KEY_USER_WEIGHT ) );
-				doctor.setId( drObj.getString( DB.KEY_REMOTE_ID ) );
-				doctor.setLoggedIn( false );
-				doctor.setPhoneNumber( drObj.getString( DB.KEY_USER_PHONE ) );
-				doctor.setTimestamp( drObj.getLong( DB.KEY_TIMESTAMP ) );
+					Doctor newDoctor = Doctor.fromJSONObject( drObj );
+					doctors.add( newDoctor );      // Add the doctor to the ArrayList
 
-				doctors.add( doctor );                          // Add the doctor to the ArrayList
 
-			} // for
+					if( !doctorRepository.doctorExists( newDoctor.getUserName() ) )
+						doctorRepository.create( newDoctor );
+
+				} // for
+
+			} // if
 
 		} // if
 

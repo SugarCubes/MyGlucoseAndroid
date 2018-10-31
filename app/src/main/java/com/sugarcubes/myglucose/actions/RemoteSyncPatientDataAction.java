@@ -37,8 +37,9 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 		{
 			PatientSingleton patient = PatientSingleton.getInstance();
 
-			if( patient.getUserName().isEmpty() )
-			{
+//			if( patient.getUserName().isEmpty() )
+//			{
+			// Always load the latest data:
 				Cursor cursor = context.getContentResolver().query(
 						MyGlucoseContentProvider.PATIENT_USERS_URI, null,
 						DB.KEY_USER_LOGGED_IN + "=?",
@@ -46,7 +47,7 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 				);
 				patientRepository.readFromCursor( patient, cursor );
 
-			} // if
+//			} // if
 
 			JSONObject jsonPatient = patient.toJSONObject();
 			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );

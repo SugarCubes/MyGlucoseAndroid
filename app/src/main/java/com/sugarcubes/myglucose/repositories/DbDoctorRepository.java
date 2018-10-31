@@ -89,9 +89,13 @@ public class DbDoctorRepository implements IDoctorRepository
 	{
 		Doctor dr = new Doctor();
 
-		dr.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
-		dr.setDegreeAbbreviation( cursor.getColumnName(
-				cursor.getColumnIndex( DB.KEY_DR_DEGREE_ABBREVIATION ) ) );
+		if( cursor != null && cursor.getCount() > 0 )
+		{
+			dr.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+			dr.setDegreeAbbreviation( cursor.getColumnName(
+					cursor.getColumnIndex( DB.KEY_DR_DEGREE_ABBREVIATION ) ) );
+
+		} // if
 
 		return dr;
 
@@ -153,5 +157,14 @@ public class DbDoctorRepository implements IDoctorRepository
 				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
 
 	} // getDoctorCursor
+
+
+	@Override
+	public boolean doctorExists( String userName )
+	{
+		Cursor cursor = getDoctorCursor( userName );
+		return cursor != null && cursor.getCount() > 0;
+
+	} // doctorExists
 
 } // repository

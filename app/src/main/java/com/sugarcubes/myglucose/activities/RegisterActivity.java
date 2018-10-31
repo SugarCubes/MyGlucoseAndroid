@@ -547,6 +547,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			super.onPostExecute( doctors );
 			mRetrieveDoctorsTask = null;                // Avoids errors
 
+			if( doctors != null )
 			mDoctorDropdownSpinner.setAdapter(
 					new DoctorDropDownAdapter( context,
 							R.layout.doctor_dropdown_item_layout,

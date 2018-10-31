@@ -5,6 +5,8 @@ import android.content.Context;
 import com.sugarcubes.myglucose.actions.DbLogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
+import com.sugarcubes.myglucose.actions.RemoteRegisterPatientAction;
+import com.sugarcubes.myglucose.actions.RemoteRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.RemoteSyncPatientDataAction;
 import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
@@ -57,15 +59,15 @@ class ObjectGraph
 		ILogGlucoseEntryAction logGlucoseEntryAction = new DbLogGlucoseEntryAction();
 
 		// Sync Actions:
+		ISyncPatientDataAction syncPatientDataAction = new RemoteSyncPatientDataAction();
 		ISyncMealDataAction syncMealDataAction = new SimulateSyncMealDataAction();
 		ISyncExerciseDataAction syncExerciseDataAction = new SimulateSyncExerciseDataAction();
 		ISyncGlucoseDataAction syncGlucoseDataAction = new SimulateSyncGlucoseDataAction();
-		ISyncPatientDataAction syncPatientDataAction = new RemoteSyncPatientDataAction();
 
-		// Remote Actions:
+		// Misc. Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
-		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction();
-		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction();
+		IRetrieveDoctorsAction retrieveDoctorsAction = new RemoteRetrieveDoctorsAction();
+		IRegisterPatientAction registerPatientAction = new RemoteRegisterPatientAction();
 
 		// Repositories:
 		IPatientRepository patientRepository = new DbPatientRepository( context );

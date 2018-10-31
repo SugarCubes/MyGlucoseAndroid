@@ -27,6 +27,7 @@ import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 {
@@ -46,6 +47,8 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	public void create( GlucoseEntry item )
 	{
 		ContentValues values = putContentValues( item );
+		if( item.getRemoteId().isEmpty() )                        // Create an ID
+			item.setRemoteId( UUID.randomUUID().toString() );
 		Log.w( LOG_TAG, "URI: " + uri + "; Values: " + values.toString() );
 		contentResolver.insert(  uri, values );
 

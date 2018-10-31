@@ -18,7 +18,8 @@ public enum ErrorCode
 	INVALID_LOGIN_TOKEN( 4 ),
 	USER_ALREADY_REGISTERED( 5 ),
 	ITEM_ALREADY_EXISTS( 6 ),
-	INVALID_MEAL_ENTRY( 7);
+	INVALID_MEAL_ENTRY( 7 ),
+	NO_DOCTORS_REGISTERED( 8 );
 
 	private int _value;
 	public static final String SUCCESS    = "success";

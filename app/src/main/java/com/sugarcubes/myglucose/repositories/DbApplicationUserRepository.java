@@ -109,7 +109,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	@Override
 	public ApplicationUser readFromCursor( ApplicationUser user, Cursor cursor )
 	{
-		if( cursor != null )
+		if( cursor != null && cursor.getCount() > 0 )
 		{
 			// NOTE: don't moveToFirst()/close() due to it being passed from another repo
 

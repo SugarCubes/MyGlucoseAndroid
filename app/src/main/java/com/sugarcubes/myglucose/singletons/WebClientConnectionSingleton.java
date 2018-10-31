@@ -46,7 +46,7 @@ public class WebClientConnectionSingleton
 	private final static String SYNC_MEAL_ITEM_STRING    = "/API/Meal/CreateItem";
 	private final static String SYNC_EXERCISE_STRING     = "/API/Exercise/Sync";
 	private final static String SYNC_PATIENT_DATA_STRING = "/API/Patient/Sync";
-	private final static String RETRIEVE_DOCTORS_STRING  = "/API/Doctor/Retrieve";
+	private final static String RETRIEVE_DOCTORS_STRING  = "/API/Doctor/List";
 
 	private UrlConnection loginConnection;             // The UrlConnections used to
 	private UrlConnection registerConnection;          // 		connect to each URL that

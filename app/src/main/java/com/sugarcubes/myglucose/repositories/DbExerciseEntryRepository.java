@@ -24,6 +24,7 @@ import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 public class DbExerciseEntryRepository implements IExerciseEntryRepository
 {
@@ -41,6 +42,9 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void create( ExerciseEntry item )
 	{
+		if( item.getRemoteId().isEmpty() )                        // Create an ID
+			item.setRemoteId( UUID.randomUUID().toString() );
+
 		contentResolver.insert( uri, this.putContentValues( item ) );
 
 	} // create
@@ -118,7 +122,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		entry.setId( cursor.getInt( cursor.getColumnIndex( DB.KEY_ID ) ) );
 		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ) );
-		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES_SPENT ) ) );
+		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES ) ) );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -147,7 +151,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );
-		values.put( DB.KEY_EXERCISE_MINUTES_SPENT, item.getMinutes() );
+		values.put( DB.KEY_EXERCISE_MINUTES, item.getMinutes() );
 		values.put( DB.KEY_CREATED_AT, item.getCreatedAt().toString() );
 		values.put( DB.KEY_UPDATED_AT, item.getUpdatedAt().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );

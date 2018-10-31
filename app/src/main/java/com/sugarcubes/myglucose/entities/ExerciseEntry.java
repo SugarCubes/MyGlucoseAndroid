@@ -140,7 +140,7 @@ public class ExerciseEntry
 		if( timestamp > 0 )
 			exerciseEntry.put( DB.KEY_TIMESTAMP, timestamp );
 		exerciseEntry.put( DB.KEY_USERNAME, userName );
-		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES_SPENT, minutes );
+		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES, minutes );
 
 		try
 		{
