@@ -30,7 +30,9 @@ import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -87,6 +89,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 		} // onCreate
 
 	} // PrefsFragment
+
+
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		WebClientConnectionSingleton conn
+				= WebClientConnectionSingleton.getInstance( getApplicationContext() );
+		try
+		{
+			conn.reset();
+		}
+		catch( MalformedURLException e )
+		{
+			e.printStackTrace();
+		}
+
+	} // onStop
 
 	/**
 	 * A preference value change listener that updates the preference's summary

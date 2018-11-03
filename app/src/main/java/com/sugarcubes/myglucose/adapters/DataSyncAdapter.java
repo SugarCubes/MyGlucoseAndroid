@@ -8,16 +8,9 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.sugarcubes.myglucose.actions.interfaces.ISyncExerciseDataAction;
-import com.sugarcubes.myglucose.actions.interfaces.ISyncGlucoseDataAction;
-import com.sugarcubes.myglucose.actions.interfaces.ISyncMealDataAction;
 import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 /**
  * Reference:
@@ -33,14 +26,8 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 	private final String LOG_TAG = getClass().getSimpleName();
 
 	// Get a reference to all our sync actions:
-	private ISyncPatientDataAction  syncPatientDataAction  =
+	private ISyncPatientDataAction syncPatientDataAction =
 			Dependencies.get( ISyncPatientDataAction.class );
-	private ISyncGlucoseDataAction  syncGlucoseDataAction  =
-			Dependencies.get( ISyncGlucoseDataAction.class );
-	private ISyncExerciseDataAction syncExerciseDataAction =
-			Dependencies.get( ISyncExerciseDataAction.class );
-	private ISyncMealDataAction     syncMealDataAction     =
-			Dependencies.get( ISyncMealDataAction.class );
 
 	private Context context;
 
@@ -91,10 +78,8 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 		 * Data transfer code goes here
 		 */
 		Log.w( LOG_TAG, "***onPerformSync called***" );
-		syncPatientDataAction.syncPatientData( context );
-//		syncGlucoseDataAction.syncGlucoseData();
-//		syncExerciseDataAction.syncExerciseData();
-//		syncMealDataAction.syncMealData();
+		String returnStr = syncPatientDataAction.syncPatientData( context );
+
 
 	} // onPerformSync
 

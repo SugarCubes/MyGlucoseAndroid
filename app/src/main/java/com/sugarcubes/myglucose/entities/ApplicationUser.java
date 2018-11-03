@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class ApplicationUser
 {
-	protected static boolean loggedIn = false;
+	protected static boolean loggedIn;
 	protected String loginToken;
-	protected long loginExpirationTimestamp;
+	protected long   loginExpirationTimestamp;
 	protected String id;
-	protected String email;					// Primary key
+	protected String email;                    // Primary key
 	protected String firstName;
 	protected String lastName;
 	protected String userName;
@@ -16,8 +16,8 @@ public class ApplicationUser
 	protected String address2;
 	protected String city;
 	protected String state;
-	protected int zip1;
-	protected int zip2;
+	protected int    zip1;
+	protected int    zip2;
 	protected String phoneNumber;
 	protected String height;
 	protected String weight;
@@ -29,25 +29,28 @@ public class ApplicationUser
 	public ApplicationUser()
 	{
 		Date newDate = new Date();
-		id 			= "";
-		email 		= "";
-		firstName 	= "";
-		lastName 	= "";
-		userName	= "";
-		address1	= "";
-		address2	= "";
-		city		= "";
-		state		= "";
-		zip1		= -1;
-		zip2		= -1;
+		id = "";
+		email = "";
+		firstName = "";
+		lastName = "";
+		userName = "";
+		address1 = "";
+		address2 = "";
+		city = "";
+		state = "";
+		zip1 = -1;
+		zip2 = -1;
 		phoneNumber = "";
-		height 		= "";
-		weight 		= "";
-		createdAt 	= newDate;
-		updatedAt 	= createdAt;
-		timestamp	= newDate.getTime();
-		loginToken 	= "";
+		height = "";
+		weight = "";
+		createdAt = newDate;
+		updatedAt = createdAt;
+		timestamp = newDate.getTime();
+		loginToken = "";
 		loginExpirationTimestamp = newDate.getTime();
+		loggedIn = false;
+		height = "0";
+		weight = "0";
 
 	} // constructor
 

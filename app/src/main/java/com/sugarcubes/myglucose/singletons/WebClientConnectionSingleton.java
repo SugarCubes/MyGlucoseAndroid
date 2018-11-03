@@ -47,6 +47,7 @@ public class WebClientConnectionSingleton
 	private final static String SYNC_EXERCISE_STRING     = "/API/Exercise/Sync";
 	private final static String SYNC_PATIENT_DATA_STRING = "/API/Patient/Sync";
 	private final static String RETRIEVE_DOCTORS_STRING  = "/API/Doctor/List";
+	private final Context context;
 
 	private UrlConnection loginConnection;             // The UrlConnections used to
 	private UrlConnection registerConnection;          // 		connect to each URL that
@@ -60,36 +61,8 @@ public class WebClientConnectionSingleton
 
 	private WebClientConnectionSingleton( Context context ) throws MalformedURLException
 	{
-		// We first get our user's preferences
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
-		host = sharedPreferences.getString( SettingsActivity.PREF_HOSTNAME, "localhost" );
-		port = Integer.parseInt(
-				sharedPreferences.getString( SettingsActivity.PREF_PORT, "8080" ) );
-
-		// Instantiate all of the connections to the server that the app will use:
-		String urlString = "http://" + host + ":" + port + LOGIN_STRING;
-		loginConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + REGISTER_STRING;
-		registerConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + SYNC_GLUCOSE_STRING;
-		syncGlucoseConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + SYNC_MEAL_ENTRY_STRING;
-		syncMealEntryConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + SYNC_MEAL_ITEM_STRING;
-		syncMealItemConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + SYNC_EXERCISE_STRING;
-		syncExerciseConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + RETRIEVE_DOCTORS_STRING;
-		retrieveDoctorsConnection = new UrlConnection( new URL( urlString ) );
-
-		urlString = "http://" + host + ":" + port + SYNC_PATIENT_DATA_STRING;
-		syncPatientDataConnection = new UrlConnection( new URL( urlString ) );
+		this.context = context;
+		reset();
 
 	} // constructor
 
@@ -187,5 +160,40 @@ public class WebClientConnectionSingleton
 		return retrieveDoctorsConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest
+
+	public void reset() throws MalformedURLException
+	{
+		// We first get our user's preferences
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+		host = sharedPreferences.getString( SettingsActivity.PREF_HOSTNAME, "localhost" );
+		port = Integer.parseInt(
+				sharedPreferences.getString( SettingsActivity.PREF_PORT, "8080" ) );
+
+		// Instantiate all of the connections to the server that the app will use:
+		String urlString = "http://" + host + ":" + port + LOGIN_STRING;
+		loginConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + REGISTER_STRING;
+		registerConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_GLUCOSE_STRING;
+		syncGlucoseConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_MEAL_ENTRY_STRING;
+		syncMealEntryConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_MEAL_ITEM_STRING;
+		syncMealItemConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_EXERCISE_STRING;
+		syncExerciseConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + RETRIEVE_DOCTORS_STRING;
+		retrieveDoctorsConnection = new UrlConnection( new URL( urlString ) );
+
+		urlString = "http://" + host + ":" + port + SYNC_PATIENT_DATA_STRING;
+		syncPatientDataConnection = new UrlConnection( new URL( urlString ) );
+
+	}
 
 } // class

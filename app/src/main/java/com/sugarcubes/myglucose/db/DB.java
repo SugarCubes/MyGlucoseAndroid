@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 10;
+	private static final int DATABASE_VERSION = 12;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -23,6 +23,8 @@ public class DB extends SQLiteOpenHelper
 	public static final String TABLE_EXERCISE_ENTRIES = "ExerciseEntry";
 
 	public static final String PATIENT_USERS = "PatientUser";
+	public static final String DOCTOR_USERS  = "DoctorUser";
+
 	// Use in ContentProvider to do joins
 
 	// Also add tables here to use in a for loop:
@@ -62,8 +64,9 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_USER_HEIGHT                     = "height";
 	public static final String KEY_USER_WEIGHT                     = "weight";
 	// Patient table keys:
+	public static final String KEY_DOCTOR                          = "doctor";
 	public static final String KEY_PATIENT_ID                      = "patientId";
-	public static final String KEY_DR_USERNAME                     = "doctorUsername";
+	public static final String KEY_DR_USERNAME                     = "doctorUserName";
 	public static final String KEY_GLUCOSE_ENTRIES                 = "glucoseEntries";
 	public static final String KEY_MEAL_ENTRIES                    = "mealEntries";
 	public static final String KEY_EXERCISE_ENTRIES                = "exerciseEntries";
@@ -132,11 +135,13 @@ public class DB extends SQLiteOpenHelper
 		// CREATE PATIENTS TABLE
 		String CREATE_PATIENTS_TABLE = "CREATE TABLE " + TABLE_PATIENTS + "("
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
+				+ KEY_DR_ID + " TEXT, "
 				+ KEY_DR_USERNAME + " TEXT );";
 
 		// CREATE DOCTORS TABLE
 		String CREATE_DOCTORS_TABLE = "CREATE TABLE " + TABLE_DOCTORS + "("
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
+				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_DR_DEGREE_ABBREVIATION + " TEXT );";
 
 		// CREATE GLUCOSE TABLE

@@ -28,7 +28,7 @@ public class JsonUtilities
 
 	public static String dateToJson( Date date )
 	{
-		SimpleDateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy HH:mm a", Locale.US );
+		SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm a", Locale.US );//"MM/dd/yyyy HH:mm a", Locale.US );//
 		return formatter.format( date );
 
 	} // dateToJson

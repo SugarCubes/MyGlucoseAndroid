@@ -31,6 +31,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			PATIENTS_URL         = "content://" + AUTHORITY + "/" + DB.TABLE_PATIENTS,
 			PATIENT_USERS_URL    = "content://" + AUTHORITY + "/" + DB.PATIENT_USERS,
 			DOCTORS_URL          = "content://" + AUTHORITY + "/" + DB.TABLE_DOCTORS,
+			DOCTOR_USERS_URL     = "content://" + AUTHORITY + "/" + DB.DOCTOR_USERS,
 			GLUCOSE_ENTRIES_URL  = "content://" + AUTHORITY + "/" + DB.TABLE_GLUCOSE_ENTRIES,
 			MEAL_ENTRIES_URL     = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ENTRIES,
 			MEAL_ITEMS_URL       = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ITEMS,
@@ -42,6 +43,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			PATIENT_USERS_URI    = Uri.parse( PATIENT_USERS_URL ),
 			PATIENTS_URI         = Uri.parse( PATIENTS_URL ),
 			DOCTORS_URI          = Uri.parse( DOCTORS_URL ),
+			DOCTOR_USERS_URI     = Uri.parse( DOCTOR_USERS_URL ),
 			GLUCOSE_ENTRIES_URI  = Uri.parse( GLUCOSE_ENTRIES_URL ),
 			MEAL_ENTRIES_URI     = Uri.parse( MEAL_ENTRIES_URL ),
 			MEAL_ITEMS_URI       = Uri.parse( MEAL_ITEMS_URL ),
@@ -56,15 +58,16 @@ public class MyGlucoseContentProvider extends ContentProvider
 			PATIENT_USERS       = 5,
 			DOCTORS             = 6,
 			DOCTORS_ID          = 7,
-			GLUCOSE_ENTRIES     = 8,
-			GLUCOSE_ENTRIES_ID  = 9,
-			MEAL_ENTRIES        = 10,
-			MEAL_ENTRIES_ID     = 11,
-			MEAL_ENTRY_ITEMS    = 12,
-			MEAL_ITEMS          = 13,
-			MEAL_ITEMS_ID       = 14,
-			EXERCISE_ENTRIES    = 15,
-			EXERCISE_ENTRIES_ID = 16;
+			DOCTOR_USERS		= 8,
+			GLUCOSE_ENTRIES     = 9,
+			GLUCOSE_ENTRIES_ID  = 10,
+			MEAL_ENTRIES        = 11,
+			MEAL_ENTRIES_ID     = 12,
+			MEAL_ENTRY_ITEMS    = 13,
+			MEAL_ITEMS          = 14,
+			MEAL_ITEMS_ID       = 15,
+			EXERCISE_ENTRIES    = 16,
+			EXERCISE_ENTRIES_ID = 17;
 
 	// Creates a UriMatcher object.
 	private static final UriMatcher uriMatcher;
@@ -80,6 +83,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_PATIENTS + "/#", PATIENTS_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_DOCTORS, DOCTORS );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_DOCTORS + "/#", DOCTORS_ID );
+		uriMatcher.addURI( AUTHORITY, DB.DOCTOR_USERS, DOCTOR_USERS );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_GLUCOSE_ENTRIES, GLUCOSE_ENTRIES );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_GLUCOSE_ENTRIES + "/#", GLUCOSE_ENTRIES_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ENTRIES, MEAL_ENTRIES );
@@ -96,7 +100,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 	private static HashMap<String, String> queryMap;    // For queryBuilder
 	private static DB                      db;                    // SQLiteOpenHelper
 	private static SQLiteDatabase          database;
-			// Get a connection using our custom handler
+	// Get a connection using our custom handler
 	private String LOG_TAG = getClass().getSimpleName();
 
 	@Override
@@ -160,11 +164,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case PATIENT_USERS:
 				queryBuilder.setTables( DB.TABLE_PATIENTS + ", " + DB.TABLE_USERS );//+ " ON "
-//						+ DB.TABLE_PATIENTS + "." + DB.KEY_USERNAME + "=" + DB.TABLE_USERS + "."
-//						+ DB.KEY_USERNAME );
+				//						+ DB.TABLE_PATIENTS + "." + DB.KEY_USERNAME + "=" + DB.TABLE_USERS + "."
+				//						+ DB.KEY_USERNAME );
 
 				if( DEBUG && selectionArgs != null ) Log.e( LOG_TAG, "Selection: " + selection
-						+ "; args: " + selectionArgs[0] );
+						+ "; args: " + selectionArgs[ 0 ] );
 				break;
 
 			case DOCTORS:
@@ -174,6 +178,13 @@ public class MyGlucoseContentProvider extends ContentProvider
 			case DOCTORS_ID:
 				queryBuilder.setTables( DB.TABLE_DOCTORS );
 				queryBuilder.appendWhere( DB.KEY_USER_EMAIL + "=" + uri.getLastPathSegment() );
+				break;
+
+			case DOCTOR_USERS:
+				queryBuilder.setTables( DB.TABLE_DOCTORS + ", " + DB.TABLE_USERS );
+
+				if( DEBUG && selectionArgs != null ) Log.e( LOG_TAG, "Selection: " + selection
+						+ "; args: " + selectionArgs[ 0 ] );
 				break;
 
 			case GLUCOSE_ENTRIES:
@@ -261,6 +272,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case DOCTORS:
 				count = database.insert( DB.TABLE_DOCTORS, AUTHORITY, values );
+				break;
+
+			case DOCTOR_USERS:
+				// Invalid action
+				count = 0;
 				break;
 
 			case GLUCOSE_ENTRIES:
@@ -367,6 +383,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 										? " AND (" + selection + ')'
 										: "" ),
 						selectionArgs );
+				break;
+
+			case DOCTOR_USERS:
+				// Invalid action
+				count = 0;
 				break;
 
 			case GLUCOSE_ENTRIES:
@@ -512,6 +533,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
+			case DOCTOR_USERS:
+				// Invalid action
+				count = 0;
+				break;
+
 			case GLUCOSE_ENTRIES:
 				count =
 						database.update( DB.TABLE_GLUCOSE_ENTRIES, values, selection, selectionArgs );
@@ -610,6 +636,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.doctors";
 			case DOCTORS_ID:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.doctorsid";
+			case DOCTOR_USERS:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.doctor_users";
 			case GLUCOSE_ENTRIES:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.glucoseentries";
 			case GLUCOSE_ENTRIES_ID:

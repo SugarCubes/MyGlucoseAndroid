@@ -30,10 +30,27 @@ public class DbDoctorRepository implements IDoctorRepository
 
 
 	@Override
+	public boolean exists( String userName )
+	{
+		Cursor cursor = getDoctorCursor( userName );
+		boolean exists = cursor != null && cursor.getCount() > 0;
+		if( exists )
+		{
+			cursor.close();
+		}
+		return exists;
+
+	} // exists
+
+
+	@Override
 	public boolean create( Doctor item )
 	{
+		Uri createUri = null;
+		if( !exists( item.getUserName() ))
+			createUri = contentResolver.insert( doctorsUri, putContentValues( item ) );
+
 		boolean createUser = dbApplicationUserRepository.create( item );	// Create ApplicationUser
-		Uri createUri = contentResolver.insert( doctorsUri, putContentValues( item ) );
 
 		return createUser && createUri != null;
 
@@ -47,7 +64,8 @@ public class DbDoctorRepository implements IDoctorRepository
 		Cursor cursor = getDoctorCursor( userName );	// Get a cursor object
 		readFromCursor( doctor, cursor );				// Pass the doctor to the cursor
 		// Load the info related to ApplicationUser:
-		dbApplicationUserRepository.readFromCursor( doctor, getApplicationUserCursor( userName ) );
+		// TODO: MUST do a join:
+//		dbApplicationUserRepository.readFromCursor( doctor, getApplicationUserCursor( userName ) );
 
 		return doctor;
 
@@ -85,15 +103,21 @@ public class DbDoctorRepository implements IDoctorRepository
 
 
 	@Override
-	public Doctor readFromCursor( Doctor doctor, Cursor cursor )
+	public Doctor readFromCursor( Doctor doctor, Cursor cursor )	// Make sure cursor is JOINed
 	{
 		Doctor dr = new Doctor();
 
 		if( cursor != null && cursor.getCount() > 0 )
 		{
+			cursor.moveToFirst();
+
 			dr.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+			dr.setId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 			dr.setDegreeAbbreviation( cursor.getColumnName(
 					cursor.getColumnIndex( DB.KEY_DR_DEGREE_ABBREVIATION ) ) );
+			dbApplicationUserRepository.readFromCursor( doctor, cursor );
+
+			cursor.close();
 
 		} // if
 
@@ -107,6 +131,7 @@ public class DbDoctorRepository implements IDoctorRepository
 	{
 		ContentValues values = new ContentValues();
 
+		values.put( DB.KEY_USERNAME, doctor.getUserName() );
 		values.put( DB.KEY_DR_DEGREE_ABBREVIATION, doctor.getDegreeAbbreviation() );
 
 		return values;
@@ -153,18 +178,9 @@ public class DbDoctorRepository implements IDoctorRepository
 
 	public Cursor getDoctorCursor( String username )
 	{
-		return contentResolver.query( doctorsUri, null,
-				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
+		return contentResolver.query( MyGlucoseContentProvider.DOCTOR_USERS_URI, null,
+				DB.TABLE_DOCTORS + "." + DB.KEY_USERNAME + "=?", new String[]{ username }, null );
 
 	} // getDoctorCursor
-
-
-	@Override
-	public boolean doctorExists( String userName )
-	{
-		Cursor cursor = getDoctorCursor( userName );
-		return cursor != null && cursor.getCount() > 0;
-
-	} // doctorExists
 
 } // repository

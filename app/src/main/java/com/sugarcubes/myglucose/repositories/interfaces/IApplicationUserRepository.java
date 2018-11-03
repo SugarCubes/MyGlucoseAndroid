@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 public interface IApplicationUserRepository<T>
 {
+	boolean exists( String userName );
+
 	boolean create( T item );
 
 	T read( String id );

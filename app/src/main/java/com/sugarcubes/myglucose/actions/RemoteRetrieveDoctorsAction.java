@@ -1,11 +1,9 @@
 package com.sugarcubes.myglucose.actions;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
-import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.Doctor;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
@@ -16,8 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
@@ -55,7 +51,7 @@ public class RemoteRetrieveDoctorsAction implements IRetrieveDoctorsAction
 					doctors.add( newDoctor );      // Add the doctor to the ArrayList
 
 
-					if( !doctorRepository.doctorExists( newDoctor.getUserName() ) )
+					if( !doctorRepository.exists( newDoctor.getUserName() ) )
 						doctorRepository.create( newDoctor );
 
 				} // for

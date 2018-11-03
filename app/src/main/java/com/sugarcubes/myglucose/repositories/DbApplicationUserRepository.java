@@ -22,6 +22,7 @@ import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
+import com.sugarcubes.myglucose.utils.JsonUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.Locale;
 
 public class DbApplicationUserRepository implements IApplicationUserRepository<ApplicationUser>
 {
-	private final String LOG_TAG = getClass().getName();
+	private final String LOG_TAG = getClass().getSimpleName();
 	private ContentResolver contentResolver;
 	private Uri uri = MyGlucoseContentProvider.USERS_URI;
 
@@ -44,11 +45,29 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 
 
 	@Override
+	public boolean exists( String userName )
+	{
+		Cursor cursor = getApplicationUserCursor( userName );
+		boolean exists = cursor != null && cursor.getCount() > 0;
+		if( exists )
+		{
+			cursor.close();
+		}
+		return exists;
+
+	} // exists
+
+
+	@Override
 	public boolean create( ApplicationUser user )
 	{
-		ContentValues values = putContentValues( user );
-		Uri create = contentResolver.insert( uri, values );
-		user.setLoggedIn( true );
+		Uri create = null;
+		if( !exists( user.getUserName() ) )
+		{
+			ContentValues values = putContentValues( user );
+			create = contentResolver.insert( uri, values );
+			user.setLoggedIn( true );
+		}
 
 		return create != null;
 
@@ -192,12 +211,14 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
 		if( !user.getUserName().isEmpty() )
 			values.put( DB.KEY_USERNAME, user.getUserName() );
+		if( user.getWeight() == null )
+			user.setWeight( "0" );
 		values.put( DB.KEY_USER_WEIGHT, user.getWeight() );
+		if( user.getHeight() == null )
+			user.setHeight( "0" );
 		values.put( DB.KEY_USER_HEIGHT, user.getHeight() );
-		values.put( DB.KEY_CREATED_AT, user.getCreatedAt().toString() );
-		values.put( DB.KEY_UPDATED_AT, user.getUpdatedAt().toString() );
-		if( user.getTimestamp() > 0 )
-			values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
+		//		if( user.getTimestamp() > 0 )
+		//			values.put( DB.KEY_TIMESTAMP, user.getTimestamp() );
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn()
 				? 1
 				: 0 );
@@ -205,6 +226,10 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			values.put( DB.KEY_USER_LOGIN_TOKEN, user.getLoginToken() );
 		if( user.getLoginExpirationTimestamp() > 0 )
 			values.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, user.getLoginExpirationTimestamp() );
+		if( user.getCreatedAt() != null )
+			values.put( DB.KEY_CREATED_AT, user.getCreatedAt().toString() );
+		if( user.getUpdatedAt() != null )
+			values.put( DB.KEY_UPDATED_AT, user.getUpdatedAt().toString() );
 		return values;
 
 	} // putContentValues

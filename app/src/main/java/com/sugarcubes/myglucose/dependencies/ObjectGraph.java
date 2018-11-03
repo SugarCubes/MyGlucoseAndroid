@@ -3,27 +3,18 @@ package com.sugarcubes.myglucose.dependencies;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.DbLogExerciseEntryAction;
+import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.DbLogMealEntryAction;
 import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.RemoteRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.RemoteRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.RemoteSyncPatientDataAction;
-import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
-import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
-import com.sugarcubes.myglucose.actions.DbLogGlucoseEntryAction;
-import com.sugarcubes.myglucose.actions.SimulateSyncExerciseDataAction;
-import com.sugarcubes.myglucose.actions.SimulateSyncGlucoseDataAction;
-import com.sugarcubes.myglucose.actions.SimulateSyncMealDataAction;
-import com.sugarcubes.myglucose.actions.SimulateSyncPatientDataAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
-import com.sugarcubes.myglucose.actions.interfaces.ISyncExerciseDataAction;
-import com.sugarcubes.myglucose.actions.interfaces.ISyncGlucoseDataAction;
-import com.sugarcubes.myglucose.actions.interfaces.ISyncMealDataAction;
 import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
 import com.sugarcubes.myglucose.repositories.DbApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.DbDoctorRepository;
@@ -60,9 +51,6 @@ class ObjectGraph
 
 		// Sync Actions:
 		ISyncPatientDataAction syncPatientDataAction = new RemoteSyncPatientDataAction();
-		ISyncMealDataAction syncMealDataAction = new SimulateSyncMealDataAction();
-		ISyncExerciseDataAction syncExerciseDataAction = new SimulateSyncExerciseDataAction();
-		ISyncGlucoseDataAction syncGlucoseDataAction = new SimulateSyncGlucoseDataAction();
 
 		// Misc. Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
@@ -88,9 +76,6 @@ class ObjectGraph
 		dependencies.put( ILogGlucoseEntryAction.class, logGlucoseEntryAction );
 
 		// Sync actions:
-		dependencies.put( ISyncMealDataAction.class, syncMealDataAction );
-		dependencies.put( ISyncExerciseDataAction.class, syncExerciseDataAction );
-		dependencies.put( ISyncGlucoseDataAction.class, syncGlucoseDataAction );
 		dependencies.put( ISyncPatientDataAction.class, syncPatientDataAction );
 
 		// Remote Actions:

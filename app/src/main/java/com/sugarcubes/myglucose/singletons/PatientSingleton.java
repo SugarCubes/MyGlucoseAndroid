@@ -26,6 +26,7 @@ public class PatientSingleton extends ApplicationUser
 	private static PatientSingleton singleton;
 	private static String LOG_TAG = "PatientSingleton";
 
+	private   String doctorId;
 	private   String doctorUserName;
 	protected Doctor doctor;
 
@@ -36,7 +37,11 @@ public class PatientSingleton extends ApplicationUser
 	//	public String weight, height;
 
 
-	public PatientSingleton()
+	/**
+	 * This class uses a private constructor so that no other class can create an instance
+	 * object except this one, called from the static method, getInstance()
+	 */
+	private PatientSingleton()
 	{
 		id = "";
 		loginToken = "";
@@ -58,14 +63,14 @@ public class PatientSingleton extends ApplicationUser
 		mealEntries = new ArrayList<>();
 		exerciseEntries = new ArrayList<>();
 
-	} // constructor
+	} // private constructor
 
 
 	// Since there should only be 1 user, we make in impossible to create more than 1 instance
 	//		of the class.
 	public static PatientSingleton getInstance()
 	{
-		if( singleton == null )
+		if( singleton == null || singleton.getUserName() == null )
 			singleton = new PatientSingleton();
 
 		return singleton;
@@ -80,46 +85,76 @@ public class PatientSingleton extends ApplicationUser
 		try
 		{
 			JSONObject jsonObject =
-					new JSONObject( jsonString );            // Convert string to Json
+					new JSONObject( jsonString );           // Convert string to Json
 
-			if( jsonObject.getString( "id" ) != null )
+			if( jsonObject.has( DB.TABLE_PATIENTS ) )       // If "Patient" is passed as an object
+				jsonObject = jsonObject.getJSONObject( DB.TABLE_PATIENTS );    // Get it
+
+			if( jsonObject.has( DB.KEY_USER_EMAIL ) )
 			{
+				String nullString = "null";
 				// Use jsonData.getInt( String key ), etc to get data from the object
-				if( !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USERNAME ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
 					patientSingleton.setUserName( jsonObject.getString( DB.KEY_USERNAME ) );
-				if( !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).isEmpty() )
 					patientSingleton.setAddress1( jsonObject.getString( DB.KEY_USER_ADDRESS1 ) );
-				if( !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).isEmpty() )
 					patientSingleton.setAddress2( jsonObject.getString( DB.KEY_USER_ADDRESS2 ) );
-				if( !jsonObject.getString( DB.KEY_USER_CITY ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_CITY ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_CITY ).isEmpty() )
 					patientSingleton.setCity( jsonObject.getString( DB.KEY_USER_CITY ) );
-				if( !jsonObject.getString( DB.KEY_USER_EMAIL ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_EMAIL ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_EMAIL ).isEmpty() )
 					patientSingleton.setEmail( jsonObject.getString( DB.KEY_USER_EMAIL ) );
-				if( !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).isEmpty() )
 					patientSingleton.setFirstName( jsonObject.getString( DB.KEY_USER_FIRST_NAME ) );
-				if( !jsonObject.getString( DB.KEY_REMOTE_ID ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_REMOTE_ID ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_REMOTE_ID ).isEmpty() )
 					patientSingleton.setId( jsonObject.getString( DB.KEY_REMOTE_ID ) );
-				if( !jsonObject.getString( DB.KEY_USER_LAST_NAME ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_LAST_NAME ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_LAST_NAME ).isEmpty() )
 					patientSingleton.setLastName( jsonObject.getString( DB.KEY_USER_LAST_NAME ) );
-				if( !jsonObject.getString( DB.KEY_USER_PHONE ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_PHONE ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_PHONE ).isEmpty() )
 					patientSingleton.setPhoneNumber( jsonObject.getString( DB.KEY_USER_PHONE ) );
-				if( !jsonObject.getString( DB.KEY_USER_STATE ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_STATE ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_STATE ).isEmpty() )
 					patientSingleton.setState( jsonObject.getString( DB.KEY_USER_STATE ) );
 				if( jsonObject.getInt( DB.KEY_USER_ZIP1 ) > 0 )
 					patientSingleton.setZip1( jsonObject.getInt( DB.KEY_USER_ZIP1 ) );
 				if( jsonObject.getInt( DB.KEY_USER_ZIP2 ) > 0 )
 					patientSingleton.setZip2( jsonObject.getInt( DB.KEY_USER_ZIP2 ) );
-				if( !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).isEmpty() )
+				if( !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).equals( nullString )
+						&& !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).isEmpty() )
 					patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
 				if( jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) > 0 )
 					patientSingleton.setLoginExpirationTimestamp(
 							jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) );
 				if( jsonObject.has( DB.KEY_USER_HEIGHT )
+						&& !jsonObject.getString( DB.KEY_USER_HEIGHT ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_HEIGHT ).isEmpty() )
 					patientSingleton.setHeight( jsonObject.getString( DB.KEY_USER_HEIGHT ) );
 				if( jsonObject.has( DB.KEY_USER_WEIGHT )
+						&& !jsonObject.getString( DB.KEY_USER_WEIGHT ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_WEIGHT ).isEmpty() )
 					patientSingleton.setWeight( jsonObject.getString( DB.KEY_USER_WEIGHT ) );
+				if( jsonObject.has( DB.KEY_DOCTOR ) )
+				{
+					JSONObject doctorJsonObj = jsonObject.getJSONObject( DB.KEY_DOCTOR );
+					Doctor doctor = Doctor.fromJSONObject( doctorJsonObj );
+					patientSingleton.setDoctor( doctor );
+					patientSingleton.setDoctorUserName( doctor.getUserName() );
+					patientSingleton.setDoctorId( doctor.getId() );
+
+				} // if
+
+				if( patientSingleton.getDoctorId() != null &&
+						patientSingleton.getDoctorId().isEmpty() )
+					patientSingleton.setDoctorId( jsonObject.getString( DB.KEY_DR_ID ) );
 
 			} // if !null
 
@@ -146,6 +181,7 @@ public class PatientSingleton extends ApplicationUser
 		patientSingleton.setLastName( "" );
 		patientSingleton.setPhoneNumber( "" );
 		patientSingleton.setState( "" );
+		patientSingleton.setDoctorUserName( "" );
 		patientSingleton.setZip1( 0 );
 		patientSingleton.setZip2( 0 );
 		patientSingleton.setGlucoseEntries( null );
@@ -207,90 +243,116 @@ public class PatientSingleton extends ApplicationUser
 		this.doctorUserName = doctorUserName;
 	}
 
-	public JSONObject toJSONObject() throws JSONException
+	public String getDoctorId()
 	{
-		JSONObject patient = new JSONObject();
+		return doctorId;
+	}
+
+	public void setDoctorId( String doctorId )
+	{
+		this.doctorId = doctorId;
+	}
+
+	public static JSONObject toJSONObject() throws JSONException
+	{
 		// APPLICATION USER ATTRIBUTES:
-		// NOTE: Do NOT send the Id or it may fail to bind:
+		// NOTE 1: Do NOT send the Id or it may fail to bind:
 		//		if( !id.isEmpty() )
-		//			patient.put( DB.KEY_REMOTE_ID, id );
-		if( !email.isEmpty() )
-			patient.put( DB.KEY_USER_EMAIL, email );
-		if( !firstName.isEmpty() )
-			patient.put( DB.KEY_USER_FIRST_NAME, firstName );
-		if( !lastName.isEmpty() )
-			patient.put( DB.KEY_USER_LAST_NAME, lastName );
-		if( !userName.isEmpty() )
-			patient.put( DB.KEY_USERNAME, userName );
-		if( !address1.isEmpty() )
-			patient.put( DB.KEY_USER_ADDRESS1, address1 );
-		if( !address2.isEmpty() )
-			patient.put( DB.KEY_USER_ADDRESS2, address2 );
-		if( !city.isEmpty() )
-			patient.put( DB.KEY_USER_CITY, city );
-		if( !state.isEmpty() )
-			patient.put( DB.KEY_USER_STATE, state );
-		if( !phoneNumber.isEmpty() )
-			patient.put( DB.KEY_USER_PHONE, phoneNumber );
-		//		patient.put( DB.KEY_USER_HEIGHT, height );
-		//		patient.put( DB.KEY_USER_WEIGHT, weight );
-		if( !loginToken.isEmpty() )
-			patient.put( DB.KEY_USER_LOGIN_TOKEN, loginToken );
-		if( zip1 > 0 )
-			patient.put( DB.KEY_USER_ZIP1, zip1 );
-		if( zip2 > 0 )
-			patient.put( DB.KEY_USER_ZIP1, zip2 );
+		//			put( DB.KEY_REMOTE_ID, id );
+		// NOTE 2: Some string objects may be null because they were never filled in by the user.
+		//		In this case, check if null and !.isEmpty()
+
+		PatientSingleton patient = getInstance();
+		JSONObject json = new JSONObject();
+
+		json.put( DB.KEY_USERNAME, patient.getUserName() );
+		if( patient.getEmail() != null && !patient.getEmail().isEmpty() )
+			json.put( DB.KEY_USER_EMAIL, patient.getEmail() );
+		if( patient.getFirstName() != null && !patient.getFirstName().isEmpty() )
+			json.put( DB.KEY_USER_FIRST_NAME, patient.getFirstName() );
+		if( patient.getLastName() != null && !patient.getLastName().isEmpty() )
+			json.put( DB.KEY_USER_LAST_NAME, patient.getLastName() );
+		if( patient.getAddress1() != null && !patient.getAddress1().isEmpty() )
+			json.put( DB.KEY_USER_ADDRESS1, patient.getAddress1() );
+		if( patient.getAddress2() != null && !patient.getAddress2().isEmpty() )
+			json.put( DB.KEY_USER_ADDRESS2, patient.getAddress2() );
+		if( patient.getCity() != null && !patient.getCity().isEmpty() )
+			json.put( DB.KEY_USER_CITY, patient.getCity() );
+		if( patient.getState() != null && !patient.getState().isEmpty() )
+			json.put( DB.KEY_USER_STATE, patient.getState() );
+		if( patient.getPhoneNumber() != null && !patient.getPhoneNumber().isEmpty() )
+			json.put( DB.KEY_USER_PHONE, patient.getPhoneNumber() );
+		if( patient.getHeight() != null && !patient.getHeight().isEmpty() )
+			json.put( DB.KEY_USER_HEIGHT, patient.getHeight() );
+		if( patient.getWeight() != null && !patient.getWeight().isEmpty() )
+			json.put( DB.KEY_USER_HEIGHT, patient.getWeight() );
+		if( patient.getLoginToken() != null && !patient.getLoginToken().isEmpty() )
+			json.put( DB.KEY_USER_LOGIN_TOKEN, patient.getLoginToken() );
+		if( patient.getZip1() > 0 )
+			json.put( DB.KEY_USER_ZIP1, patient.getZip1() );
+		if( patient.getZip2() > 0 )
+			json.put( DB.KEY_USER_ZIP1, patient.getZip2() );
 		//		if( timestamp > 0 )
-		//			patient.put( DB.KEY_TIMESTAMP, timestamp );
-		if( loginExpirationTimestamp > 0 )
-			patient.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, loginExpirationTimestamp );
+		//			put( DB.KEY_TIMESTAMP, timestamp );
+		if( patient.getLoginExpirationTimestamp() > 0 )
+			json.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP,
+					patient.getLoginExpirationTimestamp() );
 		try
 		{
-			patient.put( DB.KEY_CREATED_AT, JsonUtilities.dateToJson( createdAt ) );
-			patient.put( DB.KEY_UPDATED_AT, JsonUtilities.dateToJson( updatedAt ) );
+			json.put( DB.KEY_CREATED_AT, JsonUtilities.dateToJson( patient.getCreatedAt() ) );
+			json.put( DB.KEY_UPDATED_AT, JsonUtilities.dateToJson( patient.getUpdatedAt() ) );
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
+
 		//		// PATIENT ATTRIBUTES:
-		patient.put( DB.KEY_DR_ID, doctorUserName );
-		if( glucoseEntries != null && glucoseEntries.size() > 0 )
+		if( patient.getDoctorUserName() != null && !patient.getDoctorUserName().isEmpty() )
+			json.put( DB.KEY_DR_USERNAME, patient.getDoctorUserName() );
+		if( patient.getDoctorId() != null && !patient.getDoctorId().isEmpty() )
+			json.put( DB.KEY_DR_ID, patient.getDoctorId() );
+
+		// NOTE: Causes sync to fail:
+		// if( patient.getDoctor() != null )
+		// json.put( DB.KEY_DOCTOR, patient.getDoctor().toJSONObject() );
+
+		if( patient.getGlucoseEntries() != null && patient.getGlucoseEntries().size() > 0 )
 		{
 			JSONArray gEntries = new JSONArray();
-			for( GlucoseEntry glucoseEntry : glucoseEntries )
+			for( GlucoseEntry glucoseEntry : patient.getGlucoseEntries() )
 			{
 				gEntries.put( glucoseEntry.toJSONObject() );
 			}
 
-			patient.put( DB.KEY_GLUCOSE_ENTRIES, gEntries );    // Add the array as JSON
+			json.put( DB.KEY_GLUCOSE_ENTRIES, gEntries );    // Add the array as JSON
 
 		} // if
 
-		if( mealEntries != null && mealEntries.size() > 0 )
+		if( patient.getMealEntries() != null && patient.getMealEntries().size() > 0 )
 		{
 			JSONArray mEntries = new JSONArray();
-			for( MealEntry mealEntry : mealEntries )
+			for( MealEntry mealEntry : patient.getMealEntries() )
 			{
 				mEntries.put( mealEntry.toJSONObject() );
 			}
 
-			patient.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
+			json.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
 
 		} // if
 
-		if( exerciseEntries != null && exerciseEntries.size() > 0 )
+		if( patient.getExerciseEntries() != null && patient.getExerciseEntries().size() > 0 )
 		{
 			JSONArray eEntries = new JSONArray();
-			for( ExerciseEntry exerciseEntry : exerciseEntries )
+			for( ExerciseEntry exerciseEntry : patient.getExerciseEntries() )
 			{
 				eEntries.put( exerciseEntry.toJSONObject() );
 			}
 
-			patient.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
+			json.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
 		}
 
-		return patient;
+		return json;
 
 	} // toJSONObject
 

@@ -269,8 +269,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			showProgress( true );
 
 			patient.setEmail( email );
-			// TODO: Test
 			patient.setDoctor( doctor );
+			patient.setDoctorUserName( doctor.getUserName() );
 
 			mRegisterTask = new UserRegisterTask( patient, password );
 			mRegisterTask.execute( (Void) null );
@@ -443,7 +443,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 		@Override
 		protected ErrorCode doInBackground( Void... params )
 		{
-			ErrorCode errorCode = ErrorCode.NO_ERROR;
+			ErrorCode errorCode;
 			try
 			{
 				// We have populated our PatientSingleton, so now we save that information
@@ -453,6 +453,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 			}
 			catch( Exception e )
 			{
+				e.printStackTrace();
 				return ErrorCode.UNKNOWN;
 			}
 

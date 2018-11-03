@@ -19,7 +19,8 @@ public enum ErrorCode
 	USER_ALREADY_REGISTERED( 5 ),
 	ITEM_ALREADY_EXISTS( 6 ),
 	INVALID_MEAL_ENTRY( 7 ),
-	NO_DOCTORS_REGISTERED( 8 );
+	NO_DOCTORS_REGISTERED( 8 ),
+	USER_ALREADY_LOGGED_IN( 9 );
 
 	private int _value;
 	public static final String SUCCESS    = "success";

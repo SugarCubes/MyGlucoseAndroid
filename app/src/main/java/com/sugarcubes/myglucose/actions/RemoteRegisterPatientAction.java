@@ -10,6 +10,7 @@
 package com.sugarcubes.myglucose.actions;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.db.DB;
@@ -25,38 +26,50 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
+
 public class RemoteRegisterPatientAction implements IRegisterPatientAction
 {
+	private final String LOG_TAG = getClass().getSimpleName();
+
 	// TODO: Test
 	@Override
 	public ErrorCode registerPatient( Context context,
-									final PatientSingleton patientSingleton,
-									final String password ) throws JSONException
+									  PatientSingleton patientSingleton,
+									  final String password ) throws JSONException
 	{
 		// Send the registration request to the server:
-		WebClientConnectionSingleton webConnection =           	// Get the connection manager
+		WebClientConnectionSingleton webConnection =            // Get the connection manager
 				WebClientConnectionSingleton.getInstance( context );
 		HashMap<String, String> values = new HashMap<>();
 		values.put( "Email", patientSingleton.getEmail() );
 		values.put( "Password", password );
+		values.put( "DoctorUserName", patientSingleton.getDoctorUserName() );
 		String jsonString = webConnection.sendRegisterRequest( values );
+
+		if( DEBUG ) Log.e( LOG_TAG, "Response String: " + jsonString );
+
 		if( jsonString.isEmpty() )
 			return ErrorCode.UNKNOWN;
 
 		JSONObject jsonObject = new JSONObject( jsonString );   // Can throw exception
 
 		ErrorCode errorCode = ErrorCode.interpretErrorCode( jsonObject );
-		if( errorCode != ErrorCode.NO_ERROR )
+
+		if( errorCode != ErrorCode.NO_ERROR && errorCode != ErrorCode.USER_ALREADY_LOGGED_IN )
 			return errorCode;
 
 		// Set the id/login info to the information returned:
-		patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
-		patientSingleton.setId( jsonObject.getString( DB.KEY_REMOTE_ID ) );
+		PatientSingleton.copyFrom( jsonString );
 		patientSingleton.setLoggedIn( true );
 
 		// The patient hasn't been created in db yet, so add to the database:
 		IPatientRepository patientRepository = Dependencies.get( IPatientRepository.class );
-		patientRepository.create( patientSingleton );
+		if( patientRepository.exists( patientSingleton.getUserName() ) )             // If exists...
+			patientRepository.update( patientSingleton.getUserName(), patientSingleton ); // update
+		else
+			// Otherwise, just create in db
+			patientRepository.create( patientSingleton );
 
 		return ErrorCode.NO_ERROR;
 

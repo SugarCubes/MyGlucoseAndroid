@@ -37,27 +37,30 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 		{
 			PatientSingleton patient = PatientSingleton.getInstance();
 
-//			if( patient.getUserName().isEmpty() )
-//			{
-			// Always load the latest data:
-				Cursor cursor = context.getContentResolver().query(
-						MyGlucoseContentProvider.PATIENT_USERS_URI, null,
-						DB.KEY_USER_LOGGED_IN + "=?",
-						new String[]{ String.valueOf( 1 ) }, null
-				);
-				patientRepository.readFromCursor( patient, cursor );
+			// ALWAYS load the latest data:
+			Cursor cursor = context.getContentResolver().query(
+					MyGlucoseContentProvider.PATIENT_USERS_URI, null,
+					DB.KEY_USER_LOGGED_IN + "=?",
+					new String[]{ String.valueOf( 1 ) }, null
+			);
+			patientRepository.readFromCursor( patient, cursor );
+//			if( cursor != null )
+//				cursor.close();
 
-//			} // if
-
-			JSONObject jsonPatient = patient.toJSONObject();
-			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );
+			JSONObject jsonPatient = PatientSingleton.toJSONObject();
+			//			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );
 			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "Patient: " + patient.toString() );
-//						if( DEBUG ) Log.e( "RemoteSyncPatientData", "Json: " + jsonPatient.toString() );
-//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
+			//						if( DEBUG ) Log.e( "RemoteSyncPatientData", "Json: " + jsonPatient.toString() );
+			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
 			returnString = conn.sendSyncPatientDataRequest( jsonPatient );
+
 
 		}
 		catch( JSONException e )
+		{
+			e.printStackTrace();
+		}
+		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
