@@ -9,11 +9,14 @@
 
 package com.sugarcubes.myglucose.activities;
 
+import android.Manifest;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +34,7 @@ import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.services.AuthenticatorService;
+import com.sugarcubes.myglucose.services.PedometerService;
 import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
@@ -51,6 +55,14 @@ public class MainActivity
 	public static final int              RESULT_REGISTER_SUCCESSFUL = 101;
 	private Menu menu;                   // Reference to change Login/logout text
 
+	private static final String[] INITIAL_PERMS   = {
+			Manifest.permission.ACCESS_COARSE_LOCATION,
+			Manifest.permission.ACCESS_FINE_LOCATION
+	};
+	private static final String[] LOCATION_PERMS  = {
+			Manifest.permission.ACCESS_FINE_LOCATION
+	};
+	private static final int      INITIAL_REQUEST = 1337;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -71,10 +83,46 @@ public class MainActivity
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
 
+		// Start all of the services to run in the background:
 		startService( new Intent( this, SyncService.class ) );
 		startService( new Intent( this, AuthenticatorService.class ) );
 
+		if( !canAccessFineLocation() && !canAccessCoarseLocation()
+				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+		{
+			requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
+		}
+
+		Intent pedometerIntent = new Intent( this, PedometerService.class );
+		pedometerIntent.setAction( PedometerService.ACTION_START );
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+			startForegroundService( pedometerIntent );
+		else
+			startService( pedometerIntent );
+
 	} // onCreate
+
+	private boolean canAccessFineLocation()
+	{
+		return ( hasPermission( Manifest.permission.ACCESS_FINE_LOCATION ) );
+
+	} // canAccessFineLocation
+
+	private boolean canAccessCoarseLocation()
+	{
+		return ( hasPermission( Manifest.permission.ACCESS_COARSE_LOCATION ) );
+
+	} // canAccessCoarseLocation
+
+	private boolean hasPermission( String perm )
+	{
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+		{
+			return ( PackageManager.PERMISSION_GRANTED == checkSelfPermission( perm ) );
+		}
+		return false;
+
+	} // hasPermission
 
 
 	@Override
@@ -191,7 +239,8 @@ public class MainActivity
 		//		this.cursor = cursor;
 		//		if( mAdapter != null )
 		//			mAdapter.swapCursor( cursor );
-		if( cursor != null && !cursor.isClosed() && cursor.getCount() > 0 ) // This should return Users from db
+		if( cursor != null && !cursor.isClosed() &&
+				cursor.getCount() > 0 ) // This should return Users from db
 		{
 
 			if( DEBUG ) Log.d( LOG_TAG, patientUser.toString() );

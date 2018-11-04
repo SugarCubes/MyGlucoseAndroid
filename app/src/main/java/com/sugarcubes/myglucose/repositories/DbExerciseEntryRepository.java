@@ -123,6 +123,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		entry.setRemoteId( cursor.getString( cursor.getColumnIndex( DB.KEY_REMOTE_ID ) ) );
 		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ) );
 		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES ) ) );
+		entry.setSteps( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_STEPS ) ) );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -152,6 +153,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		values.put( DB.KEY_USERNAME, item.getUserName() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );
 		values.put( DB.KEY_EXERCISE_MINUTES, item.getMinutes() );
+		values.put( DB.KEY_EXERCISE_STEPS, item.getSteps() );
 		values.put( DB.KEY_CREATED_AT, item.getCreatedAt().toString() );
 		values.put( DB.KEY_UPDATED_AT, item.getUpdatedAt().toString() );
 		values.put( DB.KEY_TIMESTAMP, item.getTimestamp() );

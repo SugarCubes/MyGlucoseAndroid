@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 12;
+	private static final int DATABASE_VERSION = 13;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -21,6 +21,7 @@ public class DB extends SQLiteOpenHelper
 	public static final String TABLE_MEAL_ENTRIES     = "MealEntry";
 	public static final String TABLE_MEAL_ITEMS       = "MealItem";
 	public static final String TABLE_EXERCISE_ENTRIES = "ExerciseEntry";
+	public static final String TABLE_PEDOMETER        = "Pedometer";
 
 	public static final String PATIENT_USERS = "PatientUser";
 	public static final String DOCTOR_USERS  = "DoctorUser";
@@ -35,7 +36,8 @@ public class DB extends SQLiteOpenHelper
 			TABLE_GLUCOSE_ENTRIES,
 			TABLE_MEAL_ENTRIES,
 			TABLE_MEAL_ITEMS,
-			TABLE_EXERCISE_ENTRIES
+			TABLE_EXERCISE_ENTRIES,
+			TABLE_PEDOMETER
 	};
 
 	// Misc db table keys:
@@ -87,6 +89,15 @@ public class DB extends SQLiteOpenHelper
 	// ExerciseEntry table keys:
 	public static final String KEY_EXERCISE_MINUTES                = "minutes";
 	public static final String KEY_EXERCISE_NAME                   = "name";
+	public static final String KEY_EXERCISE_STEPS                  = "steps";
+	// Pedometer table:
+//	public static final String KEY_PED_HOUR                        = "hour";
+//	public static final String KEY_PED_DAY                         = "day";
+//	public static final String KEY_PED_MONTH                       = "month";
+//	public static final String KEY_PED_YEAR                        = "year";
+	public static final String KEY_PED_COORD_X                     = "xCoord";
+	public static final String KEY_PED_COORD_Y                     = "yCoord";
+	public static final String KEY_PED_STEP_COUNT                  = "steps";
 
 
 	public DB( Context context )
@@ -110,7 +121,8 @@ public class DB extends SQLiteOpenHelper
 		// ADD NEW TABLES HERE
 
 		// CREATE LOGIN TABLE
-		String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
+		String CREATE_USERS_TABLE = "CREATE TABLE "
+				+ TABLE_USERS + "("
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
 				+ KEY_USER_EMAIL + " TEXT,"
 				+ KEY_USER_LOGGED_IN + " INTEGER,"
@@ -133,19 +145,22 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_TIMESTAMP + " INTEGER );";    // Retrieve as a *long* value
 
 		// CREATE PATIENTS TABLE
-		String CREATE_PATIENTS_TABLE = "CREATE TABLE " + TABLE_PATIENTS + "("
+		String CREATE_PATIENTS_TABLE = "CREATE TABLE "
+				+ TABLE_PATIENTS + "("
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
 				+ KEY_DR_ID + " TEXT, "
 				+ KEY_DR_USERNAME + " TEXT );";
 
 		// CREATE DOCTORS TABLE
-		String CREATE_DOCTORS_TABLE = "CREATE TABLE " + TABLE_DOCTORS + "("
+		String CREATE_DOCTORS_TABLE = "CREATE TABLE "
+				+ TABLE_DOCTORS + "("
 				+ KEY_USERNAME + " TEXT PRIMARY KEY,"
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_DR_DEGREE_ABBREVIATION + " TEXT );";
 
 		// CREATE GLUCOSE TABLE
-		String CREATE_GLUCOSE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_GLUCOSE_ENTRIES + "("
+		String CREATE_GLUCOSE_ENTRIES_TABLE = "CREATE TABLE "
+				+ TABLE_GLUCOSE_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
@@ -158,7 +173,8 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_TIMESTAMP + " INTEGER);";            // Retrieve as a *long* value
 
 		// CREATE MEALS TABLE
-		String CREATE_MEAL_ENTRIES_TABLE = "CREATE TABLE " + TABLE_MEAL_ENTRIES + "("
+		String CREATE_MEAL_ENTRIES_TABLE = "CREATE TABLE "
+				+ TABLE_MEAL_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
@@ -169,7 +185,8 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_TIMESTAMP + " INTEGER);";    // Retrieve as a *long* value
 
 		// CREATE MEAL ITEMS TABLE
-		String CREATE_MEAL_ITEMS_TABLE = "CREATE TABLE " + TABLE_MEAL_ITEMS + "("
+		String CREATE_MEAL_ITEMS_TABLE = "CREATE TABLE "
+				+ TABLE_MEAL_ITEMS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_MEAL_ID + " TEXT, "
@@ -178,15 +195,31 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_MEAL_ITEM_SERVINGS + " INTEGER);";
 
 		// CREATE EXERCISE TABLE
-		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE " + TABLE_EXERCISE_ENTRIES + "("
+		String CREATE_EXERCISE_ENTRIES_TABLE = "CREATE TABLE "
+				+ TABLE_EXERCISE_ENTRIES + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
 				+ KEY_EXERCISE_NAME + " TEXT, "
 				+ KEY_EXERCISE_MINUTES + " INTEGER, "
+				+ KEY_EXERCISE_STEPS + " INTEGER, "
 				+ KEY_CREATED_AT + " TEXT, "
 				+ KEY_UPDATED_AT + " TEXT, "
 				+ KEY_TIMESTAMP + " INTEGER);";    // Retrieve as a *long* value
+
+
+		// CREATE PEDOMETER TABLE
+		String CREATE_PEDOMETER_TABLE = "CREATE TABLE "
+				+ TABLE_PEDOMETER + "("
+				+ KEY_ID + " INTEGER PRIMARY KEY, "
+				+ KEY_REMOTE_ID + " TEXT, "
+				+ KEY_USERNAME + " TEXT,"
+				+ KEY_PED_COORD_X + " INTEGER, "
+				+ KEY_PED_COORD_Y + " INTEGER,"
+				+ KEY_CREATED_AT + " TEXT, "
+				+ KEY_UPDATED_AT + " TEXT, "
+				+ KEY_PED_STEP_COUNT + " INTEGER"
+				+ " );";
 
 
 		db.execSQL( CREATE_USERS_TABLE );
@@ -196,6 +229,7 @@ public class DB extends SQLiteOpenHelper
 		db.execSQL( CREATE_MEAL_ENTRIES_TABLE );
 		db.execSQL( CREATE_MEAL_ITEMS_TABLE );
 		db.execSQL( CREATE_EXERCISE_ENTRIES_TABLE );
+		db.execSQL( CREATE_PEDOMETER_TABLE );
 
 		// NOTE: When a DB has to hit an index, and then another table, this adds
 		// 	another query it has to perform. Since we will only be storing one patient

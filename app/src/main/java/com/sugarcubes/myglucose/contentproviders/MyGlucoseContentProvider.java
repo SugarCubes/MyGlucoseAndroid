@@ -35,7 +35,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 			GLUCOSE_ENTRIES_URL  = "content://" + AUTHORITY + "/" + DB.TABLE_GLUCOSE_ENTRIES,
 			MEAL_ENTRIES_URL     = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ENTRIES,
 			MEAL_ITEMS_URL       = "content://" + AUTHORITY + "/" + DB.TABLE_MEAL_ITEMS,
-			EXERCISE_ENTRIES_URL = "content://" + AUTHORITY + "/" + DB.TABLE_EXERCISE_ENTRIES;
+			EXERCISE_ENTRIES_URL = "content://" + AUTHORITY + "/" + DB.TABLE_EXERCISE_ENTRIES,
+			PEDOMETER_URL        = "content://" + AUTHORITY + "/" + DB.TABLE_PEDOMETER;
 
 	// Uris to be used by the ContentProvider:
 	public static final Uri
@@ -47,7 +48,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 			GLUCOSE_ENTRIES_URI  = Uri.parse( GLUCOSE_ENTRIES_URL ),
 			MEAL_ENTRIES_URI     = Uri.parse( MEAL_ENTRIES_URL ),
 			MEAL_ITEMS_URI       = Uri.parse( MEAL_ITEMS_URL ),
-			EXERCISE_ENTRIES_URI = Uri.parse( EXERCISE_ENTRIES_URL );
+			EXERCISE_ENTRIES_URI = Uri.parse( EXERCISE_ENTRIES_URL ),
+			PEDOMETER_URI        = Uri.parse( PEDOMETER_URL );
 
 	// Fields for content URI
 	public static final int
@@ -58,7 +60,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 			PATIENT_USERS       = 5,
 			DOCTORS             = 6,
 			DOCTORS_ID          = 7,
-			DOCTOR_USERS		= 8,
+			DOCTOR_USERS        = 8,
 			GLUCOSE_ENTRIES     = 9,
 			GLUCOSE_ENTRIES_ID  = 10,
 			MEAL_ENTRIES        = 11,
@@ -67,7 +69,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 			MEAL_ITEMS          = 14,
 			MEAL_ITEMS_ID       = 15,
 			EXERCISE_ENTRIES    = 16,
-			EXERCISE_ENTRIES_ID = 17;
+			EXERCISE_ENTRIES_ID = 17,
+			PEDOMETER           = 18;
 
 	// Creates a UriMatcher object.
 	private static final UriMatcher uriMatcher;
@@ -93,6 +96,7 @@ public class MyGlucoseContentProvider extends ContentProvider
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_MEAL_ITEMS + "/#", MEAL_ITEMS_ID );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_EXERCISE_ENTRIES, EXERCISE_ENTRIES );
 		uriMatcher.addURI( AUTHORITY, DB.TABLE_EXERCISE_ENTRIES + "/#", EXERCISE_ENTRIES_ID );
+		uriMatcher.addURI( AUTHORITY, DB.TABLE_PEDOMETER, PEDOMETER );
 
 	} // uriMatcher
 
@@ -229,6 +233,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 				queryBuilder.appendWhere( DB.KEY_ID + "=" + uri.getLastPathSegment() );
 				break;
 
+			case PEDOMETER:
+				queryBuilder.setTables( DB.TABLE_PEDOMETER );
+				break;
+
 			default:
 				throw new IllegalArgumentException( "Unknown URI " + uri );
 		}
@@ -293,6 +301,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 
 			case EXERCISE_ENTRIES:
 				count = database.insert( DB.TABLE_EXERCISE_ENTRIES, AUTHORITY, values );
+				break;
+
+			case PEDOMETER:
+				count = database.insert( DB.TABLE_PEDOMETER, AUTHORITY, values );
 				break;
 
 			default:
@@ -451,6 +463,10 @@ public class MyGlucoseContentProvider extends ContentProvider
 						selectionArgs );
 				break;
 
+			case PEDOMETER:
+				count = database.delete( DB.TABLE_PEDOMETER, selection, selectionArgs );
+				break;
+
 			default:
 				throw new IllegalArgumentException( "Unknown URI " + uri );
 
@@ -600,6 +616,11 @@ public class MyGlucoseContentProvider extends ContentProvider
 						new String[]{ uri.getLastPathSegment() } );
 				break;
 
+			case PEDOMETER:
+				count =
+						database.update( DB.TABLE_PEDOMETER, values, selection, selectionArgs );
+				break;
+
 			default:
 				throw new IllegalArgumentException( "Unknown URI " + uri );
 
@@ -656,6 +677,8 @@ public class MyGlucoseContentProvider extends ContentProvider
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.exerciseentries";
 			case EXERCISE_ENTRIES_ID:
 				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.exerciseentriesid";
+			case PEDOMETER:
+				return "com.sugarcubes.myglucose/com.sugarcubes.myglucose.pedometer";
 			default:
 				throw new IllegalArgumentException( "Unsupported URI: " + uri );
 		} // switch

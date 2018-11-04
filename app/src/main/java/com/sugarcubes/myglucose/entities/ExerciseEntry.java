@@ -17,6 +17,7 @@ public class ExerciseEntry
 	private String userName;
 	private String exerciseName;
 	private int    minutes;
+	private int    steps;
 	private Date   updatedAt;
 	private Date   createdAt;
 	private long   timestamp;
@@ -29,6 +30,7 @@ public class ExerciseEntry
 		userName = "";
 		exerciseName = "";
 		minutes = -1;
+		steps = -1;
 		createdAt = new Date();
 		updatedAt = createdAt;
 		timestamp = createdAt.getTime();
@@ -83,6 +85,16 @@ public class ExerciseEntry
 	public void setMinutes( int minutes )
 	{
 		this.minutes = minutes;
+	}
+
+	public int getSteps()
+	{
+		return steps;
+	}
+
+	public void setSteps( int steps )
+	{
+		this.steps = steps;
 	}
 
 	public Date getCreatedAt()
@@ -141,6 +153,8 @@ public class ExerciseEntry
 			exerciseEntry.put( DB.KEY_TIMESTAMP, timestamp );
 		exerciseEntry.put( DB.KEY_USERNAME, userName );
 		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES, minutes );
+		if( steps > 0 )
+			exerciseEntry.put( DB.KEY_EXERCISE_STEPS, steps );
 
 		try
 		{
