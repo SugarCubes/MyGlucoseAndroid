@@ -1,4 +1,4 @@
-package com.sugarcubes.myglucose;
+package com.sugarcubes.myglucose.factories;
 
 
 import android.content.Context;
