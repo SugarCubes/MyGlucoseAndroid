@@ -164,8 +164,8 @@ public class GlucoseEntry
 
 		if( !remoteId.isEmpty() )
 			glucoseEntry.put( DB.KEY_REMOTE_ID, remoteId );
-		if( patient != null && patient.getUserName().isEmpty() )
-			glucoseEntry.put( DB.KEY_USERNAME, patient.getId() );
+		if( userName != null && !userName.isEmpty() )
+			glucoseEntry.put( DB.KEY_USERNAME, userName );
 		if( measurement > 0 )
 			glucoseEntry.put( DB.KEY_GLUCOSE_MEASUREMENT, measurement );
 		glucoseEntry.put( DB.KEY_GLUCOSE_BEFORE_AFTER, beforeAfter.getValue() );

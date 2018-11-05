@@ -17,7 +17,7 @@ public class ExerciseEntry
 	private String userName;
 	private String exerciseName;
 	private int    minutes;
-	private int    steps;
+	private double steps;
 	private Date   updatedAt;
 	private Date   createdAt;
 	private long   timestamp;
@@ -87,12 +87,12 @@ public class ExerciseEntry
 		this.minutes = minutes;
 	}
 
-	public int getSteps()
+	public double getSteps()
 	{
 		return steps;
 	}
 
-	public void setSteps( int steps )
+	public void setSteps( double steps )
 	{
 		this.steps = steps;
 	}
@@ -151,10 +151,10 @@ public class ExerciseEntry
 			exerciseEntry.put( DB.KEY_REMOTE_ID, remoteId );
 		if( timestamp > 0 )
 			exerciseEntry.put( DB.KEY_TIMESTAMP, timestamp );
+		exerciseEntry.put( DB.KEY_EXERCISE_NAME, exerciseName );
 		exerciseEntry.put( DB.KEY_USERNAME, userName );
 		exerciseEntry.put( DB.KEY_EXERCISE_MINUTES, minutes );
-		if( steps > 0 )
-			exerciseEntry.put( DB.KEY_EXERCISE_STEPS, steps );
+		exerciseEntry.put( DB.KEY_EXERCISE_STEPS, steps );
 
 		try
 		{

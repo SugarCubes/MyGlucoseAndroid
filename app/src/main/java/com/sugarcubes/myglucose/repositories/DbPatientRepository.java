@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
+import com.sugarcubes.myglucose.entities.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
@@ -37,13 +38,13 @@ public class DbPatientRepository implements IPatientRepository
 {
 	private final String LOG_TAG = this.getClass().getName();
 
-	private ContentResolver            contentResolver;
-	private Context                    context;
-	private IDoctorRepository          doctorRepository;
-	private IApplicationUserRepository applicationUserRepository;
-	private IGlucoseEntryRepository    glucoseEntryRepository;
-	private IMealEntryRepository       mealEntryRepository;
-	private IExerciseEntryRepository   exerciseEntryRepository;
+	private ContentResolver                             contentResolver;
+	private Context                                     context;
+	private IDoctorRepository                           doctorRepository;
+	private IApplicationUserRepository<ApplicationUser> applicationUserRepository;
+	private IGlucoseEntryRepository                     glucoseEntryRepository;
+	private IMealEntryRepository                        mealEntryRepository;
+	private IExerciseEntryRepository                    exerciseEntryRepository;
 
 
 	public DbPatientRepository( Context context )
@@ -95,10 +96,7 @@ public class DbPatientRepository implements IPatientRepository
 				DB.KEY_USERNAME + "=?",
 				new String[]{ patientSingleton.getEmail() } );
 
-		if( a > 0 && ( b > 0 || c > 0 ) )
-			return true;
-
-		return false;
+		return a > 0 && ( b > 0 || c > 0 );
 
 	} // populate
 
@@ -152,7 +150,7 @@ public class DbPatientRepository implements IPatientRepository
 		Uri patientUri = null;
 		if( !exists( patientSingleton.getUserName() ) )
 		{
-			long timestamp = new Date().getTime();
+			//long timestamp = new Date().getTime();
 			ContentValues patientValues = new ContentValues();
 			if( patientSingleton.getDoctorUserName() != null
 					&& !patientSingleton.getDoctorUserName().isEmpty() )
@@ -179,10 +177,8 @@ public class DbPatientRepository implements IPatientRepository
 				null, DB.KEY_USERNAME + "=?",
 				new String[]{ username }, null );
 		readFromCursor( patientSingleton, patientCursor );
-		applicationUserRepository.readFromCursor( patientSingleton, patientCursor );    // Populate appUser
-		//		Cursor patientCursor = contentResolver.query( MyGlucoseContentProvider.PATIENTS_URI, null,
-		//				DB.KEY_USERNAME + "=?", new String[]{ username }, null );
-		//		readFromCursor( patientSingleton, patientCursor );                                // Populate patient
+		applicationUserRepository.readFromCursor( patientSingleton, patientCursor );     // appUser
+
 		return patientSingleton;
 
 	} // read
@@ -191,10 +187,9 @@ public class DbPatientRepository implements IPatientRepository
 	@Override
 	public ArrayList<PatientSingleton> readAll()
 	{
-		ArrayList<PatientSingleton> arrayList = new ArrayList<>();
 		//		arrayList.add( read( "ArbitraryDefaultUserUsername" ) );
 
-		return arrayList;
+		return new ArrayList<>();
 
 	} // readAll
 
@@ -217,6 +212,10 @@ public class DbPatientRepository implements IPatientRepository
 				patientSingleton.setDoctor(
 						doctorRepository.read( patientSingleton.getDoctorUserName() ) );
 			applicationUserRepository.readFromCursor( patientSingleton, cursor );
+
+			// Attach the patient's entries:
+			// NOTE: This should be done in readFromCursor() to allow for passing
+			//		a cursor in directly.
 			patientSingleton.setGlucoseEntries( glucoseEntryRepository.readAll(
 					patientSingleton.getUserName() ) );
 			patientSingleton.setExerciseEntries( exerciseEntryRepository.readAll(

@@ -14,7 +14,12 @@ import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class ViewLatestExerciseEntryActivity extends AppCompatActivity
 {
@@ -63,8 +68,12 @@ public class ViewLatestExerciseEntryActivity extends AppCompatActivity
 		exerciseName.setText( exerciseEntry.getExerciseName() );
 		TextView exerciseMinutes = findViewById( R.id.exercise_minutes_view );
 		exerciseMinutes.setText( String.valueOf( exerciseEntry.getMinutes() ) );
+		TextView exerciseSteps = findViewById( R.id.exercise_steps_view );
+		exerciseSteps.setText( String.valueOf( exerciseEntry.getSteps() ) );
 		TextView tvDate = findViewById( R.id.exercise_date_view );
-		tvDate.setText( String.valueOf( exerciseEntry.getCreatedAt() ) );
+		SimpleDateFormat formatter = new SimpleDateFormat( "MM/dd/yyyy hh:mm a", Locale.US );
+		String formattedDate = formatter.format( exerciseEntry.getCreatedAt() );
+		tvDate.setText( formattedDate );//String.valueOf( formattedDate ) );
 
 	}
 }

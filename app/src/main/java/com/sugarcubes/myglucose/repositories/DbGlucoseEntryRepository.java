@@ -46,9 +46,9 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 	@Override
 	public void create( GlucoseEntry item )
 	{
-		ContentValues values = putContentValues( item );
 		if( item.getRemoteId().isEmpty() )                        // Create an ID
 			item.setRemoteId( UUID.randomUUID().toString() );
+		ContentValues values = putContentValues( item );
 		Log.w( LOG_TAG, "URI: " + uri + "; Values: " + values.toString() );
 		contentResolver.insert(  uri, values );
 
@@ -178,6 +178,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 				cursor.getColumnIndex( DB.KEY_GLUCOSE_BEFORE_AFTER ) ) ) );
 		entry.setWhichMeal( WhichMeal.valueOf( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
+		entry.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )

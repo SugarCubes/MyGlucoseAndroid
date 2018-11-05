@@ -122,8 +122,7 @@ public class MealItem
 	{
 		JSONObject mealItem = new JSONObject();
 
-		if( !remoteId.isEmpty() )
-			mealItem.put( DB.KEY_REMOTE_ID, remoteId );
+		mealItem.put( DB.KEY_REMOTE_ID, remoteId );
 		mealItem.put( DB.KEY_MEAL_ID, mealId );
 		mealItem.put( DB.KEY_MEAL_ITEM_NAME, name );
 		mealItem.put( DB.KEY_MEAL_ITEM_CARBS, carbs );

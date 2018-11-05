@@ -7,9 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/background</item>
+        <item name="android:editTextColor">@color/colorPrimaryDark</item>
         <!--<item name="android:textColor">@android:color/white</item>-->
-        <!--<item name="android:editTextColor">@android:color/white</item>-->
-        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <!--<item name="android:textColorPrimary">@android:color/black</item>-->
         <!--Main text color:-->
         <!--<item name="android:textColorSecondary">@android:color/white</item>-->
         <!--<item name="android:textColorTertiary">@android:color/white</item>-->
@@ -39,7 +39,7 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="EditTextCustomHolo" parent="android:Widget.EditText">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="android:editTextColor">@android:color/white</item>-->
         <!--<item name="android:textColorPrimary">@android:color/white</item>-->

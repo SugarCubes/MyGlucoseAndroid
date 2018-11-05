@@ -8,6 +8,7 @@ import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
+import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
@@ -54,6 +55,8 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
 			returnString = conn.sendSyncPatientDataRequest( jsonPatient );
 
+			if( ErrorCode.interpretErrorCode( returnString ) == ErrorCode.INVALID_LOGIN_TOKEN )
+				PatientSingleton.eraseData();	// Log out
 
 		}
 		catch( JSONException e )

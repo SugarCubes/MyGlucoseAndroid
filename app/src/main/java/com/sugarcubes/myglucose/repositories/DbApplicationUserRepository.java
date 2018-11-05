@@ -189,27 +189,36 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 	public ContentValues putContentValues( ApplicationUser user )
 	{
 		ContentValues values = new ContentValues();
-		if( !user.getEmail().isEmpty() )
+		if( user.getEmail() != null && !user.getEmail().equals( "null" ) &&
+				!user.getEmail().isEmpty() )
 			values.put( DB.KEY_USER_EMAIL, user.getEmail() );
-		if( !user.getFirstName().isEmpty() )
+		if( user.getFirstName() != null && !user.getFirstName().equals( "null" ) &&
+				!user.getFirstName().isEmpty() )
 			values.put( DB.KEY_USER_FIRST_NAME, user.getFirstName() );
-		if( !user.getLastName().isEmpty() )
+		if( user.getLastName() != null && !user.getLastName().equals( "null" ) &&
+				!user.getLastName().isEmpty() )
 			values.put( DB.KEY_USER_LAST_NAME, user.getLastName() );
-		if( !user.getAddress1().isEmpty() )
+		if( user.getAddress1() != null && !user.getAddress1().equals( "null" ) &&
+				!user.getAddress1().isEmpty() )
 			values.put( DB.KEY_USER_ADDRESS1, user.getAddress1() );
-		if( !user.getAddress2().isEmpty() )
+		if( user.getAddress2() != null && !user.getAddress2().equals( "null" ) &&
+				!user.getAddress2().isEmpty() )
 			values.put( DB.KEY_USER_ADDRESS2, user.getAddress2() );
-		if( !user.getCity().isEmpty() )
+		if( user.getCity() != null && !user.getCity().equals( "null" ) &&
+				!user.getCity().isEmpty() )
 			values.put( DB.KEY_USER_CITY, user.getCity() );
-		if( !user.getState().isEmpty() )
+		if( user.getState() != null && !user.getState().equals( "null" ) &&
+				!user.getState().isEmpty() )
 			values.put( DB.KEY_USER_STATE, user.getState() );
 		if( user.getZip1() > 0 )
 			values.put( DB.KEY_USER_ZIP1, user.getZip1() );
 		if( user.getZip2() > 0 )
 			values.put( DB.KEY_USER_ZIP2, user.getZip2() );
-		if( !user.getPhoneNumber().isEmpty() )
+		if( user.getPhoneNumber() != null && !user.getPhoneNumber().equals( "null" ) &&
+				!user.getPhoneNumber().isEmpty() )
 			values.put( DB.KEY_USER_PHONE, user.getPhoneNumber() );
-		if( !user.getUserName().isEmpty() )
+		if( user.getUserName() != null && !user.getUserName().equals( "null" ) &&
+				!user.getUserName().isEmpty() )
 			values.put( DB.KEY_USERNAME, user.getUserName() );
 		if( user.getWeight() == null )
 			user.setWeight( "0" );
@@ -222,7 +231,8 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		values.put( DB.KEY_USER_LOGGED_IN, user.isLoggedIn()
 				? 1
 				: 0 );
-		if( !user.getLoginToken().isEmpty() )
+		if( user.getLoginToken() != null && !user.getLoginToken().equals( "null" ) &&
+				!user.getLoginToken().isEmpty() )
 			values.put( DB.KEY_USER_LOGIN_TOKEN, user.getLoginToken() );
 		if( user.getLoginExpirationTimestamp() > 0 )
 			values.put( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP, user.getLoginExpirationTimestamp() );

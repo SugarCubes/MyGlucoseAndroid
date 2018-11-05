@@ -45,7 +45,7 @@ public class ApplicationUser
 		weight = "";
 		createdAt = newDate;
 		updatedAt = createdAt;
-		timestamp = newDate.getTime();
+		timestamp = createdAt.getTime();
 		loginToken = "";
 		loginExpirationTimestamp = newDate.getTime();
 		loggedIn = false;

@@ -29,7 +29,6 @@ import java.util.UUID;
 public class DbExerciseEntryRepository implements IExerciseEntryRepository
 {
 	private ContentResolver contentResolver;
-	private Uri uri = MyGlucoseContentProvider.EXERCISE_ENTRIES_URI;
 
 	// We need to inject a Context object so that we can get the content resolver
 	public DbExerciseEntryRepository( Context context )
@@ -45,7 +44,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		if( item.getRemoteId().isEmpty() )                        // Create an ID
 			item.setRemoteId( UUID.randomUUID().toString() );
 
-		contentResolver.insert( uri, this.putContentValues( item ) );
+		contentResolver.insert( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI, this.putContentValues( item ) );
 
 	} // create
 
@@ -53,7 +52,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public ExerciseEntry read( int id )
 	{
-		Cursor cursor = contentResolver.query( uri,
+		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
 				null, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) },
 				null );
 
@@ -90,7 +89,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		String selection = userName != null ? DB.KEY_USERNAME + "=?" : null;
 		String[] selectionArgs = userName != null ? new String[]{ userName } : null;
 
-		Cursor cursor = contentResolver.query( uri,
+		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
 				null, selection, selectionArgs,
 				DB.KEY_TIMESTAMP + " DESC" );
 
@@ -124,6 +123,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		entry.setExerciseName( cursor.getString( cursor.getColumnIndex( DB.KEY_EXERCISE_NAME ) ) );
 		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES ) ) );
 		entry.setSteps( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_STEPS ) ) );
+		entry.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -166,7 +166,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	public void update( int id, ExerciseEntry entry )
 	{
 		entry.setUpdatedAt( new Date() );
-		contentResolver.update( uri, putContentValues( entry ), DB.KEY_ID + "=?",
+		contentResolver.update( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				putContentValues( entry ), DB.KEY_ID + "=?",
 				new String[]{ String.valueOf( id ) } );
 
 	} // update
@@ -175,7 +176,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void delete( ExerciseEntry entry )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?",
+		contentResolver.delete( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				DB.KEY_ID + "=?",
 				new String[]{ String.valueOf( entry.getId() ) } );
 
 	} // delete
@@ -184,7 +186,8 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void delete( int id )
 	{
-		contentResolver.delete( uri, DB.KEY_ID + "=?",
+		contentResolver.delete( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				DB.KEY_ID + "=?",
 				new String[]{ String.valueOf( id ) } );
 
 	} // delete

@@ -83,6 +83,30 @@
             android:gravity="center">
 
             <TextView
+                android:id="@+id/tv_exercise_steps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exercise_steps"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="46dp" />
+
+            <TextView
+                android:id="@+id/exercise_steps_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/none_entered_yet"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
