@@ -68,10 +68,6 @@ public class PedometerService extends Service implements SensorEventListener
 	private Sensor        mStepDetectorSensor;
 	private static boolean running = false;
 
-	private int currentHour;
-	private int currentDay;
-	private int lastHour;
-
 	LocationListener[] mLocationListeners = new LocationListener[]{
 			new LocationListener( LocationManager.GPS_PROVIDER ),
 			new LocationListener( LocationManager.NETWORK_PROVIDER )
@@ -86,14 +82,21 @@ public class PedometerService extends Service implements SensorEventListener
 	private Timer        mTimer;
 
 
-	private static       int    hourlySteps           = 0;
-	private static       int    dailySteps            = 0;
-	private static       int    milestoneStep         = 0;
+	private static int currentHour;
+	private static int currentDay;
+	private static int currentLogHour;
+	private static int currentLogDay;
+	private static int hourlySteps    = 0;
+	private static int dailySteps     = 0;
+	private static int lastHourSteps  = 0;
+	private static int lastDaySteps   = 0;
+	private static int milestoneSteps = 0;
+
+
 	private static final int    notificationId        = 123321;
 	private static final String notificationChannelId = "com.sugarcubes.myglucose.steps";
-	private static       int    lastHourSteps         = 0;
-	private              String status                = "Steps today: " + dailySteps;
-	private              String yesterDay             = today();
+	private              String status                = "Steps dayString: " + dailySteps;
+	private Calendar calendar;
 
 
 	@Override
@@ -108,108 +111,30 @@ public class PedometerService extends Service implements SensorEventListener
 		{
 			Log.i( LOG_TAG, "Kitkat or newer detected. Starting sensor detection." );
 
-			// Get a reference to the Android sensor service
-			mSensorManager = (SensorManager)
-					getSystemService( Context.SENSOR_SERVICE );
+			requestStepSensorOrStopService();
 
-			// Now get a reference to the step counter (if it exists)
-			mStepCounterSensor = mSensorManager != null
-					? mSensorManager
-					.getDefaultSensor( Sensor.TYPE_STEP_COUNTER )
-					: null;
 
-			// and a reference to the step detector (if it exists)
-			mStepDetectorSensor = mSensorManager != null
-					? mSensorManager
-					.getDefaultSensor( Sensor.TYPE_STEP_DETECTOR )
-					: null;
+			requestLocationUpdates();
 
-			// Initialize location
-			if( mLocationManager == null )
-			{
-				mLocationManager = (LocationManager) getApplicationContext()
-						.getSystemService( Context.LOCATION_SERVICE );
-			}
 
-			// Register a listener to each of the step sensors
-			if( mSensorManager != null )
-			{
-				mSensorManager.registerListener( this, mStepCounterSensor,
-						SensorManager.SENSOR_DELAY_FASTEST );
-				mSensorManager.registerListener( this, mStepDetectorSensor,
-						SensorManager.SENSOR_DELAY_FASTEST );
-			}
+			// If the service is still running, assign the time variables:
+			currentHour = getHour( 0 );
+			currentDay = getDay( 0 );
+
+			currentLogHour = currentHour;
+			currentLogDay = currentDay;
+
+			if( mTimer == null )
+				mTimer = new Timer();
 			else
-				// If the device doesn't have a sensor, stop the service:
-				this.stopSelf();
+				mTimer.cancel();
 
-
-			// Try to initialize the wireless location listener first (lower priority):
-			try
-			{
-				mLocationManager.requestLocationUpdates(
-						LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-						mLocationListeners[ 1 ] );
-			}
-			catch( java.lang.SecurityException ex )
-			{
-				Log.i( LOG_TAG, "fail to request location update, ignore", ex );
-			}
-			catch( IllegalArgumentException ex )
-			{
-				Log.d( LOG_TAG, "network provider does not exist, " + ex.getMessage() );
-			}
-
-			// Try to initialize the GPS listener after wireless location (higher priority):
-			try
-			{
-				mLocationManager.requestLocationUpdates(
-						//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-						LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-						mLocationListeners[ 0 ] );
-			}
-			catch( java.lang.SecurityException ex )
-			{
-				Log.i( LOG_TAG, "fail to request location update, ignore", ex );
-			}
-			catch( IllegalArgumentException ex )
-			{
-				Log.d( LOG_TAG, "gps provider does not exist " + ex.getMessage() );
-			} //*/
-
-
-			// If the device has a step sensor of some kind, start a
-			//      step counter to report back every so often.
-			if( mStepCounterSensor != null || mStepDetectorSensor != null )
-			{
-				try
-				{
-					// Start the timers...
-					mAlarmManager = (AlarmManager) getApplicationContext()
-							.getSystemService( Context.ALARM_SERVICE );
-					startLogTimer();
-				}
-				catch( Exception e )
-				{
-					e.printStackTrace();
-				}
-
-				lastHour = Calendar.HOUR_OF_DAY;
-				currentHour = Calendar.HOUR_OF_DAY;
-				currentDay = Calendar.DAY_OF_MONTH;
-
-				if( mTimer == null )
-					mTimer = new Timer();
-				else
-					mTimer.cancel();
-
-				running = true;
-
-			}   // if device has a step sensor
+			running = true;
 
 		} // SDK check
 
 	} // onCreate
+
 
 	@Nullable
 	@Override
@@ -225,46 +150,15 @@ public class PedometerService extends Service implements SensorEventListener
 	{
 		running = true;
 		Sensor sensor = sensorEvent.sensor;
-		float[] values = sensorEvent.values;
-		int totalStepsSinceReboot = -1;
-
-		if( values.length > 0 )
-		{
-			totalStepsSinceReboot = (int) values[ 0 ];
-		}
 
 		if( sensor.getType() == Sensor.TYPE_STEP_COUNTER )
 		{
-			//if( DEBUG ) Log.d( LOG_TAG, "Step Counter Detected : " + totalStepsSinceReboot );
-			// Adapted from: https://stackoverflow.com/questions/42661678/android-how-to-get-the-sensor-step-counter-data-only-one-day
+			calculateDailySteps( sensorEvent );
 
-			// TODO: Only assume we are starting at the beginning of the day.
-			//		Daily updates will be handled after DB is updated.
-			dailySteps = getPreferenceInt( today() );
-			if( milestoneStep < 1 )
-				milestoneStep = totalStepsSinceReboot;              // Initialize milestoneStep
-			// Subtract any steps accounted for previously and save:
-			int additionStep = totalStepsSinceReboot - milestoneStep;
-			dailySteps += additionStep;
-			savePreferenceInt( today(), dailySteps );//todayStep + additionStep );
-			// Subtract current total steps on next iteration from larger total
-			milestoneStep = totalStepsSinceReboot;
 		}
 		else if( sensor.getType() == Sensor.TYPE_STEP_DETECTOR )
 		{
-			// For test only. Only allowed value is 1.0 i.e. for step taken
-			//if( DEBUG ) Log.d( LOG_TAG, "Step Detector Detected : " + totalStepsSinceReboot
-			//		+ "; Hourly Steps: " + hourlySteps );
-
-			if( currentHour == Calendar.HOUR_OF_DAY )
-				hourlySteps++;
-			else
-			{
-				lastHour = currentHour;                             // Save the previous hour
-				currentHour = Calendar.HOUR_OF_DAY;                 // Set current hour
-				lastHourSteps = hourlySteps;                        // Save the last hour's steps
-				hourlySteps = 1;                                    // Reset hourly steps
-			} // if
+			calculateHourlySteps();
 
 		} // if*/
 
@@ -272,34 +166,6 @@ public class PedometerService extends Service implements SensorEventListener
 		updateNotification();
 
 	} // onSensorChanged
-
-
-	private void savePreferenceInt( String key, int value )
-	{
-		SharedPreferences sharedPreferences
-				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putInt( key, value );
-		editor.apply();
-
-	} // savePreferenceInt
-
-
-	private int getPreferenceInt( String key ) // default = 0
-	{
-		SharedPreferences sharedPreferences
-				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
-		return sharedPreferences.getInt( key, 0 );
-
-	} // getPreferenceInt
-
-
-	public String today()
-	{
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
-		return sdf.format( Calendar.getInstance().getTime() );
-
-	} // today
 
 
 	@Override
@@ -369,7 +235,7 @@ public class PedometerService extends Service implements SensorEventListener
 				case ACTION_KEEPALIVE:
 					if( DEBUG ) Log.d( LOG_TAG, "Received ACTION_KEEPALIVE" );
 					// Log steps every time the alarm manager calls the KEEPALIVE action:
-					logSteps();
+					logAllSteps();
 					showNotification();
 					break;
 
@@ -392,88 +258,323 @@ public class PedometerService extends Service implements SensorEventListener
 
 
 	/**
+	 * If step sensor service is not available, the service won't continue.
+	 */
+	private void requestStepSensorOrStopService()
+	{
+		// Get a reference to the Android sensor service
+		mSensorManager = (SensorManager)
+				getSystemService( Context.SENSOR_SERVICE );
+
+		// Now get a reference to the step counter (if it exists)
+		mStepCounterSensor = mSensorManager != null
+				? mSensorManager
+				.getDefaultSensor( Sensor.TYPE_STEP_COUNTER )
+				: null;
+
+		// and a reference to the step detector (if it exists)
+		mStepDetectorSensor = mSensorManager != null
+				? mSensorManager
+				.getDefaultSensor( Sensor.TYPE_STEP_DETECTOR )
+				: null;
+
+		// Register a listener to each of the step sensors
+		if( mSensorManager != null )
+		{
+			mSensorManager.registerListener( this, mStepCounterSensor,
+					SensorManager.SENSOR_DELAY_FASTEST );
+			mSensorManager.registerListener( this, mStepDetectorSensor,
+					SensorManager.SENSOR_DELAY_FASTEST );
+		}
+		else
+			// If the device doesn't have a sensor, stop the service:
+			this.stopSelf();
+
+
+		// If the device has a step sensor of some kind, start a
+		//      step counter to report back every so often.
+		if( mStepCounterSensor != null || mStepDetectorSensor != null )
+		{
+			try
+			{
+				// Start the timers...
+				mAlarmManager = (AlarmManager) getApplicationContext()
+						.getSystemService( Context.ALARM_SERVICE );
+				startLogTimer();
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+
+		}   // if device has a step sensor
+
+	} // requestStepSensorOrStopService
+
+
+	/**
+	 * If location is available on the device, request updates
+	 */
+	private void requestLocationUpdates()
+	{
+		// Initialize location
+		if( mLocationManager == null )
+		{
+			mLocationManager = (LocationManager) getApplicationContext()
+					.getSystemService( Context.LOCATION_SERVICE );
+		}
+
+		// Try to initialize the wireless location listener first (lower priority):
+		try
+		{
+			mLocationManager.requestLocationUpdates(
+					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+					mLocationListeners[ 1 ] );
+		}
+		catch( SecurityException ex )
+		{
+			Log.i( LOG_TAG, "fail to request location update, ignore", ex );
+		}
+		catch( IllegalArgumentException ex )
+		{
+			Log.d( LOG_TAG, "network provider does not exist, " + ex.getMessage() );
+		}
+
+		// Try to initialize the GPS listener after wireless location (higher priority):
+		try
+		{
+			mLocationManager.requestLocationUpdates(
+					//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+					mLocationListeners[ 0 ] );
+		}
+		catch( SecurityException ex )
+		{
+			Log.i( LOG_TAG, "fail to request location update, ignore", ex );
+		}
+		catch( IllegalArgumentException ex )
+		{
+			Log.d( LOG_TAG, "gps provider does not exist " + ex.getMessage() );
+		} //*/
+
+	} // requestLocationUpdates
+
+
+	/**
+	 * Schedules keep-alive requests via a PendingIntent in the Alarm Manager
+	 */
+	private void startLogTimer()
+	{
+		// Get the next hour
+		calendar = Calendar.getInstance();
+		int nextHour = getHour( 1 );
+		if( nextHour > 24 )
+			nextHour = 0;
+		calendar.set( calendar.get( Calendar.YEAR ), calendar.get( Calendar.MONTH ),
+				calendar.get( Calendar.DAY_OF_MONTH ), nextHour, 0 );
+		long startTime = calendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+
+		if( DEBUG ) Log.i( LOG_TAG, "Timer start time: "
+				+ System.currentTimeMillis() + startTime );
+
+		Intent intent = new Intent();                               // Start an intent
+		intent.setClass( this, getClass() );            // Get a class reference
+		intent.setAction( ACTION_KEEPALIVE );                       // Action to run
+		PendingIntent pendingIntent =
+				PendingIntent.getService(     // Pass the intent to pendingIntent
+						this, 0, intent, 0 );
+		// Set the service to wake up every interval to show notification
+		mAlarmManager.setInexactRepeating( AlarmManager.RTC_WAKEUP, startTime,
+				AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent );
+
+	} // startLogTimer
+
+
+	/**
+	 * Gets the numeric representation [0-23] of the hour at the offset specified
+	 *
+	 * @param minuteOffset: Positive or negative offset from the current hour
+	 */
+	private int getMinute( int minuteOffset )
+	{
+		calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		if( minuteOffset != 0 )
+			calendar.add( Calendar.MINUTE, minuteOffset );            // Subtract an hour
+		return calendar.get( Calendar.MINUTE );
+
+	} // getHour
+
+
+	/**
+	 * Gets the numeric representation [0-23] of the hour at the offset specified
+	 *
+	 * @param hourOffset: Positive or negative offset from the current hour
+	 */
+	private int getHour( int hourOffset )
+	{
+		calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		if( hourOffset != 0 )
+			calendar.add( Calendar.HOUR_OF_DAY, hourOffset );            // Subtract an hour
+		return calendar.get( Calendar.HOUR_OF_DAY );
+
+	} // getHour
+
+
+	/**
+	 * Gets the numeric representation of the day of the month at the offset specified
+	 *
+	 * @param dayOffset: Positive or negative offset from the current hour
+	 */
+	private int getDay( int dayOffset )
+	{
+		calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		calendar.add( Calendar.DAY_OF_MONTH, dayOffset );            // Subtract an hour
+		return calendar.get( Calendar.DAY_OF_MONTH );
+
+	} // getYesterday
+
+
+	/**
+	 * Calculates daily steps each time it is called. Doesn't always get called on each step.
+	 *
+	 * @param sensorEvent: The SensorEvent object
+	 */
+	private void calculateDailySteps( SensorEvent sensorEvent )
+	{
+		float[] values = sensorEvent.values;
+		int stepsSinceReboot = -1;
+
+		if( values.length > 0 )
+			stepsSinceReboot = (int) values[ 0 ];
+
+		// TODO: Test
+		// Adapted from: https://stackoverflow.com/questions/42661678/android-how-to-get-the-sensor-step-counter-data-only-one-day
+		if( currentDay == getDay( 0 ) )
+		{
+			// Get the saved value from prefs
+			dailySteps = getPreferenceInt( dayString( 0 ) ); // Get today's steps
+			if( milestoneSteps < 1 )
+				milestoneSteps = stepsSinceReboot;                   // Initialize milestoneSteps
+			// Subtract any steps accounted for previously and save:
+			int additionalSteps = stepsSinceReboot - milestoneSteps; // Subtract logged steps
+			dailySteps += additionalSteps;
+
+		}
+		else
+		{
+			// If the day has changed, we need to do some housekeeping. The current day integer
+			//		will change. Then, we reset the daily steps for today.
+			currentDay = getDay( 0 );                           // Reset current day
+			dailySteps = 1;                                     // Reset daily steps
+
+		} // if...else
+
+		// Save dayString's steps. The key is to always save the steps using *today's*
+		//	    preference string. We will retrieve *yesterday's* preference string
+		//      when we log the steps.
+		savePreferenceInt( dayString( 0 ), dailySteps );
+
+		// Use milestoneSteps to Subtract current total from the total on next iteration:
+		milestoneSteps = stepsSinceReboot;
+
+		if( DEBUG ) Log.d( LOG_TAG, "Step Counter Detected : " + dailySteps
+				+ "; Steps since reboot: " + stepsSinceReboot );
+
+	} // calculateDailySteps
+
+
+	/**
+	 * Calculates hourly steps each time it is called. Typically called when a step is detected.
+	 */
+	// TODO: Test
+	private void calculateHourlySteps()
+	{
+		if( DEBUG ) Log.d( LOG_TAG, "Hourly Steps: " + hourlySteps );
+
+		if( currentHour == getHour( 0 ) )
+			hourlySteps++;
+		else                                                    // Handle hour change
+		{
+			currentHour = getHour( 0 );                         // Reset current hour
+			lastHourSteps = hourlySteps;                        // Save to be logged
+			hourlySteps = 1;                                    // Reset hourly steps
+
+		} // if
+
+	} // calculateHourlySteps
+
+
+	/**
+	 * Saves an int in SharedPreferences using a key/value pair
+	 *
+	 * @param key:   Key
+	 * @param value: Value
+	 */
+	private void savePreferenceInt( String key, int value )
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putInt( key, value );
+		editor.apply();
+
+	} // savePreferenceInt
+
+
+	/**
+	 * Gets an int from SharedPreferences using a key
+	 *
+	 * @param key: Key
+	 */
+	private int getPreferenceInt( String key ) // default = 0
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+		return sharedPreferences.getInt( key, 0 );
+
+	} // getPreferenceInt
+
+
+	/**
+	 * Gets a string representation of dayString's date for indexing purposes in SharedPreferences
+	 */
+	public String dayString( int dayOffset )
+	{
+		calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		if( dayOffset != 0 )
+			calendar.add( Calendar.DAY_OF_MONTH, dayOffset );            // Subtract an hour
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd", Locale.US );
+		return sdf.format( calendar.getTime() );
+
+	} // dayString
+
+
+	/**
 	 * Called in onStartCommand, which is called by the AlarmManager.
 	 * This gets the location of the user, and logs the date, time,
 	 * steps, and location.
 	 */
-	public void logSteps()
+	public void logAllSteps()
 	{
 		running = true;
 
-		double coordX = -1;
-		double coordY = -1;
-
 		if( DEBUG )
 			Log.d( LOG_TAG, "T:KeepAlive():Timer doing work. Hourly steps: " + hourlySteps );
-
 
 		if( mStepCounterSensor != null || mStepDetectorSensor != null )
 		{
 			try
 			{
-				// Update the user's location:
-				for( LocationListener locationListener : mLocationListeners )
-				{
-					if( locationListener != null )
-					{
-						if( locationListener.mLastLocation.getLongitude() > 0 )
-							coordX = locationListener.mLastLocation.getLongitude();
-						if( locationListener.mLastLocation.getLatitude() > 0 )
-							coordY = locationListener.mLastLocation.getLatitude();
-
-					} // if
-
-				} // for
-
-				// TODO Test: Only log daily (Calendar.DAY_OF_MONTH has changed)
-				if( currentDay != Calendar.DAY_OF_MONTH ) // getPreferenceInt( today() ) > 0 &&
-				{
-					new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							// Log the ExerciseEntry:
-							IExerciseEntryRepository exerciseEntryRepository
-									= Dependencies.get( IExerciseEntryRepository.class );
-							ExerciseEntry entry = new ExerciseEntry();  // Make a new entry
-							entry.setUserName( PatientSingleton.getInstance().getUserName() );
-							entry.setMinutes( 0 );
-							entry.setSteps( dailySteps );//dailySteps );//getPreferenceInt(today())
-							entry.setExerciseName( DB.KEY_EXERCISE_STEPS );
-							Date created = new Date();
-							entry.setCreatedAt( created );
-							entry.setUpdatedAt( created );
-							exerciseEntryRepository.create( entry );    // Create in the database
-
-							// Only reset the current day and steps after we've logged previous one:
-							currentDay = Calendar.DAY_OF_MONTH;         // should only change here
-							dailySteps = 0;
-							savePreferenceInt( today(), 0 );
-
-						} // run
-
-					}.run(); // runnable
-
-				} // if day has passed
+				// Log the ExerciseEntry:
+				logDailySteps();
 
 
 				// Only log steps when hour change detected:
-				if( lastHourSteps > 0 && lastHour != Calendar.HOUR )
-				{
-					// TODO: Create PedometerRepository for this:
-					// Log the Pedometer steps:
-					ContentValues stepValues = new ContentValues();
-					String createdAt = new Date().toString();
-					stepValues.put( DB.KEY_CREATED_AT, createdAt );
-					stepValues.put( DB.KEY_UPDATED_AT, createdAt );
-					stepValues.put( DB.KEY_PED_COORD_X, coordX );
-					stepValues.put( DB.KEY_PED_COORD_Y, coordY );
-					// Always log the *previous* hour's steps
-					stepValues.put( DB.KEY_PED_STEP_COUNT, lastHourSteps );
-					getContentResolver().insert( MyGlucoseContentProvider.PEDOMETER_URI, stepValues );
-
-				} // if hour has passed
+				logHourlySteps();
 
 			}
 			catch( Throwable t )
@@ -486,7 +587,96 @@ public class PedometerService extends Service implements SensorEventListener
 
 		} // if sensors not null
 
-	}   // logSteps
+	}   // logAllSteps
+
+
+	/**
+	 * Logs daily steps in the database
+	 */
+	private void logDailySteps()
+	{
+		// We first retrieve *yesterday's* steps:
+		lastDaySteps = getPreferenceInt( dayString( -1 ) );
+
+		// TODO: TEST:
+		//if( lastHourSteps > 0 && currentLogHour != getHour( 0 ) ) // Test hourly
+		if( lastDaySteps > 0 && currentLogDay != getDay( 0 ) )
+		{
+			new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					// Enter the daily steps into the database:
+					IExerciseEntryRepository exerciseEntryRepository
+							= Dependencies.get( IExerciseEntryRepository.class );
+					ExerciseEntry entry = new ExerciseEntry();  // Make a new entry
+					entry.setUserName( PatientSingleton.getInstance().getUserName() );
+					entry.setMinutes( 0 );
+					entry.setSteps( lastDaySteps );
+					entry.setExerciseName( DB.KEY_EXERCISE_STEPS );
+					Date created = new Date();
+					entry.setCreatedAt( created );
+					entry.setUpdatedAt( created );
+					exerciseEntryRepository.create( entry );    // Create in the database
+
+				} // run
+
+			}.run(); // runnable
+
+			// Only reset the current day after we've logged previous one:
+			currentLogDay = getDay( 0 );
+			//			currentLogHour = getHour( 0 );    // Remove after testing
+
+		} // if day has passed
+
+	} // logDailySteps
+
+
+	/**
+	 * Logs steps every hour
+	 */
+	private void logHourlySteps()
+	{
+		// TODO: TEST:
+		double coordX = -1;
+		double coordY = -1;
+
+		// Update the user's location:
+		for( LocationListener locationListener : mLocationListeners )
+		{
+			if( locationListener != null )
+			{
+				if( locationListener.mLastLocation.getLongitude() > 0 )
+					coordX = locationListener.mLastLocation.getLongitude();
+				if( locationListener.mLastLocation.getLatitude() > 0 )
+					coordY = locationListener.mLastLocation.getLatitude();
+
+			} // if
+
+		} // for
+
+		int thisHour = getHour( 0 );
+
+		if( lastHourSteps > 0 && currentLogHour != thisHour )
+		{
+			// TODO: Create PedometerRepository for this:
+			// Log the Pedometer steps:
+			ContentValues stepValues = new ContentValues();
+			String createdAt = new Date().toString();
+			stepValues.put( DB.KEY_CREATED_AT, createdAt );
+			stepValues.put( DB.KEY_UPDATED_AT, createdAt );
+			stepValues.put( DB.KEY_PED_COORD_X, coordX );
+			stepValues.put( DB.KEY_PED_COORD_Y, coordY );
+			// Always log the *previous* hour's steps
+			stepValues.put( DB.KEY_PED_STEP_COUNT, lastHourSteps );
+			getContentResolver().insert( MyGlucoseContentProvider.PEDOMETER_URI, stepValues );
+
+			currentLogHour = thisHour;
+
+		} // if hour has passed
+
+	} // logHourlySteps
 
 
 	private Notification getNotification( String text )
@@ -502,18 +692,19 @@ public class PedometerService extends Service implements SensorEventListener
 				? new Notification.Builder( this, notificationChannelId )
 				: new Notification.Builder( this );
 
-		Notification notification = builder.setContentTitle( getString( R.string.service_label ) )
-				.setContentText( text )
-				.setSmallIcon( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-						? R.mipmap.icon_single_cube
-						: R.mipmap.ic_launcher )
-				.setOnlyAlertOnce( true )
-				.setDefaults( Notification.DEFAULT_ALL )
-				.setContentIntent( contentIntent )
-				.setAutoCancel( false )
-				.setPriority( Notification.PRIORITY_MAX )
-				.setOngoing( true )
-				.build();
+		Notification notification =
+				builder.setContentTitle( getString( R.string.service_label ) )
+						.setContentText( text )
+						.setSmallIcon( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+								? R.mipmap.icon_single_cube
+								: R.mipmap.ic_launcher )
+						.setOnlyAlertOnce( true )
+						.setDefaults( Notification.DEFAULT_ALL )
+						.setContentIntent( contentIntent )
+						.setAutoCancel( false )
+						.setPriority( Notification.PRIORITY_MAX )
+						.setOngoing( true )
+						.build();
 		return notification;
 
 	} // getNotification
@@ -526,7 +717,7 @@ public class PedometerService extends Service implements SensorEventListener
 	{
 		if( DEBUG ) Log.d( LOG_TAG, "showNotification called..." );
 
-		notification = getNotification( getPreferenceInt( today() ) + " Steps Today" );
+		notification = getNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
 
 		mNotificationManager =
 				(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
@@ -567,7 +758,8 @@ public class PedometerService extends Service implements SensorEventListener
 	{
 		//		if( DEBUG ) Log.d( LOG_TAG, "updateNotification called..." );
 
-		Notification notification = getNotification( getPreferenceInt( today() ) + " Steps Today" );
+		Notification notification =
+				getNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
 
 		if( mNotificationManager == null )
 			mNotificationManager =
@@ -578,37 +770,6 @@ public class PedometerService extends Service implements SensorEventListener
 		}
 
 	} // updateNotification
-
-
-	/**
-	 * Schedules keep alives via a PendingIntent
-	 * in the Alarm Manager
-	 */
-	private void startLogTimer()
-	{
-		// Get the next hour
-		Calendar calendar = Calendar.getInstance();
-		int nextHour = calendar.get( Calendar.HOUR_OF_DAY ) + 1;
-		if( nextHour > 24 )
-			nextHour = 0;
-		calendar.set( calendar.get( Calendar.YEAR ), calendar.get( Calendar.MONTH ),
-				calendar.get( Calendar.DAY_OF_MONTH ), nextHour, 0 );
-		long startTime = calendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
-
-		if( DEBUG ) Log.i( LOG_TAG, "Timer start time: "
-				+ System.currentTimeMillis() + startTime );
-
-		Intent intent = new Intent();                               // Start an intent
-		intent.setClass( this, getClass() );            // Get a class reference
-		intent.setAction( ACTION_KEEPALIVE );                       // Action to run
-		PendingIntent pendingIntent =
-				PendingIntent.getService(     // Pass the intent to pendingIntent
-						this, 0, intent, 0 );
-		// Set the service to wake up every interval to show notification
-		mAlarmManager.setInexactRepeating( AlarmManager.RTC_WAKEUP, startTime,
-				AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent );
-
-	} // startLogTimer
 
 
 	/**

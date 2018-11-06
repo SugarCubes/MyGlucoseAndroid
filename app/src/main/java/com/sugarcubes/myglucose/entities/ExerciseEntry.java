@@ -17,7 +17,7 @@ public class ExerciseEntry
 	private String userName;
 	private String exerciseName;
 	private int    minutes;
-	private double steps;
+	private int    steps;
 	private Date   updatedAt;
 	private Date   createdAt;
 	private long   timestamp;
@@ -87,12 +87,12 @@ public class ExerciseEntry
 		this.minutes = minutes;
 	}
 
-	public double getSteps()
+	public int getSteps()
 	{
 		return steps;
 	}
 
-	public void setSteps( double steps )
+	public void setSteps( int steps )
 	{
 		this.steps = steps;
 	}

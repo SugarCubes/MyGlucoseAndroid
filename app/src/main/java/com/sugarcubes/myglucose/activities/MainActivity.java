@@ -93,6 +93,7 @@ public class MainActivity
 			requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
 		}
 
+		// TODO: Remove for sprint presentation:
 		Intent pedometerIntent = new Intent( this, PedometerService.class );
 		pedometerIntent.setAction( PedometerService.ACTION_START );
 		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
