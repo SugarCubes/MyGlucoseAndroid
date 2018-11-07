@@ -30,6 +30,8 @@ import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.services.PedometerService;
+import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
 
 import java.net.MalformedURLException;
@@ -192,6 +194,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 				try
 				{
 					WebClientConnectionSingleton.getInstance( context ).reset();
+
+					// Restart all of the services:
+					restartServices();
 				}
 				catch( MalformedURLException e )
 				{
@@ -201,6 +206,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 			}
 		}.run();
 	}
+
+
+	/**
+	 * Restarts all of the currently running services
+	 */
+	private void restartServices()
+	{
+		// Restart the sync service
+		stopService( new Intent( context, SyncService.class ) );
+		startService( new Intent( context, SyncService.class ) );
+
+		// NOTE: Resets the day's steps:
+//		// Restart the pedometer service
+//		stopService( new Intent( context, PedometerService.class ) );
+//		Intent pedometerIntent = new Intent( context, PedometerService.class );
+//		pedometerIntent.setAction( PedometerService.ACTION_START );
+//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+//			startForegroundService( pedometerIntent );
+//		else
+//			startService( pedometerIntent );
+
+	} // restartServices
+
 
 	/**
 	 * Helper method to determine if the device has an extra-large screen. For
