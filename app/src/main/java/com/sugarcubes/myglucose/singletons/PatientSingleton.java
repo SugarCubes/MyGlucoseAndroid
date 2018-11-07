@@ -87,51 +87,63 @@ public class PatientSingleton extends ApplicationUser
 			JSONObject jsonObject =
 					new JSONObject( jsonString );           // Convert string to Json
 
-			if( jsonObject.has( DB.TABLE_PATIENTS ) )       // If "Patient" is passed as an object
-				jsonObject = jsonObject.getJSONObject( DB.TABLE_PATIENTS );    // Get it
+//			if( jsonObject.has( DB.TABLE_PATIENTS ) )       // If "Patient" is passed as an object
+//				jsonObject = jsonObject.getJSONObject( DB.TABLE_PATIENTS );    // Get it
 
 			if( jsonObject.has( DB.KEY_USER_EMAIL ) )
 			{
 				String nullString = "null";
 				// Use jsonData.getInt( String key ), etc to get data from the object
-				if( !jsonObject.getString( DB.KEY_USERNAME ).equals( nullString )
-						&& !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
+//				if( !jsonObject.getString( DB.KEY_USERNAME ).equals( nullString )
+//						&& !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
 					patientSingleton.setUserName( jsonObject.getString( DB.KEY_USERNAME ) );
-				if( !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_ADDRESS1 )
+						&& !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).isEmpty() )
 					patientSingleton.setAddress1( jsonObject.getString( DB.KEY_USER_ADDRESS1 ) );
-				if( !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_ADDRESS2 )
+						&& !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_ADDRESS2 ).isEmpty() )
 					patientSingleton.setAddress2( jsonObject.getString( DB.KEY_USER_ADDRESS2 ) );
-				if( !jsonObject.getString( DB.KEY_USER_CITY ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_CITY )
+						&& !jsonObject.getString( DB.KEY_USER_CITY ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_CITY ).isEmpty() )
 					patientSingleton.setCity( jsonObject.getString( DB.KEY_USER_CITY ) );
-				if( !jsonObject.getString( DB.KEY_USER_EMAIL ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_EMAIL )
+						&& !jsonObject.getString( DB.KEY_USER_EMAIL ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_EMAIL ).isEmpty() )
 					patientSingleton.setEmail( jsonObject.getString( DB.KEY_USER_EMAIL ) );
-				if( !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_FIRST_NAME )
+						&& !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_FIRST_NAME ).isEmpty() )
 					patientSingleton.setFirstName( jsonObject.getString( DB.KEY_USER_FIRST_NAME ) );
 				if( !jsonObject.getString( DB.KEY_REMOTE_ID ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_REMOTE_ID ).isEmpty() )
 					patientSingleton.setId( jsonObject.getString( DB.KEY_REMOTE_ID ) );
-				if( !jsonObject.getString( DB.KEY_USER_LAST_NAME ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_LAST_NAME )
+						&& !jsonObject.getString( DB.KEY_USER_LAST_NAME ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_LAST_NAME ).isEmpty() )
 					patientSingleton.setLastName( jsonObject.getString( DB.KEY_USER_LAST_NAME ) );
-				if( !jsonObject.getString( DB.KEY_USER_PHONE ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_PHONE )
+						&& !jsonObject.getString( DB.KEY_USER_PHONE ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_PHONE ).isEmpty() )
 					patientSingleton.setPhoneNumber( jsonObject.getString( DB.KEY_USER_PHONE ) );
-				if( !jsonObject.getString( DB.KEY_USER_STATE ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_STATE )
+						&& !jsonObject.getString( DB.KEY_USER_STATE ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_STATE ).isEmpty() )
 					patientSingleton.setState( jsonObject.getString( DB.KEY_USER_STATE ) );
-				if( jsonObject.getInt( DB.KEY_USER_ZIP1 ) > 0 )
+				if( jsonObject.has( DB.KEY_USER_ZIP1 )
+						&& jsonObject.getInt( DB.KEY_USER_ZIP1 ) > 0 )
 					patientSingleton.setZip1( jsonObject.getInt( DB.KEY_USER_ZIP1 ) );
-				if( jsonObject.getInt( DB.KEY_USER_ZIP2 ) > 0 )
+				if( jsonObject.has( DB.KEY_USER_ZIP2 )
+						&& jsonObject.getInt( DB.KEY_USER_ZIP2 ) > 0 )
 					patientSingleton.setZip2( jsonObject.getInt( DB.KEY_USER_ZIP2 ) );
-				if( !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).equals( nullString )
+				if( jsonObject.has( DB.KEY_USER_LOGIN_TOKEN )
+						&& !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ).isEmpty() )
 					patientSingleton.setLoginToken( jsonObject.getString( DB.KEY_USER_LOGIN_TOKEN ) );
-				if( jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) > 0 )
+				if( jsonObject.has( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP )
+						&& jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) > 0 )
 					patientSingleton.setLoginExpirationTimestamp(
 							jsonObject.getLong( DB.KEY_USER_LOGIN_EXPIRATION_TIMESTAMP ) );
 				if( jsonObject.has( DB.KEY_USER_HEIGHT )

@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -33,6 +34,7 @@ import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
 import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
+import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.text.SimpleDateFormat;
@@ -234,6 +236,18 @@ public class PedometerService extends Service implements SensorEventListener
 			{
 				case ACTION_KEEPALIVE:
 					if( DEBUG ) Log.d( LOG_TAG, "Received ACTION_KEEPALIVE" );
+
+					IPatientRepository patientRepository
+							= Dependencies.get( IPatientRepository.class );
+
+					// ALWAYS load the latest data:
+					Cursor cursor = getApplicationContext().getContentResolver().query(
+							MyGlucoseContentProvider.PATIENT_USERS_URI, null,
+							DB.KEY_USER_LOGGED_IN + "=?",
+							new String[]{ String.valueOf( 1 ) }, null
+					);
+					patientRepository.readFromCursor( PatientSingleton.getInstance(), cursor );
+
 					// Log steps every time the alarm manager calls the KEEPALIVE action:
 					logAllSteps();
 					showNotification();

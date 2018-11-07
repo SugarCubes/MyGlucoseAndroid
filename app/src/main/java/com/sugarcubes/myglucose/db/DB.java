@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 14;
+	private static final int DATABASE_VERSION = 15;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -79,12 +79,12 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_GLUCOSE_MEASUREMENT             = "measurement";
 	public static final String KEY_GLUCOSE_BEFORE_AFTER            = "beforeAfter";
 	// MealEntry table keys:
-	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS          = "totalCarbohydrates";
+	public static final String KEY_MEAL_ENTRY_TOTAL_CARBS          = "totalCarbs";
 	public static final String KEY_MEAL_ITEMS                      = "mealItems";
 	// MealItem table keys:
 	public static final String KEY_MEAL_ITEM_NAME                  = "name";
 	public static final String KEY_MEAL_ID                         = "mealId";
-	public static final String KEY_MEAL_ITEM_CARBS                 = "carbohydrates";
+	public static final String KEY_MEAL_ITEM_CARBS                 = "carbs";
 	public static final String KEY_MEAL_ITEM_SERVINGS              = "servings";
 	// ExerciseEntry table keys:
 	public static final String KEY_EXERCISE_MINUTES                = "minutes";

@@ -132,6 +132,7 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 		{
 			// NOTE: don't moveToFirst()/close() due to it being passed from another repo
 
+			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 			user.setEmail( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_EMAIL ) ) );
 			user.setAddress1( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS1 ) ) );
 			user.setAddress2( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_ADDRESS2 ) ) );
@@ -163,7 +164,6 @@ public class DbApplicationUserRepository implements IApplicationUserRepository<A
 			user.setZip1( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP1 ) ) );
 			user.setZip2( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_ZIP2 ) ) );
 			user.setTimestamp( cursor.getLong( cursor.getColumnIndex( DB.KEY_TIMESTAMP ) ) );
-			user.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 			user.setWeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_WEIGHT ) ) );
 			user.setHeight( cursor.getString( cursor.getColumnIndex( DB.KEY_USER_HEIGHT ) ) );
 			user.setLoggedIn( cursor.getInt( cursor.getColumnIndex( DB.KEY_USER_LOGGED_IN ) ) > 0 );
