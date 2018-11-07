@@ -163,6 +163,8 @@ public class WebClientConnectionSingleton
 
 	public void reset() throws MalformedURLException
 	{
+		if( DEBUG ) Log.e( LOG_TAG, "Web connection reset!" );
+
 		// We first get our user's preferences
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
 		host = sharedPreferences.getString( SettingsActivity.PREF_HOSTNAME, "localhost" );

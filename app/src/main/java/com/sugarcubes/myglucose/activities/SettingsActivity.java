@@ -47,9 +47,10 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
-	public static final String PREF_HOSTNAME = "hostname";
-	public static final String PREF_PORT = "port";
+	public static final String PREF_HOSTNAME      = "hostname";
+	public static final String PREF_PORT          = "port";
 	public static final String PREF_GLUCOSE_UNITS = "glucose_units";
+	private static Context context;
 
 
 	@Override
@@ -57,6 +58,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 	{
 		super.onCreate( savedInstanceState );
 		setupActionBar();
+
+		this.context = getApplicationContext();
 
 		// Added:
 		// Display the fragment as the main content.
@@ -112,7 +115,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.
 	 */
-	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener()
+	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener
+			= new Preference.OnPreferenceChangeListener()
 	{
 		@Override
 		public boolean onPreferenceChange( Preference preference, Object value )
@@ -175,6 +179,28 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 		}
 	}; // sBindPreferenceSummaryToValueListener
 
+
+	@Override
+	public void onBackPressed()
+	{
+		super.onBackPressed();
+
+		new Runnable() {
+			@Override
+			public void run()
+			{
+				try
+				{
+					WebClientConnectionSingleton.getInstance( context ).reset();
+				}
+				catch( MalformedURLException e )
+				{
+					e.printStackTrace();
+				}
+
+			}
+		}.run();
+	}
 
 	/**
 	 * Helper method to determine if the device has an extra-large screen. For
@@ -255,16 +281,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 	} // onIsMultiPane
 
 
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	@TargetApi( Build.VERSION_CODES.HONEYCOMB )
-//	public void onBuildHeaders( List<Header> target )
-//	{
-//		loadHeadersFromResource( R.xml.pref_headers, target );
-//
-//	} // onBuildHeaders
+	//	/**
+	//	 * {@inheritDoc}
+	//	 */
+	//	@Override
+	//	@TargetApi( Build.VERSION_CODES.HONEYCOMB )
+	//	public void onBuildHeaders( List<Header> target )
+	//	{
+	//		loadHeadersFromResource( R.xml.pref_headers, target );
+	//
+	//	} // onBuildHeaders
 
 
 	/**

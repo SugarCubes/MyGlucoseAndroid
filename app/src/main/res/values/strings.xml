@@ -54,10 +54,10 @@
 
     <string name="pref_header_general">General</string>
     <string name="pref_title_hostname">Server Hostname</string>
-    <string name="pref_default_hostname">localhost</string>
+    <string name="pref_default_hostname">legendscomic.com</string>
 
     <string name="pref_title_port">Server Port</string>
-    <string name="pref_default_port">8080</string>
+    <string name="pref_default_port">22222</string>
 
     <string name="pref_title_glucose_units">Units of Measurement</string>
     <string-array name="pref_glucose_units_list_titles">
