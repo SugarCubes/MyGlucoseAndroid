@@ -297,7 +297,7 @@ public class PatientSingleton extends ApplicationUser
 		if( patient.getHeight() != null && !patient.getHeight().isEmpty() )
 			json.put( DB.KEY_USER_HEIGHT, patient.getHeight() );
 		if( patient.getWeight() != null && !patient.getWeight().isEmpty() )
-			json.put( DB.KEY_USER_HEIGHT, patient.getWeight() );
+			json.put( DB.KEY_USER_WEIGHT, patient.getWeight() );
 		if( patient.getLoginToken() != null && !patient.getLoginToken().isEmpty() )
 			json.put( DB.KEY_USER_LOGIN_TOKEN, patient.getLoginToken() );
 		if( patient.getZip1() > 0 )

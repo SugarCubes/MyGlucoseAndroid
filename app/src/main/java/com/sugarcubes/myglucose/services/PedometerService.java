@@ -25,6 +25,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.R;
@@ -63,12 +64,9 @@ public class PedometerService extends Service implements SensorEventListener
 
 	// For showing notifications:
 	private NotificationManager mNotificationManager;
-	private Notification        notification;
 
-	private SensorManager mSensorManager;
 	private Sensor        mStepCounterSensor;
 	private Sensor        mStepDetectorSensor;
-	private static boolean running = false;
 
 	LocationListener[] mLocationListeners = new LocationListener[]{
 			new LocationListener( LocationManager.GPS_PROVIDER ),
@@ -77,8 +75,10 @@ public class PedometerService extends Service implements SensorEventListener
 
 	// LOCATION fields
 	private              LocationManager mLocationManager  = null;
-	private static final int             LOCATION_INTERVAL = 600000;     // Milliseconds
-	private static final float           LOCATION_DISTANCE = 10f;        // Meters
+	private static final int             LOCATION_INTERVAL = 1000           // Milliseconds
+			* 60                                                            // Seconds
+			* 60;                                                           // Minutes
+	private static final float           LOCATION_DISTANCE = 10f;           // Meters
 
 	private AlarmManager mAlarmManager;         // Alarm manager to perform repeating tasks
 	private Timer        mTimer;
@@ -89,7 +89,6 @@ public class PedometerService extends Service implements SensorEventListener
 	private static int currentLogHour;
 	private static int currentLogDay;
 	private static int hourlySteps    = 0;
-	private static int dailySteps     = 0;
 	private static int lastHourSteps  = 0;
 	private static int lastDaySteps   = 0;
 	private static int milestoneSteps = 0;
@@ -97,7 +96,6 @@ public class PedometerService extends Service implements SensorEventListener
 
 	private static final int    notificationId        = 123321;
 	private static final String notificationChannelId = "com.sugarcubes.myglucose.steps";
-	private              String status                = "Steps dayString: " + dailySteps;
 	private Calendar calendar;
 
 
@@ -116,7 +114,8 @@ public class PedometerService extends Service implements SensorEventListener
 			requestStepSensorOrStopService();
 
 
-			requestLocationUpdates();
+			// Uncomment to request location hourly:
+			//requestLocationUpdates();
 
 
 			// If the service is still running, assign the time variables:
@@ -130,8 +129,6 @@ public class PedometerService extends Service implements SensorEventListener
 				mTimer = new Timer();
 			else
 				mTimer.cancel();
-
-			running = true;
 
 		} // SDK check
 
@@ -150,7 +147,6 @@ public class PedometerService extends Service implements SensorEventListener
 	@Override
 	public void onSensorChanged( SensorEvent sensorEvent )
 	{
-		running = true;
 		Sensor sensor = sensorEvent.sensor;
 
 		if( sensor.getType() == Sensor.TYPE_STEP_COUNTER )
@@ -259,6 +255,10 @@ public class PedometerService extends Service implements SensorEventListener
 						showNotification();
 					break;
 
+				case ACTION_STOP:
+					this.stopSelf();
+					break;
+
 				default:
 					if( DEBUG ) Log.d( LOG_TAG, "Unknown startCommand action..." );
 
@@ -274,10 +274,11 @@ public class PedometerService extends Service implements SensorEventListener
 	/**
 	 * If step sensor service is not available, the service won't continue.
 	 */
+	@RequiresApi( api = Build.VERSION_CODES.KITKAT )
 	private void requestStepSensorOrStopService()
 	{
 		// Get a reference to the Android sensor service
-		mSensorManager = (SensorManager)
+		SensorManager mSensorManager = (SensorManager)
 				getSystemService( Context.SENSOR_SERVICE );
 
 		// Now get a reference to the step counter (if it exists)
@@ -341,9 +342,10 @@ public class PedometerService extends Service implements SensorEventListener
 		// Try to initialize the wireless location listener first (lower priority):
 		try
 		{
-			mLocationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-					mLocationListeners[ 1 ] );
+			// UNCOMMENT for location updates:
+//			mLocationManager.requestLocationUpdates(
+//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+//					mLocationListeners[ 1 ] );
 		}
 		catch( SecurityException ex )
 		{
@@ -357,10 +359,11 @@ public class PedometerService extends Service implements SensorEventListener
 		// Try to initialize the GPS listener after wireless location (higher priority):
 		try
 		{
-			mLocationManager.requestLocationUpdates(
-					//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-					mLocationListeners[ 0 ] );
+			// UNCOMMENT for location updates:
+//			mLocationManager.requestLocationUpdates(
+//					//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+//					mLocationListeners[ 0 ] );
 		}
 		catch( SecurityException ex )
 		{
@@ -464,8 +467,8 @@ public class PedometerService extends Service implements SensorEventListener
 		if( values.length > 0 )
 			stepsSinceReboot = (int) values[ 0 ];
 
-		// TODO: Test
 		// Adapted from: https://stackoverflow.com/questions/42661678/android-how-to-get-the-sensor-step-counter-data-only-one-day
+		int dailySteps;
 		if( currentDay == getDay( 0 ) )
 		{
 			// Get the saved value from prefs
@@ -503,7 +506,6 @@ public class PedometerService extends Service implements SensorEventListener
 	/**
 	 * Calculates hourly steps each time it is called. Typically called when a step is detected.
 	 */
-	// TODO: Test
 	private void calculateHourlySteps()
 	{
 		if( DEBUG ) Log.d( LOG_TAG, "Hourly Steps: " + hourlySteps );
@@ -574,8 +576,6 @@ public class PedometerService extends Service implements SensorEventListener
 	 */
 	public void logAllSteps()
 	{
-		running = true;
-
 		if( DEBUG )
 			Log.d( LOG_TAG, "T:KeepAlive():Timer doing work. Hourly steps: " + hourlySteps );
 
@@ -588,7 +588,7 @@ public class PedometerService extends Service implements SensorEventListener
 
 
 				// Only log steps when hour change detected:
-				logHourlySteps();
+				//logHourlySteps();
 
 			}
 			catch( Throwable t )
@@ -612,8 +612,7 @@ public class PedometerService extends Service implements SensorEventListener
 		// We first retrieve *yesterday's* steps:
 		lastDaySteps = getPreferenceInt( dayString( -1 ) );
 
-		// TODO: TEST:
-		//if( lastHourSteps > 0 && currentLogHour != getHour( 0 ) ) // Test hourly
+		//if( lastHourSteps > 0 && currentLogHour != getHour( 0 ) ) // For DEBUGGING
 		if( lastDaySteps > 0 && currentLogDay != getDay( 0 ) )
 		{
 			new Runnable()
@@ -652,7 +651,7 @@ public class PedometerService extends Service implements SensorEventListener
 	 */
 	private void logHourlySteps()
 	{
-		// TODO: TEST:
+		// TODO: TEST
 		double coordX = -1;
 		double coordY = -1;
 
@@ -706,20 +705,18 @@ public class PedometerService extends Service implements SensorEventListener
 				? new Notification.Builder( this, notificationChannelId )
 				: new Notification.Builder( this );
 
-		Notification notification =
-				builder.setContentTitle( getString( R.string.service_label ) )
-						.setContentText( text )
-						.setSmallIcon( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-								? R.mipmap.icon_single_cube
-								: R.mipmap.ic_launcher )
-						.setOnlyAlertOnce( true )
-						.setDefaults( Notification.DEFAULT_ALL )
-						.setContentIntent( contentIntent )
-						.setAutoCancel( false )
-						.setPriority( Notification.PRIORITY_MAX )
-						.setOngoing( true )
-						.build();
-		return notification;
+		return builder.setContentTitle( getString( R.string.service_label ) )
+				.setContentText( text )
+				.setSmallIcon( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+						? R.mipmap.icon_single_cube
+						: R.mipmap.ic_launcher )
+				.setOnlyAlertOnce( true )
+				.setDefaults( Notification.DEFAULT_ALL )
+				.setContentIntent( contentIntent )
+				.setAutoCancel( false )
+				.setPriority( Notification.PRIORITY_MAX )
+				.setOngoing( true )
+				.build();
 
 	} // getNotification
 
@@ -731,7 +728,8 @@ public class PedometerService extends Service implements SensorEventListener
 	{
 		if( DEBUG ) Log.d( LOG_TAG, "showNotification called..." );
 
-		notification = getNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
+		Notification notification =
+				getNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
 
 		mNotificationManager =
 				(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
@@ -826,7 +824,7 @@ public class PedometerService extends Service implements SensorEventListener
 	{
 		Location mLastLocation;
 
-		public LocationListener( String provider )
+		private LocationListener( String provider )
 		{
 			Log.i( LOG_TAG, "LocationListener: " + provider );
 			mLastLocation = new Location( provider );

@@ -38,7 +38,7 @@ public class SyncService extends Service
 
 	// Sync interval constants
 	public static final long SECONDS_PER_MINUTE       = 60L;
-	public static final long POLL_INTERVAL_IN_MINUTES = 480L;  // 12 Hours
+	public static final long POLL_INTERVAL_IN_MINUTES = 1440L;  // 24 Hours
 	public static final long POLL_INTERVAL_SECONDS    =
 			POLL_INTERVAL_IN_MINUTES *
 					SECONDS_PER_MINUTE;
@@ -82,7 +82,7 @@ public class SyncService extends Service
 				mAccount,
 				MyGlucoseContentProvider.AUTHORITY,
 				Bundle.EMPTY,
-				POLL_INTERVAL_SECONDS );		// Currently set to 12 hours
+				POLL_INTERVAL_SECONDS );		// Currently set to 24 hours
 
 		// NOTE ON PERIODIC SYNCING: Observations indicate periodic syncing is probably set to a
 		// 		minimum number of minutes  (in my case, five). When set to 1 minute, the app was
