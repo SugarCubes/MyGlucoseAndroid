@@ -171,12 +171,26 @@ public class MainActivity
 				break;
 
 			case R.id.action_edit_profile:
-				startEditProfileActivity();
+				if(patientUser.isLoggedIn())
+				{
+					startEditProfileActivity();
+				}
+				else
+				{
+					startLoginActivity();
+				}
 				break;
 
 			case R.id.action_view_profile:
 				if( DEBUG ) Log.d( LOG_TAG, "View Profile clicked!" );
-				startViewProfileActivity();
+				if(patientUser.isLoggedIn())
+				{
+					startViewProfileActivity();
+				}
+				else
+				{
+					startLoginActivity();
+				}
 				break;
 
 			case R.id.action_exit:
@@ -327,28 +341,46 @@ public class MainActivity
 		{
 			case R.id.glucose_button:                                // Glucose button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Glucose button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
+				if(patientUser.isLoggedIn()) {
+					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+					{
+						Intent glucoseIntent = new Intent(this, LogGlucoseActivity.class);
+						startActivity(glucoseIntent);
+					}
+				}
+				else
 				{
-					Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
-					startActivity( glucoseIntent );
+					startLoginActivity();
 				}
 				break;
 
 			case R.id.meals_button:                                    // Meals button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Meals button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
+				if(patientUser.isLoggedIn()) {
+					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+					{
+						Intent mealsIntent = new Intent(this, LogMealActivity.class);
+						startActivity(mealsIntent);
+					}
+				}
+				else
 				{
-					Intent mealsIntent = new Intent( this, LogMealActivity.class );
-					startActivity( mealsIntent );
+					startLoginActivity();
 				}
 				break;
 
 			case R.id.exercise_button:                                // Exercise button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Exercise button tapped" );
-				if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
+				if(patientUser.isLoggedIn()) {
+					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+					{
+						Intent exerciseIntent = new Intent(this, LogExerciseActivity.class);
+						startActivity(exerciseIntent);
+					}
+				}
+				else
 				{
-					Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
-					startActivity( exerciseIntent );
+					startLoginActivity();
 				}
 				break;
 
