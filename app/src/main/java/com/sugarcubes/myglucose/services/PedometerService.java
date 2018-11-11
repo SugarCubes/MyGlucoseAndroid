@@ -62,27 +62,26 @@ public class PedometerService extends Service implements SensorEventListener
 			new IncomingMessageHandler() ); // Target we publish for clients to
 	private static List<Messenger> mClients   = new ArrayList<>();
 
-	// For showing notifications:
+	// NOTIFICATION fields:
 	private NotificationManager mNotificationManager;
 
-	private Sensor        mStepCounterSensor;
-	private Sensor        mStepDetectorSensor;
-
+	// LOCATION fields
 	LocationListener[] mLocationListeners = new LocationListener[]{
 			new LocationListener( LocationManager.GPS_PROVIDER ),
 			new LocationListener( LocationManager.NETWORK_PROVIDER )
 	}; // Implemented as private inner class
 
-	// LOCATION fields
 	private              LocationManager mLocationManager  = null;
 	private static final int             LOCATION_INTERVAL = 1000           // Milliseconds
 			* 60                                                            // Seconds
 			* 60;                                                           // Minutes
 	private static final float           LOCATION_DISTANCE = 10f;           // Meters
 
+
+	// LOCATION fields:
+	private Sensor       mStepCounterSensor;
 	private AlarmManager mAlarmManager;         // Alarm manager to perform repeating tasks
 	private Timer        mTimer;
-
 
 	private static int currentHour;
 	private static int currentDay;
@@ -94,8 +93,8 @@ public class PedometerService extends Service implements SensorEventListener
 	private static int milestoneSteps = 0;
 
 
-	private static final int    notificationId        = 123321;
-	private static final String notificationChannelId = "com.sugarcubes.myglucose.steps";
+	private static final int    NOTIFICATION_ID         = 123321;
+	private static final String NOTIFICATION_CHANNEL_ID = "com.sugarcubes.myglucose.steps";
 	private Calendar calendar;
 
 
@@ -154,11 +153,6 @@ public class PedometerService extends Service implements SensorEventListener
 			calculateDailySteps( sensorEvent );
 
 		}
-		else if( sensor.getType() == Sensor.TYPE_STEP_DETECTOR )
-		{
-			calculateHourlySteps();
-
-		} // if*/
 
 		// Set the current steps in the notification:
 		updateNotification();
@@ -251,7 +245,7 @@ public class PedometerService extends Service implements SensorEventListener
 
 				case ACTION_START:
 					if( DEBUG ) Log.d( LOG_TAG, "Received ACTION_START" );
-					if( mStepCounterSensor != null || mStepDetectorSensor != null )
+					if( mStepCounterSensor != null )
 						showNotification();
 					break;
 
@@ -283,23 +277,15 @@ public class PedometerService extends Service implements SensorEventListener
 
 		// Now get a reference to the step counter (if it exists)
 		mStepCounterSensor = mSensorManager != null
-				? mSensorManager
-				.getDefaultSensor( Sensor.TYPE_STEP_COUNTER )
+				? mSensorManager.getDefaultSensor( Sensor.TYPE_STEP_COUNTER )
 				: null;
 
-		// and a reference to the step detector (if it exists)
-		mStepDetectorSensor = mSensorManager != null
-				? mSensorManager
-				.getDefaultSensor( Sensor.TYPE_STEP_DETECTOR )
-				: null;
-
-		// Register a listener to each of the step sensors
+		// Register a listener to each of the step sensors. If passing an
+		// 		int = 0, battery optimization will not be as good:
 		if( mSensorManager != null )
 		{
 			mSensorManager.registerListener( this, mStepCounterSensor,
-					SensorManager.SENSOR_DELAY_FASTEST );
-			mSensorManager.registerListener( this, mStepDetectorSensor,
-					SensorManager.SENSOR_DELAY_FASTEST );
+					SensorManager.SENSOR_STATUS_ACCURACY_HIGH ); // > 0 = Battery-saving mode
 		}
 		else
 			// If the device doesn't have a sensor, stop the service:
@@ -308,7 +294,7 @@ public class PedometerService extends Service implements SensorEventListener
 
 		// If the device has a step sensor of some kind, start a
 		//      step counter to report back every so often.
-		if( mStepCounterSensor != null || mStepDetectorSensor != null )
+		if( mStepCounterSensor != null )
 		{
 			try
 			{
@@ -343,9 +329,9 @@ public class PedometerService extends Service implements SensorEventListener
 		try
 		{
 			// UNCOMMENT for location updates:
-//			mLocationManager.requestLocationUpdates(
-//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-//					mLocationListeners[ 1 ] );
+			//			mLocationManager.requestLocationUpdates(
+			//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+			//					mLocationListeners[ 1 ] );
 		}
 		catch( SecurityException ex )
 		{
@@ -360,10 +346,10 @@ public class PedometerService extends Service implements SensorEventListener
 		try
 		{
 			// UNCOMMENT for location updates:
-//			mLocationManager.requestLocationUpdates(
-//					//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-//					mLocationListeners[ 0 ] );
+			//			mLocationManager.requestLocationUpdates(
+			//					//LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+			//					LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+			//					mLocationListeners[ 0 ] );
 		}
 		catch( SecurityException ex )
 		{
@@ -387,6 +373,8 @@ public class PedometerService extends Service implements SensorEventListener
 		int nextHour = getHour( 1 );
 		if( nextHour > 24 )
 			nextHour = 0;
+
+		// Set the log timer to wake up at the beginning of next hour
 		calendar.set( calendar.get( Calendar.YEAR ), calendar.get( Calendar.MONTH ),
 				calendar.get( Calendar.DAY_OF_MONTH ), nextHour, 0 );
 		long startTime = calendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
@@ -402,7 +390,7 @@ public class PedometerService extends Service implements SensorEventListener
 						this, 0, intent, 0 );
 		// Set the service to wake up every interval to show notification
 		mAlarmManager.setInexactRepeating( AlarmManager.RTC_WAKEUP, startTime,
-				AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent );
+				AlarmManager.INTERVAL_HOUR, pendingIntent );
 
 	} // startLogTimer
 
@@ -456,6 +444,7 @@ public class PedometerService extends Service implements SensorEventListener
 
 	/**
 	 * Calculates daily steps each time it is called. Doesn't always get called on each step.
+	 * NOTE: Uses TYPE_STEP_COUNTER. More accurate, but has higher latency
 	 *
 	 * @param sensorEvent: The SensorEvent object
 	 */
@@ -505,6 +494,7 @@ public class PedometerService extends Service implements SensorEventListener
 
 	/**
 	 * Calculates hourly steps each time it is called. Typically called when a step is detected.
+	 * NOTE: Uses TYPE_STEP_DETECTOR
 	 */
 	private void calculateHourlySteps()
 	{
@@ -579,11 +569,11 @@ public class PedometerService extends Service implements SensorEventListener
 		if( DEBUG )
 			Log.d( LOG_TAG, "T:KeepAlive():Timer doing work. Hourly steps: " + hourlySteps );
 
-		if( mStepCounterSensor != null || mStepDetectorSensor != null )
+		if( mStepCounterSensor != null )
 		{
 			try
 			{
-				// Log the ExerciseEntry:
+				// Log the ExerciseEntry if it is time:
 				logDailySteps();
 
 
@@ -702,7 +692,7 @@ public class PedometerService extends Service implements SensorEventListener
 				new Intent( this, MainActivity.class ), 0 );
 
 		Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-				? new Notification.Builder( this, notificationChannelId )
+				? new Notification.Builder( this, NOTIFICATION_CHANNEL_ID )
 				: new Notification.Builder( this );
 
 		return builder.setContentTitle( getString( R.string.service_label ) )
@@ -734,7 +724,7 @@ public class PedometerService extends Service implements SensorEventListener
 		mNotificationManager =
 				(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
 
-		//startForeground( notificationId, notification);
+		//startForeground( NOTIFICATION_ID, notification);
 		//NotificationManagerCompat.from( this );
 		//(NotificationManager) getSystemService( NOTIFICATION_SERVICE );
 		//notification.flags |= Notification.FLAG_ONGOING_EVENT;
@@ -743,7 +733,7 @@ public class PedometerService extends Service implements SensorEventListener
 		{
 			CharSequence name = getString( R.string.service_label );
 			NotificationChannel notificationChannel = new NotificationChannel(
-					notificationChannelId,
+					NOTIFICATION_CHANNEL_ID,
 					name,
 					NotificationManager.IMPORTANCE_HIGH );
 			notificationChannel.setSound( null, null );
@@ -756,7 +746,7 @@ public class PedometerService extends Service implements SensorEventListener
 		}
 
 		if( mNotificationManager != null )
-			mNotificationManager.notify( notificationId, notification );
+			mNotificationManager.notify( NOTIFICATION_ID, notification );
 		else if( DEBUG )
 			Log.e( LOG_TAG, "Error getting notification manager..." );
 
@@ -778,7 +768,7 @@ public class PedometerService extends Service implements SensorEventListener
 					(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
 		if( mNotificationManager != null )
 		{
-			mNotificationManager.notify( notificationId, notification );
+			mNotificationManager.notify( NOTIFICATION_ID, notification );
 		}
 
 	} // updateNotification
