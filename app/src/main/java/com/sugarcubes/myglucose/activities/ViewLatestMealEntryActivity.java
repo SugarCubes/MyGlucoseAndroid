@@ -54,6 +54,25 @@ public class ViewLatestMealEntryActivity extends AppCompatActivity
         {
             newest = latestMealEntries.get(0);
 
+            String mealNameString = "";
+
+            for(int id = 0; id < newest.getMealItems().size(); id++)
+            {
+                String name = newest.getMealItems().get(id).getName()
+                        + " (" + newest.getMealItems().get(id).getCarbs() + ") "
+                        + " (" + newest.getMealItems().get(id).getServings() + ")";
+                mealNameString += name;
+                if(id == newest.getMealItems().size() -1)
+                {
+                    break;
+                }
+                mealNameString += "\n";
+
+            }
+
+            TextView mealNames = findViewById(R.id.mealNames);
+            mealNames.setText(String.valueOf(mealNameString));
+
             TextView totalCarbsView = findViewById(R.id.totalCarbs);
             totalCarbsView.setText( String.valueOf( newest.getTotalCarbs() ) );
 
