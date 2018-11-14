@@ -232,4 +232,5 @@
     <string name="dash">-</string>
     <string name="service_label">MyGlucose Step Tracker</string>
     <string name="exercise_steps">Steps (if applicable)</string>
+    <string name="empty_listview">You haven\'t logged any entries yet.</string>
 </resources>

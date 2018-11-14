@@ -57,6 +57,7 @@ public class LogGlucoseActivity extends AppCompatActivity
 		logGlucoseEntryAction = Dependencies.get( ILogGlucoseEntryAction.class );
 
 		Button button = findViewById( R.id.submitGlucose );
+		Button historyButton = findViewById( R.id.viewHistory );
 		Button viewLatest = findViewById( R.id.viewLatest );
 		spinner = findViewById( R.id.save_spinner );
 		glucoseForm = findViewById( R.id.glucose_form );
@@ -71,6 +72,21 @@ public class LogGlucoseActivity extends AppCompatActivity
 					mlogGlucoseTask = new LogGlucoseTask();
 					mlogGlucoseTask.execute();
 
+					return true;
+				}
+				return false;
+			}
+		} );
+
+		historyButton.setOnTouchListener( new View.OnTouchListener()
+		{
+			@Override
+			public boolean onTouch( View v, MotionEvent event )
+			{
+				if( event.getAction() == MotionEvent.ACTION_UP )
+				{
+					Intent intent = new Intent( getApplicationContext(), ViewGlucoseHistoryActivity.class );
+					startActivity( intent );
 					return true;
 				}
 				return false;
