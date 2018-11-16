@@ -94,12 +94,12 @@ public class MainActivity
 		}
 
 		// TODO: Remove for sprint presentation:
-		Intent pedometerIntent = new Intent( this, PedometerService.class );
-		pedometerIntent.setAction( PedometerService.ACTION_START );
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
-			startForegroundService( pedometerIntent );
-		else
-			startService( pedometerIntent );
+//		Intent pedometerIntent = new Intent( this, PedometerService.class );
+//		pedometerIntent.setAction( PedometerService.ACTION_START );
+//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+//			startForegroundService( pedometerIntent );
+//		else
+//			startService( pedometerIntent );
 
 	} // onCreate
 

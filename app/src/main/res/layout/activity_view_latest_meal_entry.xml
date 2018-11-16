@@ -24,9 +24,10 @@
     <android.widget.TableLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:gravity="center_vertical|center"
-        android:textSize="16sp">
+        android:padding="5dp"
+        android:textSize="14sp">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -36,7 +37,7 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="263dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Meal items (Carbs) (Servings):"
                 android:textSize="16sp"
@@ -45,7 +46,7 @@
             <TextView
                 android:id="@+id/mealNames"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="22dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:text="@string/none_entered_yet" />
@@ -60,7 +61,7 @@
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="135dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total Carbs"
                 android:textSize="16sp"
@@ -86,7 +87,7 @@
                 android:id="@+id/textView29"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/before_or_after_meal"
+                android:text="@string/Meal"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -94,7 +95,7 @@
 
             <TextView
                 android:id="@+id/whichMealM"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
