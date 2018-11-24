@@ -20,6 +20,17 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_glucose_units" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="track_steps"
+            android:title="@string/pref_title_track_steps" />
+
+        <SwitchPreference
+            android:dependency="track_steps"
+            android:defaultValue="true"
+            android:key="show_notification"
+            android:title="@string/pref_title_show_notification" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/developer_settings">

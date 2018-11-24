@@ -50,10 +50,13 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 
 
 	@Override
-	public ExerciseEntry read( int id )
+	public ExerciseEntry read( String id )
 	{
-		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
-				null, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) },
+		Cursor cursor = contentResolver.query(
+				MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				null,
+				DB.KEY_REMOTE_ID + "=?",
+				new String[]{ id },
 				null );
 
 		if( cursor != null )

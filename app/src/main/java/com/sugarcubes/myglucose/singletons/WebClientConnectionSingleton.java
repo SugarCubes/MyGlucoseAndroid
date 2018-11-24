@@ -11,6 +11,8 @@ package com.sugarcubes.myglucose.singletons;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -95,6 +97,18 @@ public class WebClientConnectionSingleton
 	} // getInstance
 
 
+	public boolean networkIsAvailable()
+	{
+		ConnectivityManager cm =
+				(ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
+		NetworkInfo netInfo = cm != null
+				? cm.getActiveNetworkInfo()
+				: null;
+		return netInfo != null && netInfo.isConnected();
+
+	} // networkIsAvailable
+
+
 	public String sendLoginRequest( HashMap<String, String> values )
 	{
 		return loginConnection.performRequest( values );
@@ -140,7 +154,7 @@ public class WebClientConnectionSingleton
 	public String sendSyncPatientDataRequest( HashMap<String, String> values )
 	{
 
-//		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
+		//		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
 		return syncPatientDataConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest
@@ -148,7 +162,6 @@ public class WebClientConnectionSingleton
 
 	public String sendSyncPatientDataRequest( JSONObject values )
 	{
-
 		//		if( DEBUG ) Log.e( LOG_TAG, "Values: " + values.toString() );
 		return syncPatientDataConnection.performRequest( values );
 
@@ -160,6 +173,7 @@ public class WebClientConnectionSingleton
 		return retrieveDoctorsConnection.performRequest( values );
 
 	} // sendSyncExerciseRequest
+
 
 	public void reset() throws MalformedURLException
 	{
@@ -196,6 +210,6 @@ public class WebClientConnectionSingleton
 		urlString = "http://" + host + ":" + port + SYNC_PATIENT_DATA_STRING;
 		syncPatientDataConnection = new UrlConnection( new URL( urlString ) );
 
-	}
+	} // reset
 
 } // class

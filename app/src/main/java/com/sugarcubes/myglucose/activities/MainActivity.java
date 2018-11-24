@@ -10,14 +10,25 @@
 package com.sugarcubes.myglucose.activities;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -33,7 +44,6 @@ import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
-import com.sugarcubes.myglucose.services.AuthenticatorService;
 import com.sugarcubes.myglucose.services.PedometerService;
 import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -41,7 +51,8 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 public class MainActivity
 		extends AppCompatActivity
 		implements LoaderCallbacks<Cursor>,
-		View.OnTouchListener
+		View.OnTouchListener,
+		ServiceConnection
 {
 	public static final boolean DEBUG = true;                        // Activate/deactivate logging
 
@@ -64,6 +75,13 @@ public class MainActivity
 	};
 	private static final int      INITIAL_REQUEST = 1337;
 
+	private final Messenger         mMessenger        = new Messenger(
+			new IncomingMessageHandler() );         // To communicate with Service
+	private       boolean           pIsBound          = false;
+	private       ServiceConnection pConnection       = this;
+	private       Messenger         pServiceMessenger = null;
+
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -83,48 +101,290 @@ public class MainActivity
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
 
-		// Start all of the services to run in the background:
-		startService( new Intent( this, SyncService.class ) );
-		startService( new Intent( this, AuthenticatorService.class ) );
-
-		if( !canAccessFineLocation() && !canAccessCoarseLocation()
-				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
-		{
-			requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
-		}
-
-		// TODO: Remove for sprint presentation:
-//		Intent pedometerIntent = new Intent( this, PedometerService.class );
-//		pedometerIntent.setAction( PedometerService.ACTION_START );
-//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
-//			startForegroundService( pedometerIntent );
-//		else
-//			startService( pedometerIntent );
+		// NOTE: UNCOMMENT to use location services when tracking steps:
+		//if( !canAccessFineLocation() && !canAccessCoarseLocation()
+		//		&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+		//{
+		//	requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
+		//}
 
 	} // onCreate
 
-	private boolean canAccessFineLocation()
+
+	/**
+	 * Called *after* onCreate, and each time we resume the Activity
+	 */
+	@Override
+	protected void onResume()
 	{
-		return ( hasPermission( Manifest.permission.ACCESS_FINE_LOCATION ) );
+		super.onResume();
+		Log.e( LOG_TAG, "Track steps: " + trackSteps( getApplicationContext() ) );
+		restartServices();
 
-	} // canAccessFineLocation
-
-	private boolean canAccessCoarseLocation()
-	{
-		return ( hasPermission( Manifest.permission.ACCESS_COARSE_LOCATION ) );
-
-	} // canAccessCoarseLocation
-
-	private boolean hasPermission( String perm )
-	{
-		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) && pIsBound )
 		{
-			return ( PackageManager.PERMISSION_GRANTED == checkSelfPermission( perm ) );
+			// If the service is running at this point, the user wants to track steps,
+			//		so we check the notification status and handle it:
+			sendMessageToPedometerService( PedometerService.MSG_NOTIFICATION_STATUS );
+
+		} // if svc running
+
+	} // onResume
+
+
+	// region  -----------------Service Helpers-----------------
+
+	private void doBindPedometer()
+	{
+		try
+		{
+			Log.d( LOG_TAG, "C:doBindPedometer()" );
+			bindService( new Intent( MainActivity.this, PedometerService.class ),
+					pConnection, Context.BIND_AUTO_CREATE );
+			pIsBound = true;
 		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
+	} // doBindPedometer
+
+
+	private void doUnbindPedometer()
+	{
+		Log.d( LOG_TAG, "C:doUnbindPedometer()" );
+
+		if( pIsBound )
+		{
+			sendMessageToPedometerService( PedometerService.MSG_UNREGISTER_CLIENT );
+			//if( DEBUG ) Log.d( LOG_TAG, "C: TX MSG_UNREGISTER_CLIENT" );
+			unbindService( pConnection );
+			pIsBound = false;
+		}
+
+	} // doUnbindPedometer
+
+	/**
+	 * Handle incoming messages from MqttService
+	 */
+	private class IncomingMessageHandler extends Handler
+	{
+		@Override
+		public void handleMessage( Message msg )
+		{
+			if( DEBUG )
+				Log.d( LOG_TAG, "C:IncomingHandler:handleMessage: " + msg.what );
+
+			switch( msg.what )
+			{
+				case PedometerService.MSG_REPORT_STEPS:
+					Log.d( LOG_TAG, "C: RX MSG_REPORT_STEPS" );
+					//textIntValue.setText("Int Message: " + msg.arg1);
+					break;
+
+				case PedometerService.MSG_NOTIFICATION_IS_VISIBLE:
+					Log.d( LOG_TAG, "C: RX MSG_NOTIFICATION_IS_VISIBLE" );
+
+					if( msg.getData().getInt( "VALUE" ) > 0 &&
+							!showNotification( getApplicationContext() ) )
+						sendMessageToPedometerService( PedometerService.MSG_HIDE_NOTIFICATION );
+
+					else if( showNotification( getApplicationContext() ) )
+						sendMessageToPedometerService( PedometerService.MSG_SHOW_NOTIFICATION );
+
+					break;
+
+				default:
+					super.handleMessage( msg );
+
+			} // switch
+
+		} // handleMessage
+
+	} // IncomingMessageHandler
+
+
+	@Override
+	public void onServiceConnected( ComponentName componentName, IBinder iBinder )
+	{
+		if( DEBUG ) Log.d( LOG_TAG, "C: Service: " + componentName.getClassName()
+				+ "; TX MSG_REGISTER_CLIENT" );
+
+		if( componentName.getClassName().equals( PedometerService.class.getName() ) )
+		{
+			pServiceMessenger = new Messenger( iBinder );
+
+			// Register activity for updates, if we ever need to receive them:
+			sendMessageToPedometerService( PedometerService.MSG_REGISTER_CLIENT );
+
+			// Tell the service to display the notification if needed:
+			if( showNotification( getApplicationContext() ) )
+				sendMessageToPedometerService( PedometerService.MSG_SHOW_NOTIFICATION );
+			else
+				sendMessageToPedometerService( PedometerService.MSG_HIDE_NOTIFICATION );
+
+		}
+
+		if( DEBUG ) Log.d( LOG_TAG, "C: Service: " + componentName.toString()
+				+ "; TX MSG_REGISTER_CLIENT" );
+
+	} // onServiceConnected
+
+
+	@Override
+	public void onServiceDisconnected( ComponentName componentName )
+	{
+		Log.d( LOG_TAG, "C:onServiceDisconnected()" );
+		if( componentName.getClassName().equals( "com.myglucose.services.PedometerService" ) )
+			pServiceMessenger = null;
+
+	} // onServiceDisconnected
+
+
+	/**
+	 * Checks each service's status and restarts if necessary
+	 */
+	private void restartServices()
+	{
+		// Restart the sync service:
+		if( serviceIsRunning( getApplicationContext(), SyncService.class ) )
+			stopService( new Intent( getApplicationContext(), SyncService.class ) );
+		startService( new Intent( getApplicationContext(), SyncService.class ) );
+
+		// Restart the pedometer service:
+		Intent pedometerIntent = new Intent( getApplicationContext(), PedometerService.class );
+		pedometerIntent.setAction( PedometerService.ACTION_START );
+
+		// Stop the service if it is running:
+		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) )
+		{
+			doUnbindPedometer();   // Service won't stop if still bound to UI
+			pedometerIntent.setAction( PedometerService.ACTION_STOP );
+			stopService( pedometerIntent );
+
+		} // if
+
+		// Start the service again, only if user wants to track steps:
+		if( trackSteps( getApplicationContext() ) )
+		{
+			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+				startForegroundService( pedometerIntent );
+			else
+				startService( pedometerIntent );
+
+			doBindPedometer();     // Bind so we can send messages
+
+		} // if
+
+	} // restartServices
+
+
+	/**
+	 * Sends data to the Mqtt service
+	 *
+	 * @param intValueToSend:
+	 */
+	protected void sendMessageToPedometerService( int intValueToSend )
+	{
+		// null, msg.what [int used in switch], arg1, 0
+		Message msg = Message.obtain( null, intValueToSend, 0, -1 );
+		msg.replyTo = mMessenger;
+
+		if( pIsBound && pServiceMessenger != null )
+			try
+			{
+				pServiceMessenger.send( msg );
+			}
+			catch( RemoteException e )
+			{
+				e.printStackTrace();
+			}
+
+	    /*
+	    for( Messenger serviceMessenger : serviceMessengers )
+	    {
+		    try
+		    {
+			    serviceMessenger.send( msg );
+		    }
+		    catch ( RemoteException e )
+		    {
+			    e.printStackTrace();
+		    }
+	    } //*/
+
+	} // sendMessageToPedometerService
+
+
+	protected static boolean serviceIsRunning( Context context, Class<?> serviceClass )
+	{
+		ActivityManager manager =
+				(ActivityManager) context.getSystemService( Context.ACTIVITY_SERVICE );
+
+		for( ActivityManager.RunningServiceInfo service : manager.getRunningServices( Integer.MAX_VALUE ) )
+		{
+			if( serviceClass.getName().equals( service.service.getClassName() ) )
+			{
+				return true;
+			} // if
+
+		} // for
+
 		return false;
 
-	} // hasPermission
+	} // serviceIsRunning
 
+	// endregion -----------------Service Helpers-----------------
+
+
+	// region -----------------Preference Helpers-----------------
+
+	/**
+	 * Gets a boolean value from SharedPreferences using a key
+	 *
+	 * @param key: Key
+	 */
+	public static boolean getPreferenceBoolean( Context context, String key ) // default = 0
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( context );
+		return sharedPreferences.getBoolean( key, false );
+
+	} // getPreferenceBoolean
+
+
+	/**
+	 * Gets an int from SharedPreferences using a key
+	 *
+	 * @param key: Key
+	 */
+	public static int getPreferenceInt( Context context, String key ) // default = 0
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( context );
+		return sharedPreferences.getInt( key, 0 );
+
+	} // getPreferenceInt
+
+
+	public static boolean showNotification( Context context )
+	{
+		return getPreferenceBoolean( context, SettingsActivity.PREF_SHOW_NOTIFICATION );
+
+	} // showNotification
+
+
+	public static boolean trackSteps( Context context )
+	{
+		return getPreferenceBoolean( context, SettingsActivity.PREF_TRACK_STEPS );
+
+	} // showNotification
+
+	// endregion -----------------Preference Helpers-----------------
+
+
+	// region -----------------Overrides-----------------
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu )
@@ -171,7 +431,7 @@ public class MainActivity
 				break;
 
 			case R.id.action_edit_profile:
-				if(patientUser.isLoggedIn())
+				if( patientUser.isLoggedIn() )
 				{
 					startEditProfileActivity();
 				}
@@ -183,7 +443,7 @@ public class MainActivity
 
 			case R.id.action_view_profile:
 				if( DEBUG ) Log.d( LOG_TAG, "View Profile clicked!" );
-				if(patientUser.isLoggedIn())
+				if( patientUser.isLoggedIn() )
 				{
 					startViewProfileActivity();
 				}
@@ -204,28 +464,6 @@ public class MainActivity
 		return true;
 
 	} // onOptionsItemSelected
-
-
-	/**
-	 * loaderReset - Refreshes content resolver when the db changes
-	 */
-	public void loaderReset()
-	{
-		getLoaderManager().restartLoader( USER_LOADER, null, this );
-		try
-		{
-			getLoaderManager().getLoader( USER_LOADER ).forceLoad();
-			getLoaderManager().notify();
-		}
-		catch( Exception e )
-		{
-			Log.i( "LOADER", "Loader not initialized. Not forcing load." + e.getMessage() );
-		}
-
-		getApplicationContext().getContentResolver().notifyChange(
-				MyGlucoseContentProvider.PATIENT_USERS_URI, null );
-
-	} // loaderReset
 
 
 	/**
@@ -341,11 +579,12 @@ public class MainActivity
 		{
 			case R.id.glucose_button:                                // Glucose button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Glucose button tapped" );
-				if(patientUser.isLoggedIn()) {
-					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+				if( patientUser.isLoggedIn() )
+				{
+					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 					{
-						Intent glucoseIntent = new Intent(this, LogGlucoseActivity.class);
-						startActivity(glucoseIntent);
+						Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
+						startActivity( glucoseIntent );
 					}
 				}
 				else
@@ -356,11 +595,12 @@ public class MainActivity
 
 			case R.id.meals_button:                                    // Meals button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Meals button tapped" );
-				if(patientUser.isLoggedIn()) {
-					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+				if( patientUser.isLoggedIn() )
+				{
+					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 					{
-						Intent mealsIntent = new Intent(this, LogMealActivity.class);
-						startActivity(mealsIntent);
+						Intent mealsIntent = new Intent( this, LogMealActivity.class );
+						startActivity( mealsIntent );
 					}
 				}
 				else
@@ -371,11 +611,12 @@ public class MainActivity
 
 			case R.id.exercise_button:                                // Exercise button tap
 				if( DEBUG ) Log.d( LOG_TAG, "Exercise button tapped" );
-				if(patientUser.isLoggedIn()) {
-					if (event.getAction() == MotionEvent.ACTION_UP)    // Only handle single event
+				if( patientUser.isLoggedIn() )
+				{
+					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 					{
-						Intent exerciseIntent = new Intent(this, LogExerciseActivity.class);
-						startActivity(exerciseIntent);
+						Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
+						startActivity( exerciseIntent );
 					}
 				}
 				else
@@ -390,6 +631,10 @@ public class MainActivity
 
 	} // onTouch
 
+	// endregion -----------------Overrides-----------------
+
+
+	// region -----------------Activity Helpers-----------------
 
 	private void startLoginActivity()
 	{
@@ -429,6 +674,7 @@ public class MainActivity
 
 	} // startEditProfileActivity
 
+
 	private void setMenuTexts()
 	{
 		if( menu != null )
@@ -444,5 +690,58 @@ public class MainActivity
 		} // if
 
 	} // setMenuTexts
+
+	// endregion -----------------Activity Helpers-----------------
+
+
+	// region -----------------UNUSED-----------------
+
+	/**
+	 * loaderReset - Refreshes content resolver when the db changes
+	 */
+	public void loaderReset()
+	{
+		getLoaderManager().restartLoader( USER_LOADER, null, this );
+		try
+		{
+			getLoaderManager().getLoader( USER_LOADER ).forceLoad();
+			getLoaderManager().notify();
+		}
+		catch( Exception e )
+		{
+			Log.i( "LOADER", "Loader not initialized. Not forcing load." + e.getMessage() );
+		}
+
+		getApplicationContext().getContentResolver().notifyChange(
+				MyGlucoseContentProvider.PATIENT_USERS_URI, null );
+
+	} // loaderReset
+
+
+	private boolean canAccessFineLocation()
+	{
+		return ( hasPermission( Manifest.permission.ACCESS_FINE_LOCATION ) );
+
+	} // canAccessFineLocation
+
+
+	private boolean canAccessCoarseLocation()
+	{
+		return ( hasPermission( Manifest.permission.ACCESS_COARSE_LOCATION ) );
+
+	} // canAccessCoarseLocation
+
+
+	private boolean hasPermission( String perm )
+	{
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+		{
+			return ( PackageManager.PERMISSION_GRANTED == checkSelfPermission( perm ) );
+		}
+		return false;
+
+	} // hasPermission
+
+	// endregion -----------------UNUSED-----------------
 
 } // class

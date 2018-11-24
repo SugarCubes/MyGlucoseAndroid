@@ -23,7 +23,7 @@ public interface IRepository<T>
 {
 	void create( T item );
 
-	T read( int id );
+	T read( String id );
 
 	ArrayList<T> readAll();
 

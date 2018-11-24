@@ -8,30 +8,42 @@
     <TextView
         android:id="@+id/itemName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="TextView"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".3" />
+        app:layout_constraintWidth_percent=".33" />
 
     <TextView
         android:id="@+id/itemValue"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="TextView"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/itemName"
         app:layout_constraintLeft_toRightOf="@+id/itemName"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itemName"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".3" />
+        app:layout_constraintWidth_percent=".33" />
 
     <TextView
         android:id="@+id/itemValue2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="TextView"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/itemName"
         app:layout_constraintLeft_toRightOf="@+id/itemValue"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itemName"
         app:layout_constraintWidth_default="spread" />
+
 </android.support.constraint.ConstraintLayout>

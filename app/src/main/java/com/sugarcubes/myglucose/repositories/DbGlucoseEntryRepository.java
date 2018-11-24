@@ -56,13 +56,15 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 
 
 	@Override
-	public GlucoseEntry read( int id )
+	public GlucoseEntry read( String id )
 	{
-		Cursor cursor = contentResolver.query( uri,
-				null, DB.KEY_ID + "=?", new String[]{ String.valueOf( id ) },
+		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
+				null,
+				DB.KEY_REMOTE_ID + "=?",
+				new String[]{ id },
 				null );
 
-		if( cursor != null )
+		if( cursor != null && cursor.getCount() > 0 )
 		{
 			cursor.moveToFirst();
 

@@ -86,11 +86,13 @@ public class DbMealEntryRepository implements IMealEntryRepository
 
 
 	@Override
-	public MealEntry read( int id )
+	public MealEntry read( String id )
 	{
-		Cursor cursor = contentResolver.query( uriEntries,
-				null, DB.KEY_ID + "=?",
-				new String[]{ String.valueOf( id ) },
+		Cursor cursor = contentResolver.query(
+				uriEntries,
+				null,
+				DB.KEY_REMOTE_ID + "=?",
+				new String[]{ id },
 				DB.KEY_TIMESTAMP + " ASC" );
 
 		if( cursor != null )                            // First, if we have a MealEntry...

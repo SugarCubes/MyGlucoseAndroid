@@ -26,6 +26,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
@@ -36,6 +37,8 @@ import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
 
 import java.net.MalformedURLException;
 import java.util.List;
+
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 /**
  * A {@link PreferenceActivity} that saves the user's preferences between uses. This is also
@@ -49,10 +52,12 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
-	public static final String PREF_HOSTNAME      = "hostname";
-	public static final String PREF_PORT          = "port";
-	public static final String PREF_GLUCOSE_UNITS = "glucose_units";
-	private static Context context;
+	public static final String PREF_HOSTNAME          = "hostname";
+	public static final String PREF_PORT              = "port";
+	public static final String PREF_GLUCOSE_UNITS     = "glucose_units";
+	public static final String PREF_TRACK_STEPS       = "track_steps";
+	public static final String PREF_SHOW_NOTIFICATION = "show_notification";
+	private final       String LOG_TAG                = getClass().getSimpleName();
 
 
 	@Override
@@ -60,8 +65,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 	{
 		super.onCreate( savedInstanceState );
 		setupActionBar();
-
-		this.context = getApplicationContext();
 
 		// Added:
 		// Display the fragment as the main content.
@@ -72,7 +75,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
 
 	// Create a PreferenceFragment to display as the top level, since our application
-	// won't require a lot of different categories of settings:
+	// 		won't require a lot of different categories of settings:
 	public static class PrefsFragment extends PreferenceFragment
 	{
 		@Override
@@ -87,31 +90,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			bindPreferenceSummaryToValue( findPreference( SettingsActivity.PREF_HOSTNAME ) );
-			bindPreferenceSummaryToValue( findPreference( SettingsActivity.PREF_PORT ) );
-			bindPreferenceSummaryToValue( findPreference( SettingsActivity.PREF_GLUCOSE_UNITS ) );
+			bindPreferenceSummaryToValue( findPreference( PREF_HOSTNAME ) );
+			bindPreferenceSummaryToValue( findPreference( PREF_PORT ) );
+			bindPreferenceSummaryToValue( findPreference( PREF_GLUCOSE_UNITS ) );
+
+			// Only set the listener to watch for value changes.
+			findPreference( PREF_GLUCOSE_UNITS )
+					.setOnPreferenceChangeListener( sBindPreferenceSummaryToValueListener );
+			findPreference( PREF_SHOW_NOTIFICATION )
+					.setOnPreferenceChangeListener( sBindPreferenceSummaryToValueListener );
 
 		} // onCreate
 
 	} // PrefsFragment
 
-
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-		WebClientConnectionSingleton conn
-				= WebClientConnectionSingleton.getInstance( getApplicationContext() );
-		try
-		{
-			conn.reset();
-		}
-		catch( MalformedURLException e )
-		{
-			e.printStackTrace();
-		}
-
-	} // onStop
 
 	/**
 	 * A preference value change listener that updates the preference's summary
@@ -183,20 +175,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
 
 	@Override
-	public void onBackPressed()
+	protected void onStop()
 	{
-		super.onBackPressed();
+		super.onStop();
 
-		new Runnable() {
+		new Runnable()
+		{
 			@Override
 			public void run()
 			{
 				try
 				{
-					WebClientConnectionSingleton.getInstance( context ).reset();
+					WebClientConnectionSingleton.getInstance( getApplicationContext() ).reset();
 
 					// Restart all of the services:
-					restartServices();
+//					MainActivity.restartServices( getApplicationContext() );
 				}
 				catch( MalformedURLException e )
 				{
@@ -205,7 +198,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
 			}
 		}.run();
-	}
+
+//		if( DEBUG ) Log.e( LOG_TAG, "Track Steps: "
+//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
+//				SettingsActivity.PREF_TRACK_STEPS )
+//				+ "; Show notification: "
+//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
+//				SettingsActivity.PREF_SHOW_NOTIFICATION ) );
+
+	} // onStop
 
 
 	/**
@@ -214,18 +215,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 	private void restartServices()
 	{
 		// Restart the sync service
-		stopService( new Intent( context, SyncService.class ) );
-		startService( new Intent( context, SyncService.class ) );
+		stopService( new Intent( getApplicationContext(), SyncService.class ) );
+		startService( new Intent( getApplicationContext(), SyncService.class ) );
 
-		// NOTE: Resets the day's steps:
-//		// Restart the pedometer service
-//		stopService( new Intent( context, PedometerService.class ) );
-//		Intent pedometerIntent = new Intent( context, PedometerService.class );
-//		pedometerIntent.setAction( PedometerService.ACTION_START );
-//		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
-//			startForegroundService( pedometerIntent );
-//		else
-//			startService( pedometerIntent );
+		Intent pedometerIntent = new Intent( getApplicationContext(), PedometerService.class );
+		pedometerIntent.setAction( PedometerService.ACTION_START );
+
+		// Restart the pedometer service
+		if( MainActivity.serviceIsRunning( getApplicationContext(), PedometerService.class ) )
+			stopService( pedometerIntent );
+
+		if( MainActivity.trackSteps( getApplicationContext() ) )
+		{
+			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+				startForegroundService( pedometerIntent );
+			else
+				startService( pedometerIntent );
+
+		} // if
 
 	} // restartServices
 

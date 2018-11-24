@@ -25,6 +25,7 @@ import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 {
+	private final String LOG_TAG = getClass().getSimpleName();
 
 	@Override
 	public String syncPatientData( Context context )
@@ -43,26 +44,33 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 					new String[]{ String.valueOf( 1 ) }, null
 			);
 			patientRepository.readFromCursor( PatientSingleton.getInstance(), cursor );
-//			if( cursor != null )
-//				cursor.close();
+			//			if( cursor != null )
+			//				cursor.close();
 
 			JSONObject jsonPatient = PatientSingleton.toJSONObject();
 			//			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );
 			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "Patient: " + patient.toString() );
 			//						if( DEBUG ) Log.e( "RemoteSyncPatientData", "Json: " + jsonPatient.toString() );
 			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
-			returnString = conn.sendSyncPatientDataRequest( jsonPatient );
 
-			if( ErrorCode.interpretErrorCode( returnString ) == ErrorCode.INVALID_LOGIN_TOKEN )
-				PatientSingleton.eraseData();	// Log out
+			if( conn.networkIsAvailable() )
+			{
+				returnString = conn.sendSyncPatientDataRequest( jsonPatient );
+
+				if( ErrorCode.interpretErrorCode( returnString ) == ErrorCode.INVALID_LOGIN_TOKEN )
+					PatientSingleton.eraseData();    // Log out
+
+			} // if
 
 		}
 		catch( JSONException e )
 		{
+			Log.e( LOG_TAG, "Error interpreting json." );
 			e.printStackTrace();
 		}
 		catch( Exception e )
 		{
+			Log.e( LOG_TAG, "Error executing request." );
 			e.printStackTrace();
 		}
 

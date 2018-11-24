@@ -12,6 +12,8 @@ import com.sugarcubes.myglucose.actions.interfaces.ISyncPatientDataAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
+
 /**
  * Reference:
  * https://developer.android.com/training/sync-adapters/creating-sync-adapter#java
@@ -77,7 +79,9 @@ public class DataSyncAdapter extends AbstractThreadedSyncAdapter
 		/*
 		 * Data transfer code goes here
 		 */
-		Log.w( LOG_TAG, "***onPerformSync called***" );
+		if( DEBUG ) Log.w( LOG_TAG, "***onPerformSync called***" );
+
+		// try/catch handled in the Action method:
 		String returnStr = syncPatientDataAction.syncPatientData( context );
 
 
