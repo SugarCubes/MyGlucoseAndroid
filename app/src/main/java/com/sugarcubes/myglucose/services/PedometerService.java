@@ -26,10 +26,12 @@ import android.os.Messenger;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.activities.MainActivity;
+import com.sugarcubes.myglucose.activities.SettingsActivity;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
@@ -46,23 +48,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class PedometerService extends Service implements SensorEventListener, StepListener
 {
-	public static final String LOG_TAG                      = "PedometerService";
-	public static final String ACTION_START                 = LOG_TAG + ".Start";
-	public static final String ACTION_STOP                  = LOG_TAG + ".Stop";
-	public static final String ACTION_KEEPALIVE             = LOG_TAG + ".KeepAlive";
-	public static final int    MSG_REGISTER_CLIENT          = 2000;
-	public static final int    MSG_UNREGISTER_CLIENT        = 2001;
-	public static final int    MSG_REPORT_STEPS             = 2002;
-	public static final int    MSG_SHOW_NOTIFICATION        = 2003;
-	public static final int    MSG_HIDE_NOTIFICATION        = 2004;
-	public static final int    MSG_NOTIFICATION_STATUS      = 2005;
-	public static final int    MSG_NOTIFICATION_IS_VISIBLE  = 2006;
+	public static final  String LOG_TAG                     = "PedometerService";
+	public static final  String ACTION_START                = LOG_TAG + ".Start";
+	public static final  String ACTION_STOP                 = LOG_TAG + ".Stop";
+	public static final  String ACTION_KEEPALIVE            = LOG_TAG + ".KeepAlive";
+	public static final  int    MSG_REGISTER_CLIENT         = 2000;
+	public static final  int    MSG_UNREGISTER_CLIENT       = 2001;
+	public static final  int    MSG_REPORT_STEPS            = 2002;
+	public static final  int    MSG_SHOW_NOTIFICATION       = 2003;
+	public static final  int    MSG_HIDE_NOTIFICATION       = 2004;
+	public static final  int    MSG_NOTIFICATION_STATUS     = 2005;
+	public static final  int    MSG_NOTIFICATION_IS_VISIBLE = 2006;
 
 
 	private final  Messenger       mMessenger = new Messenger( new IncomingMessageHandler() );
@@ -70,7 +71,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 	// NOTIFICATION fields:
 	private NotificationManager mNotificationManager;
-	private boolean showNotification    = false;
+	//	private boolean showNotification    = false;
 	private boolean notificationVisible = false;
 
 	// LOCATION fields
@@ -86,10 +87,10 @@ public class PedometerService extends Service implements SensorEventListener, St
 	private static final float           LOCATION_DISTANCE = 10f;           // Meters
 
 
-	// LOCATION fields:
+	// Step Detection fields:
+	private static final long   ALARM_INTERVAL              = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 	private Sensor       mStepCounterSensor;
 	private AlarmManager mAlarmManager;         // Alarm manager to perform repeating tasks
-	private Timer        mTimer;
 	private StepDetector accelerometerStepDetector;
 
 	private static int currentHour;
@@ -121,24 +122,17 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 			requestStepSensorOrStopService();
 
-
 			// Uncomment to request location hourly:
 			//requestLocationUpdates();
 
-
-			// If the service is still running, assign the time variables:
-			currentHour = getHour( 0 );
-			currentDay = getDay( 0 );
-
-			currentLogHour = currentHour;
-			currentLogDay = currentDay;
-
-			if( mTimer == null )
-				mTimer = new Timer();
-			else
-				mTimer.cancel();
-
 		} // SDK check
+
+		// If the service is still running, assign the time variables:
+		currentHour = getHour( 0 );
+		currentDay = getDay( 0 );
+
+		currentLogHour = currentHour;
+		currentLogDay = currentDay;
 
 	} // onCreate
 
@@ -162,13 +156,14 @@ public class PedometerService extends Service implements SensorEventListener, St
 			calculateDailySteps( sensorEvent );
 
 			// Set the current steps in the notification:
-			if( showNotification )
+			if( getPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION ) )
 				updateNotification();
 
 		}
 		else if( sensor.getType() == Sensor.TYPE_ACCELEROMETER )
 		{
-			// If acceleration changed enough, step() will be called in the listener (this class)
+			// If acceleration changed enough, step() will be called in the
+			//		listener (this class), where the notification will be updated
 			accelerometerStepDetector.updateAccel(
 					sensorEvent.timestamp,
 					sensorEvent.values[ 0 ],
@@ -195,8 +190,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 	public void step( long timeNs )
 	{
 		// Get the saved value from prefs
-		int dailySteps =
-				MainActivity.getPreferenceInt( getApplicationContext(), dayString( 0 ) ); // Get today's steps
+		int dailySteps = getPreferenceInt( dayString( 0 ) ); // Get today's steps
 		if( currentDay == getDay( 0 ) )
 		{
 			dailySteps++;
@@ -212,12 +206,12 @@ public class PedometerService extends Service implements SensorEventListener, St
 		// Save dayString's steps. The key is to always save the steps using *today's*
 		//	    preference string. We will retrieve *yesterday's* preference string
 		//      when we log the steps.
-		savePreferenceInt( dayString( 0 ), dailySteps );
+		setPreferenceInt( dayString( 0 ), dailySteps );
 
-		if( DEBUG ) Log.d( LOG_TAG, "Accelerometer step detected..." + dailySteps );
+		if( DEBUG ) Log.d( LOG_TAG, "Accelerometer step detected... " + dailySteps );
 
 		// Set the current steps in the notification:
-		if( showNotification )
+		if( getPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION ) )
 			updateNotification();
 
 	} // step
@@ -239,8 +233,8 @@ public class PedometerService extends Service implements SensorEventListener, St
 		//		mSensorManager.unregisterListener( this, mStepCounterSensor );
 		//		mSensorManager.unregisterListener( this, mStepDetectorSensor );
 
-		if( mTimer != null )
-			mTimer.cancel();
+		if( mAlarmManager != null )
+			mAlarmManager.cancel( getAlarmPendingIntent() );
 
 		try
 		{
@@ -305,6 +299,9 @@ public class PedometerService extends Service implements SensorEventListener, St
 						// Log steps every time the alarm manager calls the KEEPALIVE action:
 						logAllSteps();
 
+						if( getPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION ) )
+							updateNotification();
+
 					}
 					catch( Exception e )
 					{
@@ -318,8 +315,10 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 				case ACTION_START:
 					if( DEBUG ) Log.d( LOG_TAG, "Received ACTION_START" );
+
 					//					if( DEBUG ) Log.e( LOG_TAG, "Show notification: " + showNotification );
-					//					if( mStepCounterSensor != null && showNotification )
+					//					if( mStepCounterSensor != null
+					//							&& getPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION ) )
 					//						displayNotification();
 					break;
 
@@ -464,17 +463,23 @@ public class PedometerService extends Service implements SensorEventListener, St
 		if( DEBUG ) Log.i( LOG_TAG, "Timer start time: "
 				+ System.currentTimeMillis() + startTime );
 
+		PendingIntent pendingIntent = getAlarmPendingIntent();
+		// Set the service to wake up every interval to show notification
+		mAlarmManager.setInexactRepeating( AlarmManager.RTC_WAKEUP, startTime,
+				ALARM_INTERVAL, pendingIntent );
+
+	} // startLogTimer
+
+
+	private PendingIntent getAlarmPendingIntent()
+	{
 		Intent intent = new Intent();                               // Start an intent
 		intent.setClass( this, getClass() );            // Get a class reference
 		intent.setAction( ACTION_KEEPALIVE );                       // Action to run
-		PendingIntent pendingIntent =
-				PendingIntent.getService(     // Pass the intent to pendingIntent
-						this, 0, intent, 0 );
-		// Set the service to wake up every interval to show notification
-		mAlarmManager.setInexactRepeating( AlarmManager.RTC_WAKEUP, startTime,
-				AlarmManager.INTERVAL_HOUR, pendingIntent );
+		return PendingIntent.getService(     // Pass the intent to pendingIntent
+				this, 0, intent, 0 );
 
-	} // startLogTimer
+	} // getAlarmPendingIntent
 
 
 	/**
@@ -544,8 +549,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 		if( currentDay == getDay( 0 ) )
 		{
 			// Get the saved value from prefs
-			dailySteps =
-					MainActivity.getPreferenceInt( getApplicationContext(), dayString( 0 ) ); // Get today's steps
+			dailySteps = getPreferenceInt( dayString( 0 ) ); // Get today's steps
 			if( milestoneSteps < 1 )
 				milestoneSteps = stepsSinceReboot;                   // Initialize milestoneSteps
 			// Subtract any steps accounted for previously and save:
@@ -565,7 +569,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 		// Save "dayString's" steps. The key is to always save the steps using *today's*
 		//	    preference string. We will retrieve *yesterday's* preference string
 		//      when we log the steps.
-		savePreferenceInt( dayString( 0 ), dailySteps );
+		setPreferenceInt( dayString( 0 ), dailySteps );
 
 		// Use milestoneSteps to Subtract current total from the total on next iteration:
 		milestoneSteps = stepsSinceReboot;
@@ -598,12 +602,40 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 
 	/**
+	 * Gets a boolean value from SharedPreferences using a key
+	 *
+	 * @param key: Key
+	 */
+	public boolean getPreferenceBoolean( String key ) // default = 0
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+		return sharedPreferences.getBoolean( key, false );
+
+	} // getPreferenceBoolean
+
+
+	/**
+	 * Gets an int from SharedPreferences using a key
+	 *
+	 * @param key: Key
+	 */
+	public int getPreferenceInt( String key ) // default = 0
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+		return sharedPreferences.getInt( key, 0 );
+
+	} // getPreferenceInt
+
+
+	/**
 	 * Saves an int in SharedPreferences using a key/value pair
 	 *
 	 * @param key:   Key
 	 * @param value: Value
 	 */
-	private void savePreferenceInt( String key, int value )
+	private void setPreferenceInt( String key, int value )
 	{
 		SharedPreferences sharedPreferences
 				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
@@ -611,7 +643,24 @@ public class PedometerService extends Service implements SensorEventListener, St
 		editor.putInt( key, value );
 		editor.apply();
 
-	} // savePreferenceInt
+	} // setPreferenceInt
+
+
+	/**
+	 * Saves a boolean value in SharedPreferences using a key/value pair
+	 *
+	 * @param key:   Key
+	 * @param value: Value
+	 */
+	private void setPreferenceBoolean( String key, boolean value )
+	{
+		SharedPreferences sharedPreferences
+				= PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean( key, value );
+		editor.apply();
+
+	} // savePreferenceBoolean
 
 
 	/**
@@ -670,7 +719,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 	private void logDailySteps()
 	{
 		// We first retrieve *yesterday's* steps:
-		lastDaySteps = MainActivity.getPreferenceInt( getApplicationContext(), dayString( -1 ) );
+		lastDaySteps = getPreferenceInt( dayString( -1 ) );
 
 		//if( lastHourSteps > 0 && currentLogHour != getHour( 0 ) ) // For DEBUGGING
 		if( lastDaySteps > 0 && currentLogDay != getDay( 0 ) )
@@ -752,18 +801,20 @@ public class PedometerService extends Service implements SensorEventListener, St
 	} // logHourlySteps
 
 
-	private Notification getNotification( String text )
+	private Notification createNotification( String text )
 	{
-		if( DEBUG ) Log.d( LOG_TAG, "getNotification called..." );
+		if( DEBUG ) Log.d( LOG_TAG, "createNotification called..." );
 
 		// The PendingIntent to launch our activity if the user selects
 		// this notification
 		PendingIntent contentIntent = PendingIntent.getActivity( this, 0,
 				new Intent( this, MainActivity.class ), 0 );
 
-		Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-				? new Notification.Builder( this, NOTIFICATION_CHANNEL_ID )
-				: new Notification.Builder( this );
+		NotificationCompat.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+				? new NotificationCompat.Builder( this, NOTIFICATION_CHANNEL_ID )
+				: new NotificationCompat.Builder( this );
+
+		//		builder.setDefaults( Notification.DEFAULT_ALL )
 
 		return builder.setContentTitle( getString( R.string.service_label ) )
 				.setContentText( text )
@@ -771,14 +822,14 @@ public class PedometerService extends Service implements SensorEventListener, St
 						? R.mipmap.icon_single_cube
 						: R.mipmap.ic_launcher )
 				.setOnlyAlertOnce( true )
-				.setDefaults( Notification.DEFAULT_ALL )
+				//				.setDefaults( Notification.DEFAULT_ALL )
 				.setContentIntent( contentIntent )
 				.setAutoCancel( false )
-				.setPriority( Notification.PRIORITY_MAX )
+				.setPriority( Notification.PRIORITY_DEFAULT )
 				.setOngoing( true )
 				.build();
 
-	} // getNotification
+	} // createNotification
 
 	/**
 	 * Display a notification in the notification bar.
@@ -791,8 +842,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 		notificationVisible = true;
 
 		Notification notification =
-				getNotification( MainActivity.getPreferenceInt( getApplicationContext(),
-						dayString( 0 ) ) + " Steps Today" );
+				createNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
 
 		mNotificationManager =
 				(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
@@ -834,8 +884,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 		//		if( DEBUG ) Log.d( LOG_TAG, "updateNotification called..." );
 
 		Notification notification =
-				getNotification( MainActivity.getPreferenceInt( getApplicationContext(),
-						dayString( 0 ) ) + " Steps Today" );
+				createNotification( getPreferenceInt( dayString( 0 ) ) + " Steps Today" );
 
 		if( mNotificationManager == null )
 			mNotificationManager =
@@ -856,7 +905,8 @@ public class PedometerService extends Service implements SensorEventListener, St
 		notificationVisible = false;
 		mNotificationManager =
 				(NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		mNotificationManager.cancel( NOTIFICATION_ID );
+		if( mNotificationManager != null )
+			mNotificationManager.cancel( NOTIFICATION_ID );
 
 	} // hideNotification
 
@@ -888,20 +938,22 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 				case MSG_SHOW_NOTIFICATION:
 					Log.d( LOG_TAG, "S: RX MSG_SHOW_NOTIFICATION" );
-					showNotification = true;
+					setPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION, true );
 					if( mStepCounterSensor != null )
 						displayNotification();
 					break;
 
 				case MSG_HIDE_NOTIFICATION:
 					Log.d( LOG_TAG, "S: RX MSG_HIDE_NOTIFICATION" );
-					showNotification = false;
+					setPreferenceBoolean( SettingsActivity.PREF_SHOW_NOTIFICATION, false );
 					hideNotification();
 					break;
 
 				case MSG_NOTIFICATION_STATUS:
 					Log.d( LOG_TAG, "S: RX MSG_NOTIFICATION_STATUS" );
-					sendMessageToUI( MSG_NOTIFICATION_IS_VISIBLE, notificationVisible ? 1 : 0 );
+					sendMessageToUI( MSG_NOTIFICATION_IS_VISIBLE, notificationVisible
+							? 1
+							: 0 );
 					break;
 
 				default:

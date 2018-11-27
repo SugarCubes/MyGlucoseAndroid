@@ -8,13 +8,13 @@ import com.sugarcubes.myglucose.sensor.interfaces.StepListener;
 public class StepDetector
 {
 
-	private static final int ACCEL_RING_SIZE = 50;
+	private static final int ACCEL_RING_SIZE = 10;         // Default: 50
 	private static final int VEL_RING_SIZE   = 10;
 
 	// change this threshold according to your sensitivity preferences
-	private static final float STEP_THRESHOLD = 10f;        // Default: 50f
+	private static final float STEP_THRESHOLD = 5f;        // Default: 50f
 
-	private static final int STEP_DELAY_NS = 250000000;
+	private static final int STEP_DELAY_NS = 250000000;    // Default: 250000000
 
 	private int     accelRingCounter    = 0;
 	private float[] accelRingX          = new float[ ACCEL_RING_SIZE ];

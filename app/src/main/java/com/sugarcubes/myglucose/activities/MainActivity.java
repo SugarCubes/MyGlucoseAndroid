@@ -108,6 +108,16 @@ public class MainActivity
 		//	requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
 		//}
 
+		startServices();
+
+		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) && pIsBound )
+		{
+			// If the service is running at this point, the user wants to track steps,
+			//		so we check the notification status and handle it:
+			sendMessageToPedometerService( PedometerService.MSG_NOTIFICATION_STATUS );
+
+		} // if svc running
+
 	} // onCreate
 
 
@@ -119,20 +129,74 @@ public class MainActivity
 	{
 		super.onResume();
 		Log.e( LOG_TAG, "Track steps: " + trackSteps( getApplicationContext() ) );
-		restartServices();
-
-		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) && pIsBound )
-		{
-			// If the service is running at this point, the user wants to track steps,
-			//		so we check the notification status and handle it:
-			sendMessageToPedometerService( PedometerService.MSG_NOTIFICATION_STATUS );
-
-		} // if svc running
+//		restartServices();
 
 	} // onResume
 
 
 	// region  -----------------Service Helpers-----------------
+
+	private void startServices()
+	{
+		if( !serviceIsRunning( getApplicationContext(), SyncService.class ) )
+			startService( new Intent( getApplicationContext(), SyncService.class ) );
+
+		// Restart the pedometer service:
+		Intent pedometerIntent = new Intent( getApplicationContext(), PedometerService.class );
+		pedometerIntent.setAction( PedometerService.ACTION_START );
+
+		// Start the service, only if user wants to track steps:
+		if( trackSteps( getApplicationContext() )
+				&& !serviceIsRunning( getApplicationContext(), PedometerService.class ) )
+		{
+			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+				startForegroundService( pedometerIntent );
+			else
+				startService( pedometerIntent );
+
+			doBindPedometer();     // Bind so we can send messages
+
+		} // if
+
+	} // startServices
+
+	/**
+	 * Checks each service's status and restarts if necessary
+	 */
+	private void restartServices()
+	{
+		// Restart the sync service:
+		if( serviceIsRunning( getApplicationContext(), SyncService.class ) )
+			stopService( new Intent( getApplicationContext(), SyncService.class ) );
+		startService( new Intent( getApplicationContext(), SyncService.class ) );
+
+		// Restart the pedometer service:
+		Intent pedometerIntent = new Intent( getApplicationContext(), PedometerService.class );
+		pedometerIntent.setAction( PedometerService.ACTION_START );
+
+		// Stop the service if it is running:
+		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) )
+		{
+			doUnbindPedometer();   // Service won't stop if still bound to UI
+			pedometerIntent.setAction( PedometerService.ACTION_STOP );
+			stopService( pedometerIntent );
+
+		} // if
+
+		// Start the service again, only if user wants to track steps:
+		if( trackSteps( getApplicationContext() ) )
+		{
+			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+				startForegroundService( pedometerIntent );
+			else
+				startService( pedometerIntent );
+
+			doBindPedometer();     // Bind so we can send messages
+
+		} // if
+
+	} // restartServices
+
 
 	private void doBindPedometer()
 	{
@@ -243,44 +307,6 @@ public class MainActivity
 
 
 	/**
-	 * Checks each service's status and restarts if necessary
-	 */
-	private void restartServices()
-	{
-		// Restart the sync service:
-		if( serviceIsRunning( getApplicationContext(), SyncService.class ) )
-			stopService( new Intent( getApplicationContext(), SyncService.class ) );
-		startService( new Intent( getApplicationContext(), SyncService.class ) );
-
-		// Restart the pedometer service:
-		Intent pedometerIntent = new Intent( getApplicationContext(), PedometerService.class );
-		pedometerIntent.setAction( PedometerService.ACTION_START );
-
-		// Stop the service if it is running:
-		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) )
-		{
-			doUnbindPedometer();   // Service won't stop if still bound to UI
-			pedometerIntent.setAction( PedometerService.ACTION_STOP );
-			stopService( pedometerIntent );
-
-		} // if
-
-		// Start the service again, only if user wants to track steps:
-		if( trackSteps( getApplicationContext() ) )
-		{
-			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
-				startForegroundService( pedometerIntent );
-			else
-				startService( pedometerIntent );
-
-			doBindPedometer();     // Bind so we can send messages
-
-		} // if
-
-	} // restartServices
-
-
-	/**
 	 * Sends data to the Mqtt service
 	 *
 	 * @param intValueToSend:
@@ -366,7 +392,6 @@ public class MainActivity
 		return sharedPreferences.getInt( key, 0 );
 
 	} // getPreferenceInt
-
 
 	public static boolean showNotification( Context context )
 	{
