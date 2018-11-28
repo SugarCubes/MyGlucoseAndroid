@@ -32,19 +32,33 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 	{
 		super.onCreate( savedInstanceState );
 
-		setContentView( R.layout.activity_view_history );
+		setContentView( R.layout.activity_view_history_4_columns );
 
 		// Initialize loader to handle calls to ContentProvider
 		getSupportLoaderManager().initLoader( loaderIndex, null, this );
+
+		// Set all the header texts:
+		TextView header1 = findViewById( R.id.header1 );
+		header1.setText( R.string.before_after );
+
+		TextView header2 = findViewById( R.id.header2 );
+		header2.setText( R.string.which_meal );
+
+		TextView header3 = findViewById( R.id.header3 );
+		header3.setText( R.string.glucose_level );
+
+		TextView header4 = findViewById( R.id.header4 );
+		header4.setText( R.string.date );
 
 	} // onCreate
 
 
 	public void setEmpty( View view )
 	{
-		String emptyText = getString( R.string.empty_listview );
-		TextView emptyTextView = view.findViewById( R.id.empty_txt );
-		emptyTextView.setText( emptyText );
+		view.setVisibility( View.GONE );
+		//		String emptyText = getString( R.string.empty_listview );
+		//		TextView emptyTextView = findViewById( R.id.empty_txt );
+		//		emptyTextView.setText( emptyText );
 
 	} // setEmpty
 
@@ -72,6 +86,36 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 
 	} // loaderReset
 
+
+	private void showListview()
+	{
+		ListView listView = findViewById( R.id.listView );
+		listView.setVisibility( View.VISIBLE );
+
+		// Set the adapter
+		if( viewCursorAdapter != null )
+			listView.setAdapter( viewCursorAdapter );
+
+		View emptyView = findViewById( R.id.empty_view );
+		emptyView.setVisibility( View.GONE );
+		View headerView = findViewById( R.id.header );
+		headerView.setVisibility( View.VISIBLE );
+
+	} // showListview
+
+
+	private void showEmpty()
+	{
+		ListView listView = findViewById( R.id.listView );
+		listView.setVisibility( View.GONE );
+		View emptyView = findViewById( R.id.empty_view );
+		emptyView.setVisibility( View.VISIBLE );
+		View headerView = findViewById( R.id.header );
+		headerView.setVisibility( View.GONE );
+
+	} // showEmpty
+
+
 	@NonNull
 	@Override
 	public Loader<Cursor> onCreateLoader( int id, @Nullable Bundle args )
@@ -79,36 +123,37 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 		return new CursorLoader( getApplicationContext(),
 				MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
 				null, null, null, DB.KEY_UPDATED_AT + " ASC" );
-	}
+
+	} // onCreateLoader
 
 	@Override
 	public void onLoadFinished( @NonNull android.support.v4.content.Loader<Cursor> loader, Cursor data )
 	{
 		this.cursor = data;
 
-		// When a list item is clicked, set the activity to go to:
 		viewCursorAdapter = new GlucoseCursorAdapter( getApplicationContext(), cursor );
-		ListView listView = findViewById( R.id.listView );
-		if( viewCursorAdapter != null )
-			listView.setAdapter( viewCursorAdapter );
-		else
-			setEmpty( listView );
 
-		if( viewCursorAdapter != null )
-			viewCursorAdapter.swapCursor( cursor );
+		if( data.getCount() > 0 )
+			showListview();
+		else
+			showEmpty();
+
+		viewCursorAdapter.swapCursor( cursor );
+
 		if( cursor != null && !cursor.isClosed() )
 			synchronized( cursor )
 			{
 				cursor.notify();
 			}
 
-	}
+	} // onLoadFinished
+
 
 	@Override
 	public void onLoaderReset( @NonNull android.support.v4.content.Loader<Cursor> loader )
 	{
-//		loaderReset();
+		//		loaderReset();
 
-	}
+	} // onLoaderReset
 
 } // class

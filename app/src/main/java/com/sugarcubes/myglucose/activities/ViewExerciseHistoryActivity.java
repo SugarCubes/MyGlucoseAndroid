@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -19,9 +20,12 @@ import com.sugarcubes.myglucose.adapters.ExerciseCursorAdapter;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
+
 public class ViewExerciseHistoryActivity extends AppCompatActivity
 		implements LoaderManager.LoaderCallbacks<Cursor>
 {
+	private final String LOG_TAG = getClass().getSimpleName();
 	int loaderIndex = 33333;
 	CursorAdapter viewCursorAdapter;
 	Cursor        cursor;
@@ -31,25 +35,29 @@ public class ViewExerciseHistoryActivity extends AppCompatActivity
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
+		setContentView( R.layout.activity_view_history_3_columns );
 
-		setContentView( R.layout.activity_view_history );
+		setTitle( getString( R.string.title_activity_exercise_entry ) + " History" );
 
 		// Initialize loader to handle calls to ContentProvider
 		getSupportLoaderManager().initLoader( loaderIndex, null, this );
 
+		// Set all the header texts:
+		TextView header1 = findViewById( R.id.header1 );
+		header1.setText( R.string.exercise_name );
+
+		TextView header2 = findViewById( R.id.header2 );
+		header2.setText( R.string.minutes );
+
+		TextView header3 = findViewById( R.id.header3 );
+		header3.setText( R.string.date );
+
 	} // onCreate
 
 
-	public void setEmpty( View view )
-	{
-//		view.setVisibility( View.INVISIBLE );
-		String emptyText = getString( R.string.empty_listview );
-		TextView emptyTextView = view.findViewById( R.id.empty_txt );
-		emptyTextView.setText( emptyText );
-
-	} // setEmpty
-
-
+	/**
+	 * To be used if data changes (item is deleted from, added to database, etc)
+	 */
 	public void loaderReset()
 	{
 		if( viewCursorAdapter != null && cursor != null )
@@ -76,13 +84,52 @@ public class ViewExerciseHistoryActivity extends AppCompatActivity
 	} // loaderReset
 
 
+	/**
+	 * Shows the ListView and sets the adapter
+	 */
+	private void showListview()
+	{
+		if( DEBUG ) Log.d( LOG_TAG, "Showing ListView" );
+		ListView listView = findViewById( R.id.listView );
+		listView.setVisibility( View.VISIBLE );
+
+		// Set the adapter
+		if( viewCursorAdapter != null )
+			listView.setAdapter( viewCursorAdapter );
+		else
+			Log.e( LOG_TAG, "viewCursorAdapter is null!!" );
+
+		View emptyView = findViewById( R.id.empty_view );
+		emptyView.setVisibility( View.GONE );
+		View headerView = findViewById( R.id.header );
+		headerView.setVisibility( View.VISIBLE );
+
+	} // showListview
+
+
+	/**
+	 * Hides ListView and shows the empty view
+	 */
+	private void showEmpty()
+	{
+		if( DEBUG ) Log.d( LOG_TAG, "Showing empty" );
+		ListView listView = findViewById( R.id.listView );
+		listView.setVisibility( View.GONE );
+		View emptyView = findViewById( R.id.empty_view );
+		emptyView.setVisibility( View.VISIBLE );
+		View headerView = findViewById( R.id.header );
+		headerView.setVisibility( View.GONE );
+
+	} // showEmpty
+
+
 	@NonNull
 	@Override
 	public Loader<Cursor> onCreateLoader( int id, @Nullable Bundle args )
 	{
 		return new CursorLoader( getApplicationContext(),
 				MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
-				null, DB.KEY_EXERCISE_STEPS + "<?",
+				null, DB.KEY_EXERCISE_STEPS + "< ?",
 				new String[]{ String.valueOf( 1 ) },
 				DB.KEY_UPDATED_AT + " ASC" );
 
@@ -94,21 +141,21 @@ public class ViewExerciseHistoryActivity extends AppCompatActivity
 	{
 		this.cursor = data;
 
-		// When a list item is clicked, set the activity to go to:
-		viewCursorAdapter = new ExerciseCursorAdapter( getApplicationContext(), cursor );
-		ListView listView = findViewById( R.id.listView );
-		if( viewCursorAdapter != null )
-			listView.setAdapter( viewCursorAdapter );
-		else
-			setEmpty( listView );
+		if( DEBUG ) Log.d( LOG_TAG, "Cursor count: " + data.getCount() );
 
-		if( viewCursorAdapter != null )
-			viewCursorAdapter.swapCursor( cursor );
+		viewCursorAdapter = new ExerciseCursorAdapter( getApplicationContext(), cursor );
+
+		if( data.getCount() > 0 )
+			showListview();
+		else
+			showEmpty();
+
+		viewCursorAdapter.swapCursor( cursor );
+
 		if( cursor != null && !cursor.isClosed() )
 			synchronized( cursor )
 			{
 				cursor.notify();
-				cursor.close();
 			}
 
 	} // onLoadFinished

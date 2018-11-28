@@ -101,6 +101,8 @@ public class MainActivity
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
 
+
+
 		// NOTE: UNCOMMENT to use location services when tracking steps:
 		//if( !canAccessFineLocation() && !canAccessCoarseLocation()
 		//		&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )

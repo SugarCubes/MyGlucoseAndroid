@@ -476,11 +476,11 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 
 
 	/**
-	 * Starts ViewLatestMealEntryActivity
+	 * Starts ViewMealEntryActivity
 	 */
 	private void startViewLatestMealEntryActivity()
 	{
-		Intent intent = new Intent( this, ViewLatestMealEntryActivity.class );
+		Intent intent = new Intent( this, ViewMealEntryActivity.class );
 		startActivity( intent );
 
 	} // startViewLatestMealEntryActivity

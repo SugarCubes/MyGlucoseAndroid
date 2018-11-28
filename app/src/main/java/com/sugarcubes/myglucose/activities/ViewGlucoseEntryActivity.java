@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
-public class ViewLatestGlucoseEntryActivity extends AppCompatActivity
+public class ViewGlucoseEntryActivity extends AppCompatActivity
 {
 	private final String LOG_TAG = getClass().getSimpleName();
 

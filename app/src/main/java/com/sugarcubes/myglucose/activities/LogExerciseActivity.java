@@ -109,7 +109,7 @@ public class LogExerciseActivity extends AppCompatActivity
 
 	private void startViewLatestExerciseActivity()
 	{
-		Intent intent = new Intent( this, ViewLatestExerciseEntryActivity.class );
+		Intent intent = new Intent( this, ViewExerciseEntryActivity.class );
 		startActivity( intent );
 
 	} // startEditProfileActivity

@@ -4,17 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.activities.ViewLatestMealEntryActivity;
+import com.sugarcubes.myglucose.activities.ViewMealEntryActivity;
 import com.sugarcubes.myglucose.db.DB;
-
-import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class MealEntryCursorAdapter extends CursorAdapter
 {
@@ -28,7 +25,7 @@ public class MealEntryCursorAdapter extends CursorAdapter
 		super( context, cursor, 0 );
 		this.context = context;
 		this.cursorInflater = LayoutInflater.from( context );
-		this.listLayout = R.layout.list_item_history;
+		this.listLayout = R.layout.list_item_history_3_columns;
 
 	}
 
@@ -44,7 +41,7 @@ public class MealEntryCursorAdapter extends CursorAdapter
 	@Override
 	public void bindView( View view, Context context, Cursor cursor )
 	{
-		// Take data from cursor and set R.layout.list_item_history text to the row's data
+		// Take data from cursor and set R.layout.list_item_history_3_columns text to the row's data
 		TextView titleView = view.findViewById( R.id.itemName );
 		TextView valueView = view.findViewById( R.id.itemValue );
 		TextView value2View = view.findViewById( R.id.itemValue2 );
@@ -75,7 +72,7 @@ public class MealEntryCursorAdapter extends CursorAdapter
 			try
 			{
 				// Send the entry's info to be viewed:
-				Intent intent = new Intent( context, ViewLatestMealEntryActivity.class );
+				Intent intent = new Intent( context, ViewMealEntryActivity.class );
 				intent.putExtra( "EntryId", String.valueOf( viewIndex ) );       // Used to look up entry info
 				context.startActivity( intent );
 			}

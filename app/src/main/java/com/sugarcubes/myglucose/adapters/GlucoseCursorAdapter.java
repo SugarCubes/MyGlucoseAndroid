@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.activities.ViewLatestGlucoseEntryActivity;
+import com.sugarcubes.myglucose.activities.ViewGlucoseEntryActivity;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.utils.DateUtilities;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
@@ -21,15 +22,15 @@ public class GlucoseCursorAdapter extends CursorAdapter
 {
 	private final String LOG_TAG = getClass().getSimpleName();
 	private LayoutInflater cursorInflater;
-	private Context context;
-	private int listLayout;
+	private Context        context;
+	private int            listLayout;
 
 	public GlucoseCursorAdapter( Context context, Cursor c )
 	{
 		super( context, c, 0 );
 		this.context = context;
 		this.cursorInflater = LayoutInflater.from( context );
-		this.listLayout = R.layout.list_item_history;
+		this.listLayout = R.layout.list_item_history_4_columns;
 
 	} // constructor
 
@@ -45,14 +46,13 @@ public class GlucoseCursorAdapter extends CursorAdapter
 	@Override
 	public void bindView( View view, Context context, Cursor cursor )
 	{
-		// Take data from cursor and set R.layout.list_item_history text to the row's data
-		TextView titleView = view.findViewById( R.id.itemName );
+		// Set Before/After
 		TextView valueView = view.findViewById( R.id.itemValue );
-		TextView value2View = view.findViewById( R.id.itemValue2 );
-
-		// Get references to the cursor's data:
-		String historyId = cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_REMOTE_ID ) );
 		String title = cursor.getString( cursor.getColumnIndex( DB.KEY_GLUCOSE_BEFORE_AFTER ) );
+		TextView titleView = view.findViewById( R.id.itemName );
+		titleView.setText( title );
+
+		// Set WhichMeal
 		int whichMealInt = cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) );
 		// TODO: Cursor returning 0:
 		if( DEBUG ) Log.e( LOG_TAG, "whichMealInt:" + whichMealInt );
@@ -60,16 +60,24 @@ public class GlucoseCursorAdapter extends CursorAdapter
 		String whichMealString = "";
 		if( whichMeal != null )
 			whichMealString = whichMeal.toString();
-		int measurement = cursor.getInt( cursor.getColumnIndex( DB.KEY_GLUCOSE_MEASUREMENT ) );
-
-		// Set texts:
-		titleView.setText( title );
 		valueView.setText( whichMealString );
+
+		// Set Measurement
+		TextView value2View = view.findViewById( R.id.itemValue2 );
+		int measurement = cursor.getInt( cursor.getColumnIndex( DB.KEY_GLUCOSE_MEASUREMENT ) );
 		value2View.setText( String.valueOf( measurement ) );
 
+		// Set date
+		String dateString =
+				DateUtilities.getSimpleDateString( DateUtilities.convertStringToDate(
+						cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_UPDATED_AT ) ) ) );
+		TextView value3View = view.findViewById( R.id.itemValue3 );
+		value3View.setText( dateString );
+
 		// Set the view data to handle clicks
-		view.setTag( historyId );						// To pass during a click
-		view.setOnClickListener( historyClickHandler );		// Clicks are now handled
+		String historyId = cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_REMOTE_ID ) );
+		view.setTag( historyId );                        // To pass during a click
+		view.setOnClickListener( historyClickHandler );        // Clicks are now handled
 
 	} // bindView
 
@@ -84,7 +92,7 @@ public class GlucoseCursorAdapter extends CursorAdapter
 			try
 			{
 				// Send the entry's info to be viewed:
-				Intent intent = new Intent( context, ViewLatestGlucoseEntryActivity.class );
+				Intent intent = new Intent( context, ViewGlucoseEntryActivity.class );
 				intent.putExtra( "EntryId", String.valueOf( viewIndex ) );       // Used to look up entry info
 				context.startActivity( intent );
 			}

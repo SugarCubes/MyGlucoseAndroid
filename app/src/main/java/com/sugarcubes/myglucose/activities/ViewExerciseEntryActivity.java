@@ -13,19 +13,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
-import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.entities.ExerciseEntry;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
-public class ViewLatestExerciseEntryActivity extends AppCompatActivity
+public class ViewExerciseEntryActivity extends AppCompatActivity
 {
 	private final String LOG_TAG = getClass().getSimpleName();
 
@@ -35,7 +31,7 @@ public class ViewLatestExerciseEntryActivity extends AppCompatActivity
 		//change this
 		setContentView( R.layout.activity_view_latest_exercise_entry );
 		Toolbar toolbar = findViewById( R.id.toolbar );
-		toolbar.setTitle( R.string.title_activity_view_latest_exercise_entry );
+		toolbar.setTitle( "View " + getString( R.string.title_activity_exercise_entry ) );
 		setSupportActionBar( toolbar );
 		if( getSupportActionBar() != null )
 			getSupportActionBar().setDisplayHomeAsUpEnabled( true );

@@ -20,7 +20,7 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.util.ArrayList;
 
-public class ViewLatestMealEntryActivity extends AppCompatActivity
+public class ViewMealEntryActivity extends AppCompatActivity
 {
 
     @Override

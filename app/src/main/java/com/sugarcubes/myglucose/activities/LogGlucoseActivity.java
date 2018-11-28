@@ -112,7 +112,7 @@ public class LogGlucoseActivity extends AppCompatActivity
 
 	private void startViewLatestGlucoseActivity()
 	{
-		Intent intent = new Intent( this, ViewLatestGlucoseEntryActivity.class );
+		Intent intent = new Intent( this, ViewGlucoseEntryActivity.class );
 		startActivity( intent );
 
 	} // startEditProfileActivity
