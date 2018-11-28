@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="holo_blue_dark">#2fadd7</color>
     <color name="background">#ffffff</color>
+    <color name="secondary_text_material_dark">#ffffff</color>
+    <color name="text_color_secondary">#ffffff</color>
 </resources>

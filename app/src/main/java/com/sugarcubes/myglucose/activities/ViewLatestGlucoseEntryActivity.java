@@ -17,6 +17,7 @@ import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.entities.GlucoseEntry;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 

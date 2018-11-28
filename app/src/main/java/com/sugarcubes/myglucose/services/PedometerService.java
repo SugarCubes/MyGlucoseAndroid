@@ -53,17 +53,17 @@ import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class PedometerService extends Service implements SensorEventListener, StepListener
 {
-	public static final  String LOG_TAG                     = "PedometerService";
-	public static final  String ACTION_START                = LOG_TAG + ".Start";
-	public static final  String ACTION_STOP                 = LOG_TAG + ".Stop";
-	public static final  String ACTION_KEEPALIVE            = LOG_TAG + ".KeepAlive";
-	public static final  int    MSG_REGISTER_CLIENT         = 2000;
-	public static final  int    MSG_UNREGISTER_CLIENT       = 2001;
-	public static final  int    MSG_REPORT_STEPS            = 2002;
-	public static final  int    MSG_SHOW_NOTIFICATION       = 2003;
-	public static final  int    MSG_HIDE_NOTIFICATION       = 2004;
-	public static final  int    MSG_NOTIFICATION_STATUS     = 2005;
-	public static final  int    MSG_NOTIFICATION_IS_VISIBLE = 2006;
+	public static final String LOG_TAG                     = "PedometerService";
+	public static final String ACTION_START                = LOG_TAG + ".Start";
+	public static final String ACTION_STOP                 = LOG_TAG + ".Stop";
+	public static final String ACTION_KEEPALIVE            = LOG_TAG + ".KeepAlive";
+	public static final int    MSG_REGISTER_CLIENT         = 2000;
+	public static final int    MSG_UNREGISTER_CLIENT       = 2001;
+	public static final int    MSG_REPORT_STEPS            = 2002;
+	public static final int    MSG_SHOW_NOTIFICATION       = 2003;
+	public static final int    MSG_HIDE_NOTIFICATION       = 2004;
+	public static final int    MSG_NOTIFICATION_STATUS     = 2005;
+	public static final int    MSG_NOTIFICATION_IS_VISIBLE = 2006;
 
 
 	private final  Messenger       mMessenger = new Messenger( new IncomingMessageHandler() );
@@ -88,7 +88,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 
 
 	// Step Detection fields:
-	private static final long   ALARM_INTERVAL              = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+	private static final long ALARM_INTERVAL = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 	private Sensor       mStepCounterSensor;
 	private AlarmManager mAlarmManager;         // Alarm manager to perform repeating tasks
 	private StepDetector accelerometerStepDetector;

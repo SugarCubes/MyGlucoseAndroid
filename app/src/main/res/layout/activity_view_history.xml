@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <!--android:background="@drawable/gradient_blue"-->
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/header1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Header @string/zip1" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:dividerHeight="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <!--android:divider="@color/colorPrimary"-->
+    <!--android:layout_marginBottom="50dp"-->
+
+    <!--empty_listview automatically gets filled when ListView is empty-->
+    <RelativeLayout
+        android:id="@+id/empty_container"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/listView">
+
+        <TextView
+            android:id="@+id/empty_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:padding="15dp"
+            android:text="@string/empty_listview"
+            android:textSize="17sp"
+            android:theme="@style/AppTheme.Dark" />
+
+        <ImageView
+            android:id="@+id/empty_img"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/empty_listview"
+            android:scaleType="centerCrop" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

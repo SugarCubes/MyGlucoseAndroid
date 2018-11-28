@@ -51,13 +51,12 @@ public class LogExerciseActivity extends AppCompatActivity
 		// Return the correct LogExerciseEntry action (set up in .dependencies.ObjectMap)
 		logExerciseEntryAction = Dependencies.get( ILogExerciseEntryAction.class );
 
-		Button button = findViewById( R.id.submitButton );
-		Button viewLatest = findViewById( R.id.view_latest );
 		spinner = findViewById( R.id.save_spinner );
 		exerciseForm = findViewById( R.id.exercise_form );
 		constraintLayout = findViewById( R.id.contraint_layout );
 
-		button.setOnTouchListener( new View.OnTouchListener()
+		Button saveButton = findViewById( R.id.submitButton );
+		saveButton.setOnTouchListener( new View.OnTouchListener()
 		{
 			@Override
 			public boolean onTouch( View v, MotionEvent event )
@@ -73,7 +72,8 @@ public class LogExerciseActivity extends AppCompatActivity
 			}
 		} );
 
-		viewLatest.setOnTouchListener( new View.OnTouchListener()
+		Button viewLatestButton = findViewById( R.id.view_latest );
+		viewLatestButton.setOnTouchListener( new View.OnTouchListener()
 		{
 			@Override
 			public boolean onTouch( View v, MotionEvent event )
@@ -81,6 +81,23 @@ public class LogExerciseActivity extends AppCompatActivity
 				if( event.getAction() == MotionEvent.ACTION_UP )
 				{
 					startViewLatestExerciseActivity();
+					return true;
+				}
+				return false;
+			}
+		} );
+
+		Button historyButton = findViewById( R.id.view_history );
+		historyButton.setOnTouchListener( new View.OnTouchListener()
+		{
+			@Override
+			public boolean onTouch( View v, MotionEvent event )
+			{
+				if( event.getAction() == MotionEvent.ACTION_UP )
+				{
+					Intent intent = new Intent( getApplicationContext(),
+							ViewExerciseHistoryActivity.class );
+					startActivity( intent );
 					return true;
 				}
 				return false;

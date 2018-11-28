@@ -172,6 +172,7 @@
                 android:value="com.sugarcubes.myglucose.activities.LogMealActivity" />
         </activity>
         <activity android:name=".activities.ViewGlucoseHistoryActivity"></activity>
+        <activity android:name=".activities.ViewExerciseHistoryActivity" />
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.sugarcubes.myglucose.activities;
 
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -8,21 +9,20 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.adapters.GlucoseCursorAdapter;
+import com.sugarcubes.myglucose.adapters.ExerciseCursorAdapter;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 
-public class ViewGlucoseHistoryActivity extends AppCompatActivity
+public class ViewExerciseHistoryActivity extends AppCompatActivity
 		implements LoaderManager.LoaderCallbacks<Cursor>
 {
-	int loaderIndex = 53535;
+	int loaderIndex = 33333;
 	CursorAdapter viewCursorAdapter;
 	Cursor        cursor;
 
@@ -42,6 +42,7 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 
 	public void setEmpty( View view )
 	{
+//		view.setVisibility( View.INVISIBLE );
 		String emptyText = getString( R.string.empty_listview );
 		TextView emptyTextView = view.findViewById( R.id.empty_txt );
 		emptyTextView.setText( emptyText );
@@ -65,21 +66,28 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 		}
 		catch( Exception e )
 		{
-			Log.i( "LOADER", "Loader not initialized. Not forcing load.\n" + e.getMessage() );
+			Log.i( "LOADER", "Loader not initialized. Not forcing load.\n"
+					+ e.getMessage() );
 		}
 
-		getContentResolver().notifyChange( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI, null );
+		getContentResolver().notifyChange(
+				MyGlucoseContentProvider.EXERCISE_ENTRIES_URI, null );
 
 	} // loaderReset
+
 
 	@NonNull
 	@Override
 	public Loader<Cursor> onCreateLoader( int id, @Nullable Bundle args )
 	{
 		return new CursorLoader( getApplicationContext(),
-				MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
-				null, null, null, DB.KEY_UPDATED_AT + " ASC" );
-	}
+				MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				null, DB.KEY_EXERCISE_STEPS + "<?",
+				new String[]{ String.valueOf( 1 ) },
+				DB.KEY_UPDATED_AT + " ASC" );
+
+	} // onCreateLoader
+
 
 	@Override
 	public void onLoadFinished( @NonNull android.support.v4.content.Loader<Cursor> loader, Cursor data )
@@ -87,7 +95,7 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 		this.cursor = data;
 
 		// When a list item is clicked, set the activity to go to:
-		viewCursorAdapter = new GlucoseCursorAdapter( getApplicationContext(), cursor );
+		viewCursorAdapter = new ExerciseCursorAdapter( getApplicationContext(), cursor );
 		ListView listView = findViewById( R.id.listView );
 		if( viewCursorAdapter != null )
 			listView.setAdapter( viewCursorAdapter );
@@ -100,15 +108,17 @@ public class ViewGlucoseHistoryActivity extends AppCompatActivity
 			synchronized( cursor )
 			{
 				cursor.notify();
+				cursor.close();
 			}
 
-	}
+	} // onLoadFinished
+
 
 	@Override
 	public void onLoaderReset( @NonNull android.support.v4.content.Loader<Cursor> loader )
 	{
-//		loaderReset();
+		//		loaderReset();
 
-	}
+	} // onLoaderReset
 
 } // class

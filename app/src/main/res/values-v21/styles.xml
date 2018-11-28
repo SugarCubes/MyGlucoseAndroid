@@ -22,4 +22,18 @@
         <!--<item name="android:textColorSecondaryInverse">@android:color/white</item>-->
         <!--<item name="android:textColorTertiaryInverse">@android:color/white</item>-->
     </style>
+
+    <!-- Green App Theme -->
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- AppCompat Attributes -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
 </resources>
