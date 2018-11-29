@@ -23,8 +23,11 @@ guideline.-->
         android:layout_height="0dp"
         android:layout_marginLeft="8dp"
         android:background="@android:color/holo_purple"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:drawableTop="@drawable/icon_exercise"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
         android:text="@string/log_exercise"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/glucose_button"
@@ -32,7 +35,8 @@ guideline.-->
         app:layout_constraintLeft_toRightOf="@+id/meals_button"
         app:layout_constraintTop_toTopOf="@+id/glucose_button"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".305" />
+        app:layout_constraintWidth_percent=".305"
+        android:layout_marginStart="8dp" />
 
     <Button
         android:id="@+id/meals_button"
@@ -41,15 +45,19 @@ guideline.-->
         android:layout_height="0dp"
         android:layout_marginLeft="8dp"
         android:background="@android:color/holo_green_light"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:drawableTop="@drawable/icon_meals"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
         android:text="@string/log_meals"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/glucose_button"
         app:layout_constraintLeft_toRightOf="@+id/glucose_button"
         app:layout_constraintTop_toTopOf="@+id/glucose_button"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".305" />
+        app:layout_constraintWidth_percent=".305"
+        android:layout_marginStart="8dp" />
 
     <Button
         android:id="@+id/glucose_button"
@@ -58,6 +66,11 @@ guideline.-->
         android:layout_height="0dp"
         android:layout_marginLeft="16dp"
         android:background="@android:color/holo_orange_dark"
+        android:drawableTop="@drawable/icon_glucose"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
         android:text="@string/log_glucose"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,7 +79,8 @@ guideline.-->
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_min="wrap"
-        app:layout_constraintWidth_percent=".305" />
+        app:layout_constraintWidth_percent=".305"
+        android:layout_marginStart="16dp" />
 
     <TextView
         android:id="@+id/textView"

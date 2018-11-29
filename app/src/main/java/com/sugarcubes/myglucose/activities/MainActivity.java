@@ -30,13 +30,17 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.PopupMenu;
+import android.widget.ShareActionProvider;
 
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
@@ -48,13 +52,19 @@ import com.sugarcubes.myglucose.services.PedometerService;
 import com.sugarcubes.myglucose.services.SyncService;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class MainActivity
 		extends AppCompatActivity
 		implements LoaderCallbacks<Cursor>,
 		View.OnTouchListener,
 		ServiceConnection
 {
-	public static final boolean DEBUG = true;                        // Activate/deactivate logging
+	public static final boolean DEBUG           = true;              // Activate/deactivate logging
+	public final static String  WEBSITE_ADDRESS = "www.legendscomic.com:22222";
+	//"www.myglucosetracker.com";
 
 	private final       String           LOG_TAG                    = getClass().getSimpleName();
 	private             PatientSingleton patientUser                =
@@ -64,7 +74,6 @@ public class MainActivity
 	public static final int              REGISTER_REQUEST           = 300;
 	// Return code after register
 	public static final int              RESULT_REGISTER_SUCCESSFUL = 101;
-	private Menu menu;                   // Reference to change Login/logout text
 
 	private static final String[] INITIAL_PERMS   = {
 			Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -80,6 +89,9 @@ public class MainActivity
 	private       boolean           pIsBound          = false;
 	private       ServiceConnection pConnection       = this;
 	private       Messenger         pServiceMessenger = null;
+
+	private Menu                menu;                   // Reference to change Login/logout text
+	private ShareActionProvider mShareActionProvider;
 
 
 	@Override
@@ -100,7 +112,6 @@ public class MainActivity
 		glucoseButton.setOnTouchListener( this );
 		mealsButton.setOnTouchListener( this );
 		exerciseButton.setOnTouchListener( this );
-
 
 
 		// NOTE: UNCOMMENT to use location services when tracking steps:
@@ -131,7 +142,7 @@ public class MainActivity
 	{
 		super.onResume();
 		Log.e( LOG_TAG, "Track steps: " + trackSteps( getApplicationContext() ) );
-//		restartServices();
+		//		restartServices();
 
 	} // onResume
 
@@ -421,6 +432,26 @@ public class MainActivity
 
 		this.menu = menu;
 
+		// A mixture of solutions at:
+		// https://stackoverflow.com/questions/18374183/how-to-show-icons-in-overflow-menu-in-actionbar/32523930
+
+		// Force the menu to show the icons:
+		if( menu instanceof MenuBuilder )
+		{
+			Method m;
+			try
+			{
+				m = menu.getClass().getDeclaredMethod(
+						"setOptionalIconsVisible", Boolean.TYPE );
+				m.setAccessible( true );
+				m.invoke( menu, true );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+
 		setMenuTexts();                    // Show Log in/out, Register
 
 		return true;
@@ -478,6 +509,17 @@ public class MainActivity
 				{
 					startLoginActivity();
 				}
+				break;
+
+			case R.id.action_share:// Fetch and store ShareActionProvider
+				//				mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+				Intent sharingIntent = new Intent( android.content.Intent.ACTION_SEND );
+				sharingIntent.setType( "text/plain" );
+				String shareBody = "Hi, check out MyGlucose, a good application for you and your " +
+						"doctor to track your health!\nhttp://" + WEBSITE_ADDRESS;
+				sharingIntent.putExtra( android.content.Intent.EXTRA_SUBJECT, "MyGlucose Health Tracker" );
+				sharingIntent.putExtra( android.content.Intent.EXTRA_TEXT, shareBody );
+				startActivity( Intent.createChooser( sharingIntent, "Share via" ) );
 				break;
 
 			case R.id.action_exit:

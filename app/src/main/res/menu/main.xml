@@ -1,40 +1,54 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
-        android:id="@+id/action_login"
-        android:orderInCategory="100"
-        android:title="@string/login"
-        app:showAsAction="collapseActionView" />
+    <!--https://www.homeandlearn.co.uk/android/android_vector_assets.html-->
 
     <item
+        android:id="@+id/action_view_profile"
+        android:icon="@drawable/action_account_circle_white_40dp"
+        android:orderInCategory="102"
+        android:title="@string/view_profile"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_login"
+        android:icon="@drawable/action_swap_horiz_black_24dp"
+        android:orderInCategory="104"
+        android:title="@string/login" />
+    <item
         android:id="@+id/action_register"
-        android:orderInCategory="101"
+        android:icon="@drawable/action_person_add_black_24dp"
+        android:orderInCategory="105"
         android:title="@string/register"
         app:showAsAction="collapseActionView" />
 
     <item
-        android:id="@+id/action_view_profile"
-        android:orderInCategory="102"
-        android:title="@string/view_profile"
-        app:showAsAction="collapseActionView" />
+        android:id="@+id/action_edit_profile"
+        android:icon="@drawable/action_edit_black_24dp"
+        android:orderInCategory="106"
+        android:title="@string/edit_profile"
+        app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_edit_profile"
-        android:orderInCategory="103"
-        android:title="@string/edit_profile"
-        app:showAsAction="collapseActionView" />
+        android:id="@+id/action_share"
+        android:icon="@drawable/action_share_black_24dp"
+        android:orderInCategory="107"
+        android:title="@string/share_this"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="104"
+        android:icon="@drawable/action_settings_white_40dp"
+        android:orderInCategory="108"
         android:title="@string/action_settings"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_exit"
-        android:orderInCategory="105"
-        android:title="@string/exit" />
-
+        android:icon="@drawable/action_exit_to_app_black_24dp"
+        android:orderInCategory="109"
+        android:title="@string/exit"
+        app:showAsAction="ifRoom" />
 
 </menu>

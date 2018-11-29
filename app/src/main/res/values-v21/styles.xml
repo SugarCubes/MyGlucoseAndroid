@@ -21,9 +21,18 @@
         <!--<item name="android:textColorPrimaryInverse">@android:color/white</item>-->
         <!--<item name="android:textColorSecondaryInverse">@android:color/white</item>-->
         <!--<item name="android:textColorTertiaryInverse">@android:color/white</item>-->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
     </style>
 
-    <!-- Green App Theme -->
+    <!--To offset the drop-down menu:-->
+    <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="overlapAnchor">false</item>
+        <!--<item name="android:dropDownVerticalOffset">5.0dp</item>-->
+        <!--<item name="android:popupBackground">#FFF</item>-->
+    </style>
+
+    <!-- For ListView items -->
     <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
