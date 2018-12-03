@@ -38,7 +38,7 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.activity_view_history_4_columns );
+		setContentView( R.layout.activity_view_history_3_columns );
 
         setTitle( "Meal Entry History" );
 
