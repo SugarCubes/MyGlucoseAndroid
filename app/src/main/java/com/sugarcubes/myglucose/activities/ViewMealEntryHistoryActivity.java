@@ -15,9 +15,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
+import com.sugarcubes.myglucose.adapters.GlucoseCursorAdapter;
 import com.sugarcubes.myglucose.adapters.MealEntryCursorAdapter;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
+import com.sugarcubes.myglucose.dependencies.Dependencies;
+import com.sugarcubes.myglucose.entities.MealEntry;
+import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
+import com.sugarcubes.myglucose.singletons.PatientSingleton;
+
+import java.util.ArrayList;
 
 public class ViewMealEntryHistoryActivity extends AppCompatActivity
 		implements LoaderManager.LoaderCallbacks<Cursor>
@@ -31,7 +38,45 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.activity_view_meal_entry_history );
+		setContentView( R.layout.activity_view_history_4_columns );
+
+        setTitle( "Meal Entry History" );
+
+        /*(PatientSingleton patientSingleton = PatientSingleton.getInstance();
+        IMealEntryRepository mealEntryRepository = Dependencies.get( IMealEntryRepository.class );
+
+        MealEntry newest;
+        ArrayList<MealEntry> latestMealEntries = mealEntryRepository.readAll();
+        if( latestMealEntries.size() > 0 ) {
+            newest = latestMealEntries.get(0);
+
+            String mealNameString = "";
+
+            for (int id = 0; id < newest.getMealItems().size(); id++) {
+                String name = newest.getMealItems().get(id).getName()
+                        + " (" + newest.getMealItems().get(id).getCarbs() + ") "
+                        + " (" + newest.getMealItems().get(id).getServings() + ")";
+                mealNameString += name;
+                if (id == newest.getMealItems().size() - 1) {
+                    break;
+                }
+                mealNameString += "\n";
+
+            }*/
+
+           // TextView header1 = findViewById( R.id.header1 );
+            //header1.setText( mealNameString );
+
+            TextView header2 = findViewById( R.id.header1 );
+            header2.setText( "Total Carbs" );
+
+            TextView header3 = findViewById( R.id.header2 );
+            header3.setText( "Which Meal" );
+
+            TextView header4 = findViewById( R.id.header3 );
+            header4.setText( R.string.date );
+
+        //}
 
 		// Initialize loader to handle calls to ContentProvider
 		getSupportLoaderManager().initLoader( loaderIndex, null, this );
@@ -41,9 +86,10 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 
 	public void setEmpty( View view )
 	{
-		String emptyText = getString( R.string.empty_listview );
-		TextView emptyTextView = view.findViewById( R.id.empty_txt );
-		emptyTextView.setText( emptyText );
+        view.setVisibility( View.GONE );
+		//String emptyText = getString( R.string.empty_listview );
+		//TextView emptyTextView = view.findViewById( R.id.empty_txt );
+		//emptyTextView.setText( emptyText );
 
 	} // setEmpty
 
@@ -71,37 +117,64 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 
 	} // loaderReset
 
-	@NonNull
+    private void showListview()
+    {
+        ListView listView = findViewById( R.id.listView );
+        listView.setVisibility( View.VISIBLE );
+
+        // Set the adapter
+        if( viewCursorAdapter != null )
+            listView.setAdapter( viewCursorAdapter );
+
+        View emptyView = findViewById( R.id.empty_view );
+        emptyView.setVisibility( View.GONE );
+        View headerView = findViewById( R.id.header );
+        headerView.setVisibility( View.VISIBLE );
+
+    } // showListview
+
+    private void showEmpty()
+    {
+        ListView listView = findViewById( R.id.listView );
+        listView.setVisibility( View.GONE );
+        View emptyView = findViewById( R.id.empty_view );
+        emptyView.setVisibility( View.VISIBLE );
+        View headerView = findViewById( R.id.header );
+        headerView.setVisibility( View.GONE );
+
+    } // showEmpty
+
+    @NonNull
 	@Override
 	public Loader<Cursor> onCreateLoader( int id, @Nullable Bundle args )
 	{
 		return new CursorLoader( getApplicationContext(),
 				MyGlucoseContentProvider.MEAL_ENTRIES_URI,
-				null, null, null, DB.KEY_UPDATED_AT + " ASC" );
+				null, DB.KEY_MEAL_ID, new String[]{String.valueOf(1)}, DB.KEY_UPDATED_AT + " ASC" );
 	}
 
 	@Override
 	public void onLoadFinished( @NonNull android.support.v4.content.Loader<Cursor> loader, Cursor data )
 	{
-		this.cursor = data;
+        this.cursor = data;
 
-		// When a list item is clicked, set the activity to go to:
-		viewCursorAdapter = new MealEntryCursorAdapter( getApplicationContext(), cursor );
-		ListView listView = findViewById( R.id.listView );
-		if( viewCursorAdapter != null )
-			listView.setAdapter( viewCursorAdapter );
-		else
-			setEmpty( listView );
+        viewCursorAdapter = new GlucoseCursorAdapter( getApplicationContext(), cursor );
 
-		if( viewCursorAdapter != null )
-			viewCursorAdapter.swapCursor( cursor );
-		if( cursor != null && !cursor.isClosed() )
-			synchronized( cursor )
-			{
-				cursor.notify();
-			}
+        if( data.getCount() > 0 )
+            showListview();
+        else
+            showEmpty();
 
-	}
+        viewCursorAdapter.swapCursor( cursor );
+
+        if( cursor != null && !cursor.isClosed() )
+            synchronized( cursor )
+            {
+                cursor.notify();
+            }
+
+
+    }
 
 	@Override
 	public void onLoaderReset( @NonNull android.support.v4.content.Loader<Cursor> loader )

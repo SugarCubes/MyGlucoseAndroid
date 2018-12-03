@@ -85,6 +85,9 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 		Button addButton = findViewById( R.id.add_meal_item_button );
 		addButton.setOnTouchListener( this );
 
+		Button mHistoryButton = findViewById(R.id.button_view_history);
+        mHistoryButton.setOnTouchListener(this);
+
 		spinner = findViewById( R.id.save_spinner );
 		mealForm = findViewById( R.id.meal_form );
 		mealItemTable = findViewById( R.id.meal_item_table );

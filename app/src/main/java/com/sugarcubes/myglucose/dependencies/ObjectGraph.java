@@ -9,6 +9,8 @@ import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.RemoteRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.RemoteRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.RemoteSyncPatientDataAction;
+import com.sugarcubes.myglucose.actions.SimulateRegisterPatientAction;
+import com.sugarcubes.myglucose.actions.SimulateRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
@@ -54,8 +56,8 @@ class ObjectGraph
 
 		// Misc. Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
-		IRetrieveDoctorsAction retrieveDoctorsAction = new RemoteRetrieveDoctorsAction();
-		IRegisterPatientAction registerPatientAction = new RemoteRegisterPatientAction();
+		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction(); //RetrieveDoctorsAction();
+		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction(); //RemoteRegisterPatientAction();
 
 		// Repositories:
 		IPatientRepository patientRepository = new DbPatientRepository( context );
