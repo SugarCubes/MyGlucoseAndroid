@@ -67,10 +67,10 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
            // TextView header1 = findViewById( R.id.header1 );
             //header1.setText( mealNameString );
 
-            TextView header2 = findViewById( R.id.header1 );
+            TextView header2 = findViewById( R.id.header2 );
             header2.setText( "Total Carbs" );
 
-            TextView header3 = findViewById( R.id.header2 );
+            TextView header3 = findViewById( R.id.header1 );
             header3.setText( "Which Meal" );
 
             TextView header4 = findViewById( R.id.header3 );

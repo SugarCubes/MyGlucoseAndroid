@@ -47,8 +47,7 @@ public class MealEntryCursorAdapter extends CursorAdapter
 	public void bindView( View view, Context context, Cursor cursor )
 	{
 		// Take data from cursor and set R.layout.list_item_history_3_columns text to the row's data
-		TextView titleView = view.findViewById( R.id.itemName );
-		TextView valueView = view.findViewById( R.id.itemValue );
+		//TextView titleView = view.findViewById( R.id.itemName );
 		//TextView value2View = view.findViewById( R.id.itemValue2 );
 
 		// Get references to the cursor's data:
@@ -62,20 +61,22 @@ public class MealEntryCursorAdapter extends CursorAdapter
 		int whichMealInt = cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) );
 		// TODO: Cursor returning 0:
 		if( DEBUG ) Log.e( LOG_TAG, "whichMealInt:" + whichMealInt );
+		TextView valueView = view.findViewById( R.id.itemName );
 		WhichMeal whichMeal = WhichMeal.fromInt( whichMealInt );
 		String whichMealString = "";
 		if( whichMeal != null )
 			whichMealString = whichMeal.toString();
+
 		valueView.setText( whichMealString );
 
-		TextView value2View = view.findViewById( R.id.itemValue2 );
+		TextView value2View = view.findViewById( R.id.itemValue);
 		int totalCarbs = cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) );
 		value2View.setText( String.valueOf( totalCarbs ) );
 
 		String dateString =
 				DateUtilities.getSimpleDateString( DateUtilities.convertStringToDate(
 						cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_UPDATED_AT ) ) ) );
-		TextView value3View = view.findViewById( R.id.itemValue3 );
+		TextView value3View = view.findViewById( R.id.itemValue2 );
 		value3View.setText( dateString );
 
 
