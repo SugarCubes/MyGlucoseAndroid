@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -92,6 +93,7 @@ public class PedometerService extends Service implements SensorEventListener, St
 	private Sensor       mStepCounterSensor;
 	private AlarmManager mAlarmManager;         // Alarm manager to perform repeating tasks
 	private StepDetector accelerometerStepDetector;
+	private	PowerManager.WakeLock mWakeLock = null;
 
 	private static int currentHour;
 	private static int currentDay;
@@ -229,12 +231,14 @@ public class PedometerService extends Service implements SensorEventListener, St
 	{
 		super.onDestroy();
 		// Deactivate pedometer listeners
-		// Android Developer site suggested not un-registering listeners:
+		// Android Developer site suggested NOT un-registering the listeners:
 		//		mSensorManager.unregisterListener( this, mStepCounterSensor );
 		//		mSensorManager.unregisterListener( this, mStepDetectorSensor );
 
 		if( mAlarmManager != null )
 			mAlarmManager.cancel( getAlarmPendingIntent() );
+
+		releaseWakeLock();
 
 		try
 		{
@@ -359,6 +363,10 @@ public class PedometerService extends Service implements SensorEventListener, St
 			mStepCounterSensor = mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER );
 			accelerometerStepDetector = new StepDetector();
 			accelerometerStepDetector.registerListener( this );
+
+			// REQUIRED TO KEEP ACCELEROMETER GATHERING DATA:
+			acquireWakeLock();
+
 		}
 
 		// Register a listener to each of the step sensors. If passing an
@@ -392,6 +400,31 @@ public class PedometerService extends Service implements SensorEventListener, St
 		}
 
 	} // requestStepSensorOrStopService
+
+
+	private void acquireWakeLock()
+	{
+		final PowerManager powerManager =
+				(PowerManager) getApplicationContext().getSystemService( Context.POWER_SERVICE );
+		releaseWakeLock();
+		// Acquire new wakelock
+		if( powerManager != null )
+		{
+			mWakeLock =
+					powerManager.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, "PARTIAL_WAKE_LOCK" );
+			mWakeLock.acquire();
+		} // if
+
+	} // acquireWakelock
+
+
+	private void releaseWakeLock()
+	{
+		if( mWakeLock != null && mWakeLock.isHeld() )
+			mWakeLock.release();
+		mWakeLock = null;
+
+	} // releaseWakeLock
 
 
 	/**
