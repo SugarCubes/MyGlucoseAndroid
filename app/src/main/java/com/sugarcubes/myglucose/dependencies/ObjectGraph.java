@@ -56,8 +56,8 @@ class ObjectGraph
 
 		// Misc. Remote Actions:
 		ILoginAction remoteLoginAction = new RemoteLoginAction();
-		IRetrieveDoctorsAction retrieveDoctorsAction = new SimulateRetrieveDoctorsAction(); //RetrieveDoctorsAction();
-		IRegisterPatientAction registerPatientAction = new SimulateRegisterPatientAction(); //RemoteRegisterPatientAction();
+		IRetrieveDoctorsAction retrieveDoctorsAction = new RemoteRetrieveDoctorsAction(); //RetrieveDoctorsAction();
+		IRegisterPatientAction registerPatientAction = new RemoteRegisterPatientAction(); //RemoteRegisterPatientAction();
 
 		// Repositories:
 		IPatientRepository patientRepository = new DbPatientRepository( context );
