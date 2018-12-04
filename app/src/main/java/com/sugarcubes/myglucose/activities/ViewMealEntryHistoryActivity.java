@@ -150,7 +150,9 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 	{
 		return new CursorLoader( getApplicationContext(),
 				MyGlucoseContentProvider.MEAL_ENTRIES_URI,
-				null, DB.KEY_MEAL_ID, new String[]{String.valueOf(1)}, DB.KEY_UPDATED_AT + " ASC" );
+				null, DB.KEY_USERNAME + "=?",
+				new String[]{PatientSingleton.getInstance().getUserName()},
+				DB.KEY_UPDATED_AT + " DESC" );
 	}
 
 	@Override
@@ -158,7 +160,7 @@ public class ViewMealEntryHistoryActivity extends AppCompatActivity
 	{
         this.cursor = data;
 
-        viewCursorAdapter = new GlucoseCursorAdapter( getApplicationContext(), cursor );
+        viewCursorAdapter = new MealEntryCursorAdapter( getApplicationContext(), cursor );
 
         if( data.getCount() > 0 )
             showListview();
