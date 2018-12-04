@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,10 @@ import android.widget.TextView;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.activities.ViewMealEntryActivity;
 import com.sugarcubes.myglucose.db.DB;
+import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.utils.DateUtilities;
+
+import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
 public class MealEntryCursorAdapter extends CursorAdapter
 {
@@ -44,10 +49,9 @@ public class MealEntryCursorAdapter extends CursorAdapter
 		// Take data from cursor and set R.layout.list_item_history_3_columns text to the row's data
 		TextView titleView = view.findViewById( R.id.itemName );
 		TextView valueView = view.findViewById( R.id.itemValue );
-		TextView value2View = view.findViewById( R.id.itemValue2 );
+		//TextView value2View = view.findViewById( R.id.itemValue2 );
 
 		// Get references to the cursor's data:
-		String historyId = cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_REMOTE_ID ) );
 		// TODO: Started the wrong user story. Please continue...   :D
 //
 //		// Set texts:
@@ -55,7 +59,28 @@ public class MealEntryCursorAdapter extends CursorAdapter
 //		valueView.setText( "" );
 //		value2View.setText( String.valueOf( measurement ) );
 
+		int whichMealInt = cursor.getInt( cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) );
+		// TODO: Cursor returning 0:
+		if( DEBUG ) Log.e( LOG_TAG, "whichMealInt:" + whichMealInt );
+		WhichMeal whichMeal = WhichMeal.fromInt( whichMealInt );
+		String whichMealString = "";
+		if( whichMeal != null )
+			whichMealString = whichMeal.toString();
+		valueView.setText( whichMealString );
+
+		TextView value2View = view.findViewById( R.id.itemValue2 );
+		int totalCarbs = cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) );
+		value2View.setText( String.valueOf( totalCarbs ) );
+
+		String dateString =
+				DateUtilities.getSimpleDateString( DateUtilities.convertStringToDate(
+						cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_UPDATED_AT ) ) ) );
+		TextView value3View = view.findViewById( R.id.itemValue3 );
+		value3View.setText( dateString );
+
+
 		// Set the view data to handle clicks
+		String historyId = cursor.getString( cursor.getColumnIndexOrThrow( DB.KEY_REMOTE_ID ) );
 		view.setTag( historyId );						// To pass during a click
 		view.setOnClickListener( historyClickHandler );		// Clicks are now handled
 
