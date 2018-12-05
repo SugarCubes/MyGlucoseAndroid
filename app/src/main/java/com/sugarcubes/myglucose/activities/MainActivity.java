@@ -87,6 +87,8 @@ public class MainActivity
 	private final Messenger         mMessenger        = new Messenger(
 			new IncomingMessageHandler() );         // To communicate with Service
 	private       boolean           pIsBound          = false;
+	private       boolean           trackSteps        = false;
+	private       boolean           showNotification  = false;
 	private       ServiceConnection pConnection       = this;
 	private       Messenger         pServiceMessenger = null;
 
@@ -121,12 +123,15 @@ public class MainActivity
 		//	requestPermissions( INITIAL_PERMS, INITIAL_REQUEST );
 		//}
 
+		trackSteps = trackSteps( getApplicationContext() );
+		showNotification = showNotification( getApplicationContext() );
+
 		startServices();
 
-		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) && pIsBound )
+		if( serviceIsRunning( getApplicationContext(), PedometerService.class ) )
 		{
-			// If the service is running at this point, the user wants to track steps,
-			//		so we check the notification status and handle it:
+			// If the service is running at this point, the user wants to track steps.
+			//		So, we ask for notification status then handle it after reply received:
 			sendMessageToPedometerService( PedometerService.MSG_NOTIFICATION_STATUS );
 
 		} // if svc running
@@ -141,8 +146,21 @@ public class MainActivity
 	protected void onResume()
 	{
 		super.onResume();
-		Log.e( LOG_TAG, "Track steps: " + trackSteps( getApplicationContext() ) );
-		//		restartServices();
+		if( DEBUG ) Log.e( LOG_TAG, "Track steps: " + trackSteps( getApplicationContext() )
+				+ "; Show notification: " + showNotification( getApplicationContext() ) );
+
+		// Only restart the services if the settings have been changed by the user:
+		if( trackSteps != trackSteps( getApplicationContext() )
+				|| showNotification != showNotification( getApplicationContext() ) )
+		{
+			restartServices();
+			trackSteps = trackSteps( getApplicationContext() );
+			showNotification = showNotification( getApplicationContext() );
+
+		} // if
+
+		// Rebind the service to send messages if it is not bound:
+		//doBindPedometer(); // Won't bind if services not started in this activity...
 
 	} // onResume
 
@@ -176,7 +194,7 @@ public class MainActivity
 	/**
 	 * Checks each service's status and restarts if necessary
 	 */
-	private void restartServices()
+	public void restartServices()
 	{
 		// Restart the sync service:
 		if( serviceIsRunning( getApplicationContext(), SyncService.class ) )

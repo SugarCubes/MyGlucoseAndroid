@@ -188,8 +188,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 				{
 					WebClientConnectionSingleton.getInstance( getApplicationContext() ).reset();
 
-					// Restart all of the services:
-//					MainActivity.restartServices( getApplicationContext() );
+					// Restart all of the services (Can't make this static):
+					//MainActivity.restartServices( getApplicationContext() );
+					//restartServices();	// MainActivity won't bind to services...
 				}
 				catch( MalformedURLException e )
 				{
