@@ -32,12 +32,12 @@ public class SensorFilter
 
 	public static float norm( float[] array )
 	{
-		float retval = 0;
+		float retArray = 0;
 		for( int i = 0; i < array.length; i++ )
 		{
-			retval += array[ i ] * array[ i ];
+			retArray += array[ i ] * array[ i ];
 		}
-		return (float) Math.sqrt( retval );
+		return (float) Math.sqrt( retArray );
 
 	} // norm
 
@@ -51,13 +51,13 @@ public class SensorFilter
 
 	public static float[] normalize( float[] a )
 	{
-		float[] retval = new float[ a.length ];
+		float[] retArray = new float[ a.length ];
 		float norm = norm( a );
 		for( int i = 0; i < a.length; i++ )
 		{
-			retval[ i ] = a[ i ] / norm;
+			retArray[ i ] = a[ i ] / norm;
 		}
-		return retval;
+		return retArray;
 
 	} // normalize
 

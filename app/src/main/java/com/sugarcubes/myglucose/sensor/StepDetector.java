@@ -1,5 +1,7 @@
 package com.sugarcubes.myglucose.sensor;
 
+import android.hardware.SensorEventListener;
+
 import com.sugarcubes.myglucose.sensor.interfaces.StepListener;
 
 /**
@@ -7,8 +9,7 @@ import com.sugarcubes.myglucose.sensor.interfaces.StepListener;
  */
 public class StepDetector
 {
-
-	private static final int ACCEL_RING_SIZE = 20;         // Default: 50
+	private static final int ACCEL_RING_SIZE = 25;         // Default: 50
 	private static final int VEL_RING_SIZE   = 10;         // Default: 10
 
 	// change this threshold according to your sensitivity preferences
@@ -55,6 +56,7 @@ public class StepDetector
 		currentAccel[ 2 ] = z;
 
 		// First step is to update our guess of where the global z vector is.
+		// First, we fill up each slot in the x, y, and z arrays:
 		accelRingCounter++;
 		accelRingX[ accelRingCounter % ACCEL_RING_SIZE ] = currentAccel[ 0 ];
 		accelRingY[ accelRingCounter % ACCEL_RING_SIZE ] = currentAccel[ 1 ];
@@ -78,7 +80,8 @@ public class StepDetector
 		velRingCounter++;
 		velRing[ velRingCounter % VEL_RING_SIZE ] = currentZ;
 
-		float velocityEstimate = SensorFilter.sum( velRing );
+//		float velocityEstimate = SensorFilter.sum( velRing );
+		float velocityEstimate = SensorFilter.norm( velRing );
 
 		if( velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD
 				&& ( timeNs - lastStepTimeNs > STEP_DELAY_NS ) )
