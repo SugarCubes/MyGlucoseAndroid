@@ -175,10 +175,34 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
 
 	@Override
-	protected void onStop()
+	public boolean onOptionsItemSelected( MenuItem item )
 	{
-		super.onStop();
+		super.onOptionsItemSelected( item );
 
+		switch( item.getItemId() )
+		{
+			case android.R.id.home:
+				restartWebClient();
+				finish();
+				break;
+		}
+		return true;
+
+	} // onOptionsItemSelected
+
+
+	@Override
+	public void onBackPressed()
+	{
+		super.onBackPressed();
+
+		restartWebClient();
+
+	} // onBackPressed
+
+
+	private void restartWebClient()
+	{
 		new Runnable()
 		{
 			@Override
@@ -200,14 +224,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 			}
 		}.run();
 
-//		if( DEBUG ) Log.e( LOG_TAG, "Track Steps: "
-//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
-//				SettingsActivity.PREF_TRACK_STEPS )
-//				+ "; Show notification: "
-//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
-//				SettingsActivity.PREF_SHOW_NOTIFICATION ) );
+		//		if( DEBUG ) Log.e( LOG_TAG, "Track Steps: "
+		//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
+		//				SettingsActivity.PREF_TRACK_STEPS )
+		//				+ "; Show notification: "
+		//				+ MainActivity.getPreferenceBoolean( getApplicationContext(),
+		//				SettingsActivity.PREF_SHOW_NOTIFICATION ) );
 
-	} // onStop
+	} // restartWebClient
 
 
 	/**

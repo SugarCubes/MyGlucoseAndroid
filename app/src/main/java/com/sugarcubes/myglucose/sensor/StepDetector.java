@@ -9,11 +9,14 @@ import com.sugarcubes.myglucose.sensor.interfaces.StepListener;
  */
 public class StepDetector
 {
-	private static final int ACCEL_RING_SIZE = 25;         // Default: 50
+	// This acts as the sample size, constantly rotating accelerations in
+	//		and out. The higher the sample size, the more accurate the
+	//		acceleration change detection should be:
+	private static final int ACCEL_RING_SIZE = 100;        // Default: 50
 	private static final int VEL_RING_SIZE   = 10;         // Default: 10
 
 	// change this threshold according to your sensitivity preferences
-	private static final float STEP_THRESHOLD = 12f;       // Default: 50f
+	private static final float STEP_THRESHOLD = 14f;       // Default: 50f
 	private static final int   STEP_DELAY_NS  = 250000000; // Default: 250000000
 
 	private int     accelRingCounter    = 0;
@@ -62,6 +65,7 @@ public class StepDetector
 		accelRingY[ accelRingCounter % ACCEL_RING_SIZE ] = currentAccel[ 1 ];
 		accelRingZ[ accelRingCounter % ACCEL_RING_SIZE ] = currentAccel[ 2 ];
 
+		// Get an average value for each axis (x, y, z):
 		float[] worldZ = new float[ 3 ];
 		worldZ[ 0 ] =
 				SensorFilter.sum( accelRingX ) / Math.min( accelRingCounter, ACCEL_RING_SIZE );
@@ -80,16 +84,22 @@ public class StepDetector
 		velRingCounter++;
 		velRing[ velRingCounter % VEL_RING_SIZE ] = currentZ;
 
-//		float velocityEstimate = SensorFilter.sum( velRing );
-		float velocityEstimate = SensorFilter.norm( velRing );
-
-		if( velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD
-				&& ( timeNs - lastStepTimeNs > STEP_DELAY_NS ) )
+		// This should keep the accuracy, but only check for step a percentage of the
+		//		time, thus saving the device from so much work, and saving battery...
+		if( velRingCounter % 2 == 0 )
 		{
-			listener.step( timeNs );
-			lastStepTimeNs = timeNs;
-		}
-		oldVelocityEstimate = velocityEstimate;
+			float velocityEstimate = SensorFilter.sum( velRing );
+			//		float velocityEstimate = SensorFilter.norm( velRing ); // not as sensitive
+
+			if( velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD
+					&& ( timeNs - lastStepTimeNs > STEP_DELAY_NS ) )
+			{
+				listener.step( timeNs );
+				lastStepTimeNs = timeNs;
+			}
+			oldVelocityEstimate = velocityEstimate;
+
+		} // if
 
 	} // updateAccel
 

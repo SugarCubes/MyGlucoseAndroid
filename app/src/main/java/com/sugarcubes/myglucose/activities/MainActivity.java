@@ -67,6 +67,8 @@ public class MainActivity
 	//"www.myglucosetracker.com";
 
 	private final       String           LOG_TAG                    = getClass().getSimpleName();
+	private final       String           STATE_TRACK_STEPS          = "trackSteps";
+	private final       String           STATE_SHOW_NOTIFICATION    = "showNotification";
 	private             PatientSingleton patientUser                =
 			PatientSingleton.getInstance();
 	public static final int              USER_LOADER                = 100;// Loader ID
@@ -137,6 +139,31 @@ public class MainActivity
 		} // if svc running
 
 	} // onCreate
+
+
+	@Override
+	public void onSaveInstanceState( Bundle savedInstanceState )
+	{
+		// Save the user's step-tracking and notification preferences:
+		savedInstanceState.putBoolean( STATE_TRACK_STEPS, trackSteps );
+		savedInstanceState.putBoolean( STATE_SHOW_NOTIFICATION, showNotification );
+
+		// Always call the superclass so it can save the view hierarchy state
+		super.onSaveInstanceState( savedInstanceState );
+	}
+
+
+	@Override
+	public void onRestoreInstanceState( Bundle savedInstanceState )
+	{
+		// Always call the superclass so it can restore the view hierarchy
+		super.onRestoreInstanceState( savedInstanceState );
+
+		// Restore state members from saved instance
+		trackSteps = savedInstanceState.getBoolean( STATE_TRACK_STEPS );
+		showNotification = savedInstanceState.getBoolean( STATE_SHOW_NOTIFICATION );
+
+	} // onRestoreInstanceState
 
 
 	/**
@@ -488,18 +515,14 @@ public class MainActivity
 				break;
 
 			case R.id.action_login:
-				if( patientUser.isLoggedIn() )
-				{
-					DbPatientRepository patientRepository = // Get reference to repo
-							new DbPatientRepository( getApplicationContext() );
-					patientRepository.delete( patientUser );// Delete from db
-					PatientSingleton.eraseData();           // deletes data and sets logged in to false
-					setMenuTexts();                         // Show Log in/out, Register
-				}
-				else
-				{
+				if( !patientUser.isLoggedIn() )
 					startLoginActivity();
-				}
+
+				DbPatientRepository patientRepository = // Get reference to repo
+						new DbPatientRepository( getApplicationContext() );
+				patientRepository.delete( patientUser );// Delete from db
+				PatientSingleton.eraseData();           // deletes data and sets logged in to false
+				setMenuTexts();                         // Show Log in/out, Register
 				break;
 
 			case R.id.action_register:
@@ -507,35 +530,28 @@ public class MainActivity
 				break;
 
 			case R.id.action_edit_profile:
-				if( patientUser.isLoggedIn() )
-				{
-					startEditProfileActivity();
-				}
-				else
-				{
+				if( !patientUser.isLoggedIn() )
 					startLoginActivity();
-				}
+
+				startEditProfileActivity();
 				break;
 
 			case R.id.action_view_profile:
-				if( DEBUG ) Log.d( LOG_TAG, "View Profile clicked!" );
-				if( patientUser.isLoggedIn() )
-				{
-					startViewProfileActivity();
-				}
-				else
-				{
+				//if( DEBUG ) Log.d( LOG_TAG, "View Profile clicked!" );
+				if( !patientUser.isLoggedIn() )
 					startLoginActivity();
-				}
+
+				startViewProfileActivity();
 				break;
 
 			case R.id.action_share:// Fetch and store ShareActionProvider
-				//				mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+				//mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 				Intent sharingIntent = new Intent( android.content.Intent.ACTION_SEND );
 				sharingIntent.setType( "text/plain" );
 				String shareBody = "Hi, check out MyGlucose, a good application for you and your " +
 						"doctor to track your health!\nhttp://" + WEBSITE_ADDRESS;
-				sharingIntent.putExtra( android.content.Intent.EXTRA_SUBJECT, "MyGlucose Health Tracker" );
+				sharingIntent.putExtra( android.content.Intent.EXTRA_SUBJECT,
+						"MyGlucose Health Tracker" );
 				sharingIntent.putExtra( android.content.Intent.EXTRA_TEXT, shareBody );
 				startActivity( Intent.createChooser( sharingIntent, "Share via" ) );
 				break;
@@ -566,9 +582,12 @@ public class MainActivity
 		// This is where the main joined query takes place. We want to check if the user is
 		//	logged in. To do this, we join the "patients" and "users" table, and check the
 		//	"logged_in" column
-		return new CursorLoader( getApplicationContext(), MyGlucoseContentProvider.PATIENT_USERS_URI,
-				null, DB.KEY_USER_LOGGED_IN + "=?",
-				new String[]{ String.valueOf( 1 ) }, null );
+		return new CursorLoader( getApplicationContext(),
+				MyGlucoseContentProvider.PATIENT_USERS_URI,
+				null,
+				DB.KEY_USER_LOGGED_IN + "=?",
+				new String[]{ String.valueOf( 1 ) },
+				null );
 
 	} // onCreateLoader
 
@@ -598,11 +617,6 @@ public class MainActivity
 			if( DEBUG ) Log.d( LOG_TAG, patientUser.toString() );
 
 			setMenuTexts();                                        // Show Log in/out, Register
-
-			//			synchronized( cursor )
-			//			{
-			//				cursor.notify();
-			//			}
 
 		} // if cursor valid
 
@@ -662,57 +676,34 @@ public class MainActivity
 		view.performClick();                                // Perform default action
 		//Log.i( LOG_TAG, "Touch detected: " + view.getId() );
 
-		switch( view.getId() )
+		if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
 		{
-			case R.id.glucose_button:                                // Glucose button tap
-				if( DEBUG ) Log.d( LOG_TAG, "Glucose button tapped" );
-				if( patientUser.isLoggedIn() )
-				{
-					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
-					{
-						Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
-						startActivity( glucoseIntent );
-					}
-				}
-				else
-				{
-					startLoginActivity();
-				}
-				break;
+			if( !patientUser.isLoggedIn() )
+				startLoginActivity();
 
-			case R.id.meals_button:                                    // Meals button tap
-				if( DEBUG ) Log.d( LOG_TAG, "Meals button tapped" );
-				if( patientUser.isLoggedIn() )
-				{
-					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
-					{
-						Intent mealsIntent = new Intent( this, LogMealActivity.class );
-						startActivity( mealsIntent );
-					}
-				}
-				else
-				{
-					startLoginActivity();
-				}
-				break;
+			switch( view.getId() )
+			{
+				case R.id.glucose_button:                                // Glucose button tap
+					if( DEBUG ) Log.d( LOG_TAG, "Glucose button tapped" );
+					Intent glucoseIntent = new Intent( this, LogGlucoseActivity.class );
+					startActivity( glucoseIntent );
+					break;
 
-			case R.id.exercise_button:                                // Exercise button tap
-				if( DEBUG ) Log.d( LOG_TAG, "Exercise button tapped" );
-				if( patientUser.isLoggedIn() )
-				{
-					if( event.getAction() == MotionEvent.ACTION_UP )    // Only handle single event
-					{
-						Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
-						startActivity( exerciseIntent );
-					}
-				}
-				else
-				{
-					startLoginActivity();
-				}
-				break;
+				case R.id.meals_button:                                    // Meals button tap
+					if( DEBUG ) Log.d( LOG_TAG, "Meals button tapped" );
+					Intent mealsIntent = new Intent( this, LogMealActivity.class );
+					startActivity( mealsIntent );
+					break;
 
-		} // switch
+				case R.id.exercise_button:                                // Exercise button tap
+					if( DEBUG ) Log.d( LOG_TAG, "Exercise button tapped" );
+					Intent exerciseIntent = new Intent( this, LogExerciseActivity.class );
+					startActivity( exerciseIntent );
+					break;
+
+			} // switch
+
+		} // if Button up
 
 		return false;
 
