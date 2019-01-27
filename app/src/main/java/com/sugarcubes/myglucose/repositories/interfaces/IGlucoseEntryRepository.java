@@ -10,7 +10,7 @@
 
 package com.sugarcubes.myglucose.repositories.interfaces;
 
-import com.sugarcubes.myglucose.entities.GlucoseEntry;
+import com.sugarcubes.myglucose.models.GlucoseEntry;
 
 public interface IGlucoseEntryRepository extends IRepository<GlucoseEntry>
 {

@@ -32,8 +32,8 @@ import android.widget.TableRow;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.interfaces.ILogMealEntryAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.MealEntry;
-import com.sugarcubes.myglucose.entities.MealItem;
+import com.sugarcubes.myglucose.models.MealEntry;
+import com.sugarcubes.myglucose.models.MealItem;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
@@ -65,7 +65,12 @@ public class LogMealActivity extends AppCompatActivity implements View.OnTouchLi
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.activity_log_meal );
+
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP )
+			setContentView( R.layout.activity_log_meal );
+		else
+			setContentView( R.layout.activity_log_meal_compat );
+
 		Toolbar toolbar = findViewById( R.id.toolbar );
 		setSupportActionBar( toolbar );
 		if( getSupportActionBar() != null )

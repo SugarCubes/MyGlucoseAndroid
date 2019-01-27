@@ -19,10 +19,9 @@ import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
+import com.sugarcubes.myglucose.models.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
-import com.sugarcubes.myglucose.utils.JsonUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

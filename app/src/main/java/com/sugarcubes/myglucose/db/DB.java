@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB extends SQLiteOpenHelper
 {
 	// Database Version
-	private static final int DATABASE_VERSION = 15;
+	private static final int DATABASE_VERSION = 16;
 
 	// DB Name:
 	public static final String DB_NAME = "myglucose";
@@ -40,13 +40,14 @@ public class DB extends SQLiteOpenHelper
 			TABLE_PEDOMETER
 	};
 
-	// Misc db table keys:
+	// Shared db table keys:
 	public static final String KEY_ID                              = "_id";
 	public static final String KEY_TIMESTAMP                       = "timestamp";
 	public static final String KEY_REMOTE_ID                       = "id";
 	public static final String KEY_WHICH_MEAL                      = "whichMeal";
 	public static final String KEY_CREATED_AT                      = "createdAt";
 	public static final String KEY_UPDATED_AT                      = "updatedAt";
+	public static final String KEY_SYNCED                          = "synced";
 	// ApplicationUser table keys:
 	public static final String KEY_USER_LOGGED_IN                  = "loggedIn";
 	public static final String KEY_USER_LOGIN_TOKEN                = "remoteLoginToken";
@@ -91,10 +92,10 @@ public class DB extends SQLiteOpenHelper
 	public static final String KEY_EXERCISE_NAME                   = "name";
 	public static final String KEY_EXERCISE_STEPS                  = "steps";
 	// Pedometer table:
-//	public static final String KEY_PED_HOUR                        = "hour";
-//	public static final String KEY_PED_DAY                         = "day";
-//	public static final String KEY_PED_MONTH                       = "month";
-//	public static final String KEY_PED_YEAR                        = "year";
+	//	public static final String KEY_PED_HOUR                        = "hour";
+	//	public static final String KEY_PED_DAY                         = "day";
+	//	public static final String KEY_PED_MONTH                       = "month";
+	//	public static final String KEY_PED_YEAR                        = "year";
 	public static final String KEY_PED_COORD_X                     = "xCoord";
 	public static final String KEY_PED_COORD_Y                     = "yCoord";
 	public static final String KEY_PED_STEP_COUNT                  = "steps";
@@ -164,6 +165,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
+				+ KEY_SYNCED + " INTEGER, "
 				+ KEY_GLUCOSE_MEASUREMENT + " REAL, "    // DEFAULT: mmol/L. May need conversion
 				+ KEY_GLUCOSE_BEFORE_AFTER + " INTEGER, "
 				+ KEY_WHICH_MEAL + " INTEGER, "
@@ -178,6 +180,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
+				+ KEY_SYNCED + " INTEGER, "
 				+ KEY_MEAL_ENTRY_TOTAL_CARBS + " INTEGER, "
 				+ KEY_WHICH_MEAL + " INTEGER, "
 				+ KEY_CREATED_AT + " TEXT, "
@@ -200,6 +203,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT, "
+				+ KEY_SYNCED + " INTEGER, "
 				+ KEY_EXERCISE_NAME + " TEXT, "
 				+ KEY_EXERCISE_MINUTES + " INTEGER, "
 				+ KEY_EXERCISE_STEPS + " INTEGER, "
@@ -214,6 +218,7 @@ public class DB extends SQLiteOpenHelper
 				+ KEY_ID + " INTEGER PRIMARY KEY, "
 				+ KEY_REMOTE_ID + " TEXT, "
 				+ KEY_USERNAME + " TEXT,"
+				+ KEY_SYNCED + " INTEGER, "
 				+ KEY_PED_COORD_X + " REAL, "
 				+ KEY_PED_COORD_Y + " REAL,"
 				+ KEY_CREATED_AT + " TEXT, "
@@ -243,28 +248,32 @@ public class DB extends SQLiteOpenHelper
 		//		// CREATE DOCTORS ENTRIES INDEX ON user_id
 		//		String CREATE_DOCTORS_INDEX = "CREATE INDEX `patients_index` ON " +
 		//				TABLE_DOCTORS + "(" + DB.KEY_USER_ID + ");";
-		//
-		//		// CREATE GLUCOSE ITEMS INDEX ON user_id
-		//		String CREATE_GLUCOSE_ENTRIES_INDEX = "CREATE INDEX `glucose_entries_index` ON " +
-		//				TABLE_GLUCOSE_ENTRIES + "(" + DB.KEY_USER_ID + ");";
-		//
-		//		// CREATE EXERCISE ITEMS INDEX ON user_id
-		//		String CREATE_EXERCISE_ENTRIES_INDEX = "CREATE INDEX `exercise_entries_index` ON " +
-		//				TABLE_EXERCISE_ENTRIES + "(" + DB.KEY_USER_ID + ");";
+
+		// CREATE GLUCOSE ITEMS INDEX ON user_id
+		String CREATE_GLUCOSE_ENTRIES_INDEX = "CREATE INDEX `glucose_entries_synced_index` ON " +
+				TABLE_GLUCOSE_ENTRIES + "(" + DB.KEY_SYNCED + ");";
+
+		// CREATE EXERCISE ITEMS INDEX ON user_id
+		String CREATE_EXERCISE_ENTRIES_INDEX = "CREATE INDEX `exercise_entries_synced_index` ON " +
+				TABLE_EXERCISE_ENTRIES + "(" + DB.KEY_SYNCED + ");";
 
 		// CREATE MEAL ENTRIES INDEX ON user_id
 		String CREATE_MEAL_ENTRIES_INDEX = "CREATE INDEX `meal_entries_index` ON " +
 				TABLE_MEAL_ENTRIES + "(" + DB.KEY_REMOTE_ID + ");";
-		//
+
+		String CREATE_MEAL_ENTRIES_SYNCED_INDEX = "CREATE INDEX `meal_entries_synced_index` ON " +
+				TABLE_MEAL_ENTRIES + "(" + DB.KEY_SYNCED + ");";
+
 		// CREATE MEAL ITEMS INDEX ON meal_id
 		String CREATE_MEAL_ITEMS_INDEX = "CREATE INDEX `meal_items_index` ON " +
 				TABLE_MEAL_ITEMS + "(" + DB.KEY_MEAL_ID + ");";
 		//
 		//		db.execSQL( CREATE_PATIENTS_INDEX );
 		//		db.execSQL( CREATE_DOCTORS_INDEX );
-		//		db.execSQL( CREATE_GLUCOSE_ENTRIES_INDEX );
-		//		db.execSQL( CREATE_EXERCISE_ENTRIES_INDEX );
+		db.execSQL( CREATE_GLUCOSE_ENTRIES_INDEX );
+		db.execSQL( CREATE_EXERCISE_ENTRIES_INDEX );
 		db.execSQL( CREATE_MEAL_ENTRIES_INDEX );
+		db.execSQL( CREATE_MEAL_ENTRIES_SYNCED_INDEX );
 		db.execSQL( CREATE_MEAL_ITEMS_INDEX );
 	}
 

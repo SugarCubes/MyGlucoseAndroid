@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
 import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
 

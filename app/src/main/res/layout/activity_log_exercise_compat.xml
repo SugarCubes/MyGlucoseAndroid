@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contraint_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.LogExerciseActivity"
+    tools:layout_editor_absoluteY="81dp">
+
+    <!-- Progress Spinner -->
+    <ProgressBar
+        android:id="@+id/save_spinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/exercise_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+
+            <EditText
+                android:id="@+id/exerciseType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/exercise_type"
+                app:layout_constraintStart_toStartOf="@+id/textView12"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exercise_examples"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/exerciseType" />
+
+            <EditText
+                android:id="@+id/minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="6dp"
+                android:hint="@string/minutes"
+                android:inputType="number"
+                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+            <Button
+                android:id="@+id/submitButton"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="48dp"
+                android:layout_marginRight="48dp"
+                android:layout_marginTop="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@android:color/holo_green_light"
+                android:text="@string/submit"/>
+            <!--android:drawableRight="@drawable/ic_save_white_24dp"-->
+            <!--android:drawableEnd="@drawable/ic_save_white_24dp"-->
+
+            <!--<Button-->
+            <!--android:id="@+id/submitButton"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="36dp"-->
+            <!--android:layout_marginStart="36dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:text="Submit"-->
+            <!--app:layout_constraintStart_toStartOf="@+id/button5"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/minutes" />-->
+
+            <!--<Button-->
+            <!--android:id="@+id/view_latest"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="3dp"-->
+            <!--android:layout_marginStart="3dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:text="View Latest Entry"-->
+            <!--app:layout_constraintStart_toStartOf="@+id/button6"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/submitButton" />-->
+
+            <!--<Button-->
+            <!--android:id="@+id/button6"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="11dp"-->
+            <!--android:text="View Entry History"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintHorizontal_bias="0.502"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/button5" />-->
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/view_latest"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@android:color/holo_blue_dark"
+                android:text="@string/view_latest_entry" />
+            <!--android:drawableRight="@drawable/ic_last_page_white_24dp"-->
+            <!--android:drawableEnd="@drawable/ic_last_page_white_24dp"-->
+
+            <Button
+                android:id="@+id/view_history"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@android:color/holo_purple"
+                android:text="@string/view_entry_history" />
+            <!--android:drawableRight="@drawable/ic_history_white_24dp"-->
+            <!--android:drawableEnd="@drawable/ic_history_white_24dp"-->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

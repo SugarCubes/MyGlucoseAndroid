@@ -10,4 +10,6 @@ public interface IPatientRepository extends IApplicationUserRepository<PatientSi
 
 	Cursor getCursorForLoggedInUser();
 
+	void setAllSynced();
+
 } // interface

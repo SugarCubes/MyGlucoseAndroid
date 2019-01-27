@@ -1,25 +1,25 @@
-package com.sugarcubes.myglucose.entities;
+package com.sugarcubes.myglucose.models;
 
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.models.interfaces.Syncable;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class GlucoseEntry
+public class GlucoseEntry implements Syncable
 {
 	private int              id;
 	private String           remoteId;
 	private String           userName;
+	private boolean          synced;
 	private PatientSingleton patient;
 	private float            measurement;
 	// DEFAULT: mmol/L. May need conversion to display correctly
@@ -85,6 +85,16 @@ public class GlucoseEntry
 	public void setUserName( String userName )
 	{
 		this.userName = userName;
+	}
+
+	public boolean isSynced()
+	{
+		return synced;
+	}
+
+	public void setSynced( boolean synced )
+	{
+		this.synced = synced;
 	}
 
 	public float getMeasurement()

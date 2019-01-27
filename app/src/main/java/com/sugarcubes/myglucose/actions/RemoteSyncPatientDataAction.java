@@ -9,6 +9,7 @@ import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
 import com.sugarcubes.myglucose.enums.ErrorCode;
+import com.sugarcubes.myglucose.enums.SyncStatus;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 import com.sugarcubes.myglucose.singletons.WebClientConnectionSingleton;
@@ -47,20 +48,25 @@ public class RemoteSyncPatientDataAction implements ISyncPatientDataAction
 			//			if( cursor != null )
 			//				cursor.close();
 
-			JSONObject jsonPatient = PatientSingleton.toJSONObject();
-			//			HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );
-			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "Patient: " + patient.toString() );
-			//						if( DEBUG ) Log.e( "RemoteSyncPatientData", "Json: " + jsonPatient.toString() );
-			//			if( DEBUG ) Log.e( "RemoteSyncPatientData", "HashMap: " + hashMap.toString() );
+			JSONObject jsonPatient = PatientSingleton.toJSONObject( SyncStatus.UNSYNCED );
+			//HashMap<String, String> hashMap = JsonUtilities.toMap( jsonPatient );	// OLD method
+			if( DEBUG ) Log.e( LOG_TAG, "Json: " + jsonPatient.toString() );
 
 			if( conn.networkIsAvailable() )
 			{
+				// Sync all of the unsynced data:
 				returnString = conn.sendSyncPatientDataRequest( jsonPatient );
+				if( DEBUG ) Log.e( LOG_TAG, "Server returned: " + returnString );
 
-				if( ErrorCode.interpretErrorCode( returnString ) == ErrorCode.INVALID_LOGIN_TOKEN )
-					PatientSingleton.eraseData();    // Log out
+				ErrorCode returnCode = ErrorCode.interpretErrorCode( returnString );
+				if( returnCode == ErrorCode.INVALID_LOGIN_TOKEN )
+					PatientSingleton.eraseData();    	// Log out
+				else if( returnCode == ErrorCode.NO_ERROR )
+					patientRepository.setAllSynced();	// Set all unsynced to now synced
 
 			} // if
+			else
+				Log.e( LOG_TAG, "NETWORK UNAVAILABLE..." );
 
 		}
 		catch( JSONException e )

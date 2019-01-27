@@ -22,7 +22,7 @@ import android.widget.Spinner;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.interfaces.ILogGlucoseEntryAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.GlucoseEntry;
+import com.sugarcubes.myglucose.models.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.enums.WhichMeal;
@@ -47,7 +47,12 @@ public class LogGlucoseActivity extends AppCompatActivity
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.activity_log_glucose );
+
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP )
+			setContentView( R.layout.activity_log_glucose );
+		else
+			setContentView( R.layout.activity_log_glucose_compat );
+
 		Toolbar toolbar = findViewById( R.id.toolbar );
 		setSupportActionBar( toolbar );
 		if( getSupportActionBar() != null )

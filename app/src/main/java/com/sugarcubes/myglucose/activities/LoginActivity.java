@@ -29,14 +29,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.actions.RemoteLoginAction;
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
+import com.sugarcubes.myglucose.models.ApplicationUser;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 

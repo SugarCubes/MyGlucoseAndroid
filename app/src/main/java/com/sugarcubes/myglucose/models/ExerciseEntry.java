@@ -1,6 +1,7 @@
-package com.sugarcubes.myglucose.entities;
+package com.sugarcubes.myglucose.models;
 
 import com.sugarcubes.myglucose.db.DB;
+import com.sugarcubes.myglucose.models.interfaces.Syncable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,17 +11,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class ExerciseEntry
+public class ExerciseEntry implements Syncable
 {
-	private int    id;
-	private String remoteId;
-	private String userName;
-	private String exerciseName;
-	private int    minutes;
-	private int    steps;
-	private Date   updatedAt;
-	private Date   createdAt;
-	private long   timestamp;
+	private int     id;
+	private String  remoteId;
+	private String  userName;
+	private boolean synced;
+	private String  exerciseName;
+	private int     minutes;
+	private int     steps;
+	private Date    updatedAt;
+	private Date    createdAt;
+	private long    timestamp;
 
 
 	public ExerciseEntry()
@@ -65,6 +67,16 @@ public class ExerciseEntry
 	public void setUserName( String userName )
 	{
 		this.userName = userName;
+	}
+
+	public boolean isSynced()
+	{
+		return synced;
+	}
+
+	public void setSynced( boolean synced )
+	{
+		this.synced = synced;
 	}
 
 	public String getExerciseName()

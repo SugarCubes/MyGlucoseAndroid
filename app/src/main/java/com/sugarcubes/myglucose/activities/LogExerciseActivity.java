@@ -20,7 +20,7 @@ import android.widget.EditText;
 import com.sugarcubes.myglucose.R;
 import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
@@ -44,7 +44,12 @@ public class LogExerciseActivity extends AppCompatActivity
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		setContentView( R.layout.activity_log_exercise );
+
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP )
+			setContentView( R.layout.activity_log_exercise );
+		else
+			setContentView( R.layout.activity_log_exercise_compat );
+
 		if( getSupportActionBar() != null )
 			getSupportActionBar().setDisplayHomeAsUpEnabled( true );
 

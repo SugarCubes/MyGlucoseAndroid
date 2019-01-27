@@ -1,4 +1,4 @@
-package com.sugarcubes.myglucose.entities;
+package com.sugarcubes.myglucose.models;
 
 import java.util.Date;
 

@@ -19,7 +19,7 @@ import android.util.Log;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.GlucoseEntry;
+import com.sugarcubes.myglucose.models.GlucoseEntry;
 import com.sugarcubes.myglucose.enums.BeforeAfter;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.repositories.interfaces.IGlucoseEntryRepository;
@@ -181,6 +181,7 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		entry.setWhichMeal( WhichMeal.valueOf( cursor.getString(
 				cursor.getColumnIndex( DB.KEY_WHICH_MEAL ) ) ) );
 		entry.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+		entry.setSynced( cursor.getInt( cursor.getColumnIndex( DB.KEY_SYNCED ) ) > 0 );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -199,5 +200,16 @@ public class DbGlucoseEntryRepository implements IGlucoseEntryRepository
 		return entry;
 
 	} // readFromCursor
+
+
+	@Override
+	public void setAllSynced()
+	{
+		ContentValues values = new ContentValues();
+		values.put( DB.KEY_SYNCED, true );
+		contentResolver.update( MyGlucoseContentProvider.GLUCOSE_ENTRIES_URI,
+				values, DB.KEY_SYNCED + "=?", new String[]{ String.valueOf( 0 ) } );
+
+	} // setAllSynced
 
 } // repository

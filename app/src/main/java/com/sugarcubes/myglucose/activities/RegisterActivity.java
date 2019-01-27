@@ -43,10 +43,8 @@ import com.sugarcubes.myglucose.actions.interfaces.IRegisterPatientAction;
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
 import com.sugarcubes.myglucose.adapters.DoctorDropDownAdapter;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 import com.sugarcubes.myglucose.enums.ErrorCode;
-import com.sugarcubes.myglucose.repositories.DbPatientRepository;
-import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import org.json.JSONException;

@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
+import com.sugarcubes.myglucose.models.ApplicationUser;
 import com.sugarcubes.myglucose.repositories.interfaces.IApplicationUserRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
@@ -31,7 +31,6 @@ import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class DbPatientRepository implements IPatientRepository
@@ -206,6 +205,8 @@ public class DbPatientRepository implements IPatientRepository
 					cursor.getString( cursor.getColumnIndex( DB.KEY_DR_USERNAME ) ) );
 			patientSingleton.setDoctorId(
 					cursor.getString( cursor.getColumnIndex( DB.KEY_DR_ID ) ) );
+			patientSingleton.setLoggedIn(
+					cursor.getInt( cursor.getColumnIndexOrThrow( DB.KEY_USER_LOGGED_IN ) ) > 0 );
 			// Get doctor from repository:
 			if( patientSingleton.getDoctorUserName() != null
 					&& !patientSingleton.getDoctorUserName().isEmpty() )
@@ -282,6 +283,15 @@ public class DbPatientRepository implements IPatientRepository
 		return null;
 
 	} // getCursorForLoggedInUser
+
+
+	@Override
+	public void setAllSynced()
+	{
+		glucoseEntryRepository.setAllSynced();
+		exerciseEntryRepository.setAllSynced();
+		mealEntryRepository.setAllSynced();
+	}
 
 
 	/**

@@ -15,16 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.adapters.GlucoseCursorAdapter;
 import com.sugarcubes.myglucose.adapters.MealEntryCursorAdapter;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.MealEntry;
-import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;
-
-import java.util.ArrayList;
 
 public class ViewMealEntryHistoryActivity extends AppCompatActivity
 		implements LoaderManager.LoaderCallbacks<Cursor>

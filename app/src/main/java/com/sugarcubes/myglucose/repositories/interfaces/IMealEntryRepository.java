@@ -13,8 +13,8 @@ package com.sugarcubes.myglucose.repositories.interfaces;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.sugarcubes.myglucose.entities.MealEntry;
-import com.sugarcubes.myglucose.entities.MealItem;
+import com.sugarcubes.myglucose.models.MealEntry;
+import com.sugarcubes.myglucose.models.MealItem;
 
 import java.util.ArrayList;
 

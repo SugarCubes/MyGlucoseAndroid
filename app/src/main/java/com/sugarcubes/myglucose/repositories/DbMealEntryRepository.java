@@ -18,8 +18,8 @@ import android.net.Uri;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.MealEntry;
-import com.sugarcubes.myglucose.entities.MealItem;
+import com.sugarcubes.myglucose.models.MealEntry;
+import com.sugarcubes.myglucose.models.MealItem;
 import com.sugarcubes.myglucose.enums.WhichMeal;
 import com.sugarcubes.myglucose.repositories.interfaces.IMealEntryRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
@@ -184,6 +184,7 @@ public class DbMealEntryRepository implements IMealEntryRepository
 		entry.setTotalCarbs( cursor.getInt( cursor.getColumnIndex( DB.KEY_MEAL_ENTRY_TOTAL_CARBS ) ) );
 		entry.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
 		entry.setMealItems( readAllMealItems( entry.getRemoteId() ) );    // Access MealItems by meal id
+		entry.setSynced( cursor.getInt( cursor.getColumnIndex( DB.KEY_SYNCED ) ) > 0 );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -363,6 +364,17 @@ public class DbMealEntryRepository implements IMealEntryRepository
 				new String[]{ String.valueOf( mealItemId ) } );
 
 	} // deleteMealItem
+
+
+	@Override
+	public void setAllSynced()
+	{
+		ContentValues values = new ContentValues();
+		values.put( DB.KEY_SYNCED, true );
+		contentResolver.update( MyGlucoseContentProvider.MEAL_ENTRIES_URI,
+				values, null, null );
+
+	} // setAllSynced
 
 
 } // repository

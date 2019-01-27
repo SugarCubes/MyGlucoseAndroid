@@ -1,6 +1,5 @@
 package com.sugarcubes.myglucose.adapters;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.R;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 
 import java.util.List;
 

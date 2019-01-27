@@ -1,12 +1,10 @@
-package com.sugarcubes.myglucose.entities;
+package com.sugarcubes.myglucose.models;
 
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.utils.JsonUtilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class Doctor extends ApplicationUser
 {

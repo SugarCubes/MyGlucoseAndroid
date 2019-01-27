@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

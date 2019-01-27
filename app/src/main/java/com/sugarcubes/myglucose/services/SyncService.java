@@ -68,8 +68,8 @@ public class SyncService extends Service
 		// Get the content resolver object for your app
 		mResolver = getContentResolver();
 
-		// UNCOMMENT TO SYNC WHEN DATA CHANGES IN ANY OF THE TABLES:
-		setToSyncWhenTablesChange();
+		// UNCOMMENT TO SYNC WHEN DATA CHANGES IN ANY OF THE TABLES: (Caution: Causes constant syncing!!)
+		//setToSyncWhenTablesChange();
 
 		// Allow account to sync:
 		ContentResolver.setIsSyncable( mAccount, MyGlucoseContentProvider.AUTHORITY, 1 );

@@ -1,7 +1,8 @@
-package com.sugarcubes.myglucose.entities;
+package com.sugarcubes.myglucose.models;
 
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.enums.WhichMeal;
+import com.sugarcubes.myglucose.models.interfaces.Syncable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,11 +14,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class MealEntry
+public class MealEntry implements Syncable
 {
 	private int       id;
 	private String    remoteId;
 	private String    userName;
+	private boolean   synced;
 	private int       totalCarbs;
 	private Date      createdAt;
 	private Date      updatedAt;
@@ -70,6 +72,16 @@ public class MealEntry
 	public void setUserName( String userName )
 	{
 		this.userName = userName;
+	}
+
+	public boolean isSynced()
+	{
+		return synced;
+	}
+
+	public void setSynced( boolean synced )
+	{
+		this.synced = synced;
 	}
 
 	public int getTotalCarbs()

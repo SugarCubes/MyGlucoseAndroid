@@ -36,7 +36,7 @@ import com.sugarcubes.myglucose.activities.SettingsActivity;
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
 import com.sugarcubes.myglucose.dependencies.Dependencies;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
 import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
 import com.sugarcubes.myglucose.repositories.interfaces.IPatientRepository;
 import com.sugarcubes.myglucose.sensor.StepDetector;

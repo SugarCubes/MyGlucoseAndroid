@@ -13,11 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.sugarcubes.myglucose.repositories.DbGlucoseEntryRepository;
-import com.sugarcubes.myglucose.singletons.PatientSingleton;
-import com.sugarcubes.myglucose.entities.GlucoseEntry;
+import com.sugarcubes.myglucose.models.GlucoseEntry;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 

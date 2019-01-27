@@ -3,7 +3,7 @@ package com.sugarcubes.myglucose.actions;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.ILogExerciseEntryAction;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbExerciseEntryRepository;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;

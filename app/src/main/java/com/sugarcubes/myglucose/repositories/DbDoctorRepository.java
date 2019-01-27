@@ -8,8 +8,7 @@ import android.net.Uri;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 import com.sugarcubes.myglucose.repositories.interfaces.IDoctorRepository;
 
 import java.util.ArrayList;

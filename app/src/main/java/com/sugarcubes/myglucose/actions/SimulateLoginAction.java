@@ -3,7 +3,7 @@ package com.sugarcubes.myglucose.actions;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.ILoginAction;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 import com.sugarcubes.myglucose.enums.ErrorCode;
 import com.sugarcubes.myglucose.repositories.DbPatientRepository;
 import com.sugarcubes.myglucose.singletons.PatientSingleton;

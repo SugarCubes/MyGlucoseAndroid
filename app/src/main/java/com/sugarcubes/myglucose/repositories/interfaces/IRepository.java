@@ -49,4 +49,6 @@ public interface IRepository<T>
 
 	void delete( int id );
 
+	void setAllSynced();
+
 } // interface

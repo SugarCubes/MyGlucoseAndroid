@@ -3,21 +3,20 @@ package com.sugarcubes.myglucose.singletons;
 import android.util.Log;
 
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ApplicationUser;
-import com.sugarcubes.myglucose.entities.Doctor;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
-import com.sugarcubes.myglucose.entities.GlucoseEntry;
-import com.sugarcubes.myglucose.entities.MealEntry;
+import com.sugarcubes.myglucose.enums.SyncStatus;
+import com.sugarcubes.myglucose.models.ApplicationUser;
+import com.sugarcubes.myglucose.models.Doctor;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
+import com.sugarcubes.myglucose.models.GlucoseEntry;
+import com.sugarcubes.myglucose.models.MealEntry;
+import com.sugarcubes.myglucose.models.interfaces.Syncable;
 import com.sugarcubes.myglucose.utils.JsonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.sugarcubes.myglucose.activities.MainActivity.DEBUG;
 
@@ -87,16 +86,16 @@ public class PatientSingleton extends ApplicationUser
 			JSONObject jsonObject =
 					new JSONObject( jsonString );           // Convert string to Json
 
-//			if( jsonObject.has( DB.TABLE_PATIENTS ) )       // If "Patient" is passed as an object
-//				jsonObject = jsonObject.getJSONObject( DB.TABLE_PATIENTS );    // Get it
+			//			if( jsonObject.has( DB.TABLE_PATIENTS ) )       // If "Patient" is passed as an object
+			//				jsonObject = jsonObject.getJSONObject( DB.TABLE_PATIENTS );    // Get it
 
 			if( jsonObject.has( DB.KEY_USER_EMAIL ) )
 			{
 				String nullString = "null";
 				// Use jsonData.getInt( String key ), etc to get data from the object
-//				if( !jsonObject.getString( DB.KEY_USERNAME ).equals( nullString )
-//						&& !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
-					patientSingleton.setUserName( jsonObject.getString( DB.KEY_USERNAME ) );
+				//				if( !jsonObject.getString( DB.KEY_USERNAME ).equals( nullString )
+				//						&& !jsonObject.getString( DB.KEY_USERNAME ).isEmpty() )
+				patientSingleton.setUserName( jsonObject.getString( DB.KEY_USERNAME ) );
 				if( jsonObject.has( DB.KEY_USER_ADDRESS1 )
 						&& !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).equals( nullString )
 						&& !jsonObject.getString( DB.KEY_USER_ADDRESS1 ).isEmpty() )
@@ -265,7 +264,7 @@ public class PatientSingleton extends ApplicationUser
 		this.doctorId = doctorId;
 	}
 
-	public static JSONObject toJSONObject() throws JSONException
+	public static JSONObject toJSONObject( SyncStatus... syncStatus ) throws JSONException
 	{
 		// APPLICATION USER ATTRIBUTES:
 		// NOTE 1: Do NOT send the Id or it may fail to bind:
@@ -334,7 +333,8 @@ public class PatientSingleton extends ApplicationUser
 			JSONArray gEntries = new JSONArray();
 			for( GlucoseEntry glucoseEntry : patient.getGlucoseEntries() )
 			{
-				gEntries.put( glucoseEntry.toJSONObject() );
+				if( syncStatus.length == 0 || toBeAdded( syncStatus[ 0 ], glucoseEntry ) )
+					gEntries.put( glucoseEntry.toJSONObject() );
 			}
 
 			json.put( DB.KEY_GLUCOSE_ENTRIES, gEntries );    // Add the array as JSON
@@ -346,7 +346,8 @@ public class PatientSingleton extends ApplicationUser
 			JSONArray mEntries = new JSONArray();
 			for( MealEntry mealEntry : patient.getMealEntries() )
 			{
-				mEntries.put( mealEntry.toJSONObject() );
+				if( syncStatus.length == 0 || toBeAdded( syncStatus[ 0 ], mealEntry ) )
+					mEntries.put( mealEntry.toJSONObject() );
 			}
 
 			json.put( DB.KEY_MEAL_ENTRIES, mEntries );    // Add the array as JSON
@@ -358,7 +359,8 @@ public class PatientSingleton extends ApplicationUser
 			JSONArray eEntries = new JSONArray();
 			for( ExerciseEntry exerciseEntry : patient.getExerciseEntries() )
 			{
-				eEntries.put( exerciseEntry.toJSONObject() );
+				if( syncStatus.length == 0 || toBeAdded( syncStatus[ 0 ], exerciseEntry ) )
+					eEntries.put( exerciseEntry.toJSONObject() );
 			}
 
 			json.put( DB.KEY_EXERCISE_ENTRIES, eEntries );
@@ -367,6 +369,20 @@ public class PatientSingleton extends ApplicationUser
 		return json;
 
 	} // toJSONObject
+
+
+	private static boolean toBeAdded( SyncStatus syncStatus, Syncable syncable )
+	{
+		// Otherwise, if we want unsynced and it's not synced, include it
+		return ( ( syncStatus == SyncStatus.UNSYNCED ||
+						syncStatus == SyncStatus.ALL )
+						&& !syncable.isSynced() )
+				||
+				// Or, if we want synced and it's synced, include it
+				( ( syncStatus == SyncStatus.SYNCED ||
+						syncStatus == SyncStatus.ALL )
+						&& syncable.isSynced() );
+	} // toBeAdded
 
 
 	@Override

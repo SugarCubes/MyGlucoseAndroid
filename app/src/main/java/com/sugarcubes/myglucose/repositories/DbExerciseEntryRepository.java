@@ -14,11 +14,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
 import com.sugarcubes.myglucose.contentproviders.MyGlucoseContentProvider;
 import com.sugarcubes.myglucose.db.DB;
-import com.sugarcubes.myglucose.entities.ExerciseEntry;
+import com.sugarcubes.myglucose.models.ExerciseEntry;
 import com.sugarcubes.myglucose.repositories.interfaces.IExerciseEntryRepository;
 import com.sugarcubes.myglucose.utils.DateUtilities;
 
@@ -89,7 +88,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	{
 		ArrayList<ExerciseEntry> entryArrayList = new ArrayList<>();
 
-		String selection = userName != null ? DB.KEY_USERNAME + "=?" : null;
+		String selection =  userName != null ? DB.KEY_USERNAME + "=?" : null;
 		String[] selectionArgs = userName != null ? new String[]{ userName } : null;
 
 		Cursor cursor = contentResolver.query( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
@@ -127,6 +126,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		entry.setMinutes( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_MINUTES ) ) );
 		entry.setSteps( cursor.getInt( cursor.getColumnIndex( DB.KEY_EXERCISE_STEPS ) ) );
 		entry.setUserName( cursor.getString( cursor.getColumnIndex( DB.KEY_USERNAME ) ) );
+		entry.setSynced( cursor.getInt( cursor.getColumnIndex( DB.KEY_SYNCED ) ) > 0 );
 
 		String updatedAt = cursor.getString( cursor.getColumnIndex( DB.KEY_UPDATED_AT ) );
 		if( !updatedAt.isEmpty() )
@@ -154,6 +154,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 		//		values.put( DB.KEY_ID, item.getId() );
 		values.put( DB.KEY_REMOTE_ID, item.getRemoteId() );
 		values.put( DB.KEY_USERNAME, item.getUserName() );
+		values.put( DB.KEY_SYNCED, item.isSynced() );
 		values.put( DB.KEY_EXERCISE_NAME, item.getExerciseName() );
 		values.put( DB.KEY_EXERCISE_MINUTES, item.getMinutes() );
 		values.put( DB.KEY_EXERCISE_STEPS, item.getSteps() );
@@ -179,9 +180,7 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 	@Override
 	public void delete( ExerciseEntry entry )
 	{
-		contentResolver.delete( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
-				DB.KEY_ID + "=?",
-				new String[]{ String.valueOf( entry.getId() ) } );
+		delete( entry.getId() );
 
 	} // delete
 
@@ -194,5 +193,16 @@ public class DbExerciseEntryRepository implements IExerciseEntryRepository
 				new String[]{ String.valueOf( id ) } );
 
 	} // delete
+
+
+	@Override
+	public void setAllSynced()
+	{
+		ContentValues values = new ContentValues();
+		values.put( DB.KEY_SYNCED, true );
+		contentResolver.update( MyGlucoseContentProvider.EXERCISE_ENTRIES_URI,
+				values, null, null );
+
+	} // setAllSynced
 
 } // class

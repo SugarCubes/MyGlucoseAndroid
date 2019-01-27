@@ -204,7 +204,7 @@ public class MainActivity
 		pedometerIntent.setAction( PedometerService.ACTION_START );
 
 		// Start the service, only if user wants to track steps:
-		if( trackSteps( getApplicationContext() )
+		if( PatientSingleton.getInstance().isLoggedIn() && trackSteps( getApplicationContext() )
 				&& !serviceIsRunning( getApplicationContext(), PedometerService.class ) )
 		{
 			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
@@ -242,7 +242,7 @@ public class MainActivity
 		} // if
 
 		// Start the service again, only if user wants to track steps:
-		if( trackSteps( getApplicationContext() ) )
+		if( PatientSingleton.getInstance().isLoggedIn() && trackSteps( getApplicationContext() ) )
 		{
 			if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
 				startForegroundService( pedometerIntent );
@@ -616,14 +616,13 @@ public class MainActivity
 
 			if( DEBUG ) Log.d( LOG_TAG, patientUser.toString() );
 
+			// Start the login activity if not logged in:
+			if( !PatientSingleton.getInstance().isLoggedIn() )
+				startLoginActivity();
+
 			setMenuTexts();                                        // Show Log in/out, Register
 
 		} // if cursor valid
-
-		else
-		{
-			startLoginActivity();
-		}
 
 	} // onLoadFinished
 
@@ -651,7 +650,7 @@ public class MainActivity
 
 		} // switch
 
-		switch( resultCode )    // TODO: Not working after registering...
+		switch( resultCode )
 		{
 			case RESULT_REGISTER_SUCCESSFUL:
 				setMenuTexts();

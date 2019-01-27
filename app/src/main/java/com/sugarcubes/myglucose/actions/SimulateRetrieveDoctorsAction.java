@@ -3,7 +3,7 @@ package com.sugarcubes.myglucose.actions;
 import android.content.Context;
 
 import com.sugarcubes.myglucose.actions.interfaces.IRetrieveDoctorsAction;
-import com.sugarcubes.myglucose.entities.Doctor;
+import com.sugarcubes.myglucose.models.Doctor;
 
 import java.util.ArrayList;
 import java.util.List;

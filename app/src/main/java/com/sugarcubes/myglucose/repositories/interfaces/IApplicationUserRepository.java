@@ -13,8 +13,6 @@ package com.sugarcubes.myglucose.repositories.interfaces;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.sugarcubes.myglucose.entities.ApplicationUser;
-
 import java.util.ArrayList;
 
 public interface IApplicationUserRepository<T>
